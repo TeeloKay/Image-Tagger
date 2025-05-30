@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 ProjectManager="*res://autoload/_project_manager.gd"
+FileService="*res://autoload/_file_handler.gd"
 
 [display]
 
@@ -28,7 +29,12 @@ window/stretch/aspect="expand"
 [file_customization]
 
 folder_colors={
-"res://autoload/": "purple"
+"res://assets/": "pink",
+"res://autoload/": "purple",
+"res://core/": "teal",
+"res://data/": "orange",
+"res://scenes/": "blue",
+"res://scripts/": "green"
 }
 
 [gui]

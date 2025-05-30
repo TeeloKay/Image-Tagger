@@ -5,7 +5,7 @@ var accepted_types := ["png", "jpg", "jpeg", "webp", "gif"]
 func search_images(query: String) -> Array[String]:
 	var results :Array[String] = []
 	var root := ProjectManager.current_project.project_path
-	var q := ProjectManager.sanitize_tag(query)
+	var q := ProjectTools.sanitize_tag(query)
 	
 	_recursive_search(root,q,results)
 	print(results)

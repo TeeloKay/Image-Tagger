@@ -23,21 +23,17 @@ func _on_image_selected(path: String) -> void:
 	# TODO: hash and cross-reference data.
 	# the system should be fed a path. it should return a hash.
 	current_image = path
-	current_hash = ProjectManager.image_hasher.hash_image(path)
-	var abs_path := ProjectManager.current_project.to_abolute_path(current_image)
-	var img = Image.new()
-	var err = img.load(path)
-	if err != OK:
-		push_warning("Failed to load full image for preview: %s" % path)
-		return
+	current_hash = ProjectManager.current_project.get_hash_for_path(path)
 	
-	var tex = ImageTexture.create_from_image(img)
-	image_preview.texture = tex
+	var texture = ImageUtil.load_image(path)
+	image_preview.texture = texture
+	
 	explorer_button.disabled = false
 	file_name_label.text = path.get_file()
 	
 	_tag_editor.set_image_path(path)
-
+	_tag_editor.current_image_hash = current_hash
+	
 func _on_explorer_button_pressed() -> void:
 	if current_image.is_empty():
 		return

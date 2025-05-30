@@ -12,6 +12,7 @@ func _ready() -> void:
 	_tree.set_column_custom_minimum_width(0,32)
 	_tree.item_selected.connect(_on_item_selected)
 	ProjectManager.project_loaded.connect(_on_project_loaded)
+	
 
 func _on_project_loaded() -> void:
 	var dir_path := ProjectManager.current_project.project_path

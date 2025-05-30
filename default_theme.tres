@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=41 format=3 uid="uid://d37f6ht67sx7o"]
+[gd_resource type="Theme" load_steps=43 format=3 uid="uid://d37f6ht67sx7o"]
 
 [ext_resource type="FontFile" uid="uid://dcfvk71wpmcae" path="res://assets/fonts/inter/static/Inter_28pt-Regular.ttf" id="1_e7bfs"]
 
@@ -106,6 +106,11 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_3taad"]
+color = Color(0.227451, 0.290196, 0.337255, 1)
+grow_begin = -2.0
+grow_end = -2.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbqnu"]
 bg_color = Color(0.164706, 0.203922, 0.243137, 1)
@@ -410,6 +415,12 @@ corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_e7bfs"]
+color = Color(0.227451, 0.290196, 0.337255, 1)
+grow_begin = -2.0
+grow_end = -2.0
+vertical = true
+
 [resource]
 default_font = ExtResource("1_e7bfs")
 Button/colors/font_color = Color(0.878431, 0.901961, 0.921569, 1)
@@ -427,6 +438,7 @@ HScrollBar/styles/grabber = SubResource("StyleBoxFlat_65mqm")
 HScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_xhl1p")
 HScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_srpr5")
 HScrollBar/styles/scroll = SubResource("StyleBoxFlat_wbcek")
+HSeparator/styles/separator = SubResource("StyleBoxLine_3taad")
 ItemList/styles/focus = SubResource("StyleBoxFlat_tbqnu")
 ItemList/styles/panel = SubResource("StyleBoxFlat_7idtx")
 LineEdit/styles/focus = SubResource("StyleBoxFlat_qverm")
@@ -468,3 +480,4 @@ VScrollBar/styles/grabber = SubResource("StyleBoxFlat_8l1df")
 VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_f0y68")
 VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_ahn61")
 VScrollBar/styles/scroll = SubResource("StyleBoxFlat_4wtc2")
+VSeparator/styles/separator = SubResource("StyleBoxLine_e7bfs")

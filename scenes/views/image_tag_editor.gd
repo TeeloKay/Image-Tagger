@@ -32,15 +32,15 @@ func _initialize() -> void:
 
 func set_image_path(path: String) -> void:
 	current_image_path = path
-	var hsh := project_data.get_hash_for_path(path)
-	_original_tags = project_data.get_tags_for_hash(hsh).duplicate()
+	var hash := project_data.get_hash_for_path(path)
+	_original_tags = project_data.get_tags_for_hash(hash).duplicate()
 	_working_tags = _original_tags.duplicate()
 	_refresh_tag_list()
 	mark_clean()
 
 func save_changes() -> void:
 	project_data.add_image(current_image_hash, current_image_path)
-	project_data.set_tags_for_hash(current_image_hash, _working_tags)
+	project_data.set_tags_for_hash(current_image_hash,_working_tags)
 	_original_tags = _working_tags.duplicate()
 	_refresh_tag_list()
 	mark_clean()
@@ -58,7 +58,7 @@ func _on_add_tag_pressed() -> void:
 	_on_add_tag(text)
 
 func _on_add_tag(text: String) -> void:
-	var tag := StringName(ProjectManager.sanitize_tag(text))
+	var tag := StringName(ProjectTools.sanitize_tag(text))
 	if tag.is_empty() || tag in _working_tags:
 		return
 	_tag_input.clear()

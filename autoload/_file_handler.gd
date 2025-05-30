@@ -1,4 +1,4 @@
-class_name FileHandler extends Object
+class_name FileHandler extends Node
 
 signal file_moved(old_path: String, new_path: String)
 signal file_removed(path: String)

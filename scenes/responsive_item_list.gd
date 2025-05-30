@@ -45,7 +45,7 @@ func set_icon_size(size: IconSizes) -> void:
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var index := get_item_at_position(at_position)
 	# Absolute path
-	var path := list_view.file_paths_in_dir[index]
+	var path := list_view.get_file_paths_in_dir()[index]
 	print(path)
 	
 	var preview = TextureRect.new()
@@ -54,7 +54,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	preview.set_size(_get_icon_size())
 	set_drag_preview(preview)
 	
-	var drag_data = ImageDragData.new(path)
+	var drag_data = ImageDragData.new(self,path)
 	return drag_data
 
 func _get_icon_size() -> Vector2i:

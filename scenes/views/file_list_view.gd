@@ -3,22 +3,24 @@ class_name FileListView extends Control
 @onready var _list_view : ItemList = %ImageList
 @onready var _context_menu: PopupMenu = %ContextMenu
 
-var file_paths_in_dir: PackedStringArray = []
-var _cache: ThumbnailCache
-var _thumbnail_generator: ThumbnailGenerator
+var _current_dir: String = ""
+var _file_paths_in_dir: PackedStringArray = []
 var _right_click_index: int = -1
+
+var _cache: ThumbnailCache
 
 signal image_selected(image_path: String)
 
 func _ready() -> void:
 	_cache = ProjectManager.thumbnail_cache
-	_thumbnail_generator = ProjectManager.thumbnail_generator
-	
+	FileService.file_moved.connect(_on_file_moved)
+	FileService.file_removed.connect(_on_file_removed)
 	_build_context_menu()
 
 func load_images_in_folder(directory_path: String) -> void:
+	_current_dir = directory_path
 	_list_view.clear()
-	file_paths_in_dir.clear()
+	_file_paths_in_dir.clear()
 	
 	var dir = DirAccess.open(directory_path)
 	if !dir:
@@ -30,7 +32,7 @@ func load_images_in_folder(directory_path: String) -> void:
 		if !dir.current_is_dir():
 			var ext := file_name.get_extension()
 			var full_path := directory_path.path_join(file_name)
-			if !ext in ProjectManager.accepted_files:
+			if !ext in ImageUtil.ACCEPTED_TYPES:
 				file_name = dir.get_next()
 				continue
 			_add_image_to_list(full_path, file_name)
@@ -39,26 +41,29 @@ func load_images_in_folder(directory_path: String) -> void:
 
 func load_images(image_paths: PackedStringArray) -> void:
 	_list_view.clear()
-	file_paths_in_dir.clear()
+	_file_paths_in_dir.clear()
 	
 	for path in image_paths:
 		var full_path = _get_full_path(path)
 		_add_image_to_list(full_path, path)
 
+func refresh() -> void:
+	if _current_dir:
+		load_images_in_folder(_current_dir)
+		return
+
 func _add_image_to_list(full_path: String, file_name: String) -> void:
-	var image := Image.new()
+	var type := full_path.get_extension()
 	var rel_path = _get_rel_path(full_path)
 	var t := _cache.get_image(rel_path)
 	if t == null:
-		var err := image.load(full_path)
-		if err != OK:
-			#TODO: figure out if we can't figure out the correct file type somehow.
+		t = ImageUtil.generate_thumbnail_from_path(full_path)
+		if t == null:
 			return
-		t = _thumbnail_generator.generate(image)
-		_cache.add_image(rel_path,t)
+	_cache.add_image(rel_path,t)
 	
 	var index := _list_view.add_item(file_name)
-	file_paths_in_dir.append(full_path)
+	_file_paths_in_dir.append(full_path)
 	_list_view.set_item_icon(index,t)
 
 func _get_full_path(rel_path: String) -> String:
@@ -80,21 +85,21 @@ func _build_context_menu() -> void:
 	_list_view.gui_input.connect(_on_list_view_gui_input)
 
 func _on_context_menu_item_pressed(id: int) -> void:
-	if _right_click_index < 0 || _right_click_index >= file_paths_in_dir.size():
+	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 		return
 	
-	var path := file_paths_in_dir[_right_click_index]
+	var path = _file_paths_in_dir[_right_click_index]
 	var hash := ProjectManager.current_project.get_hash_for_path(path)
+	var is_favorited = ProjectManager.current_project.is_favorited(hash)
 	
 	match id:
 		0:
 			if ProjectManager.current_project.is_favorited(hash):
 				ProjectManager.current_project.remove_from_favorites(hash)
 				_context_menu.set_item_checked(0,false)
-				ProjectManager.save_current_project()
-				return
-			ProjectManager.current_project.add_to_favorites(hash)
-			_context_menu.set_item_checked(0,true)
+			else:
+				ProjectManager.current_project.add_to_favorites(hash)
+				_context_menu.set_item_checked(0,true)
 			ProjectManager.save_current_project()
 		1:
 			# TODO: remake
@@ -110,16 +115,28 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 		var click_pos := evt.position
 		_right_click_index = _list_view.get_item_at_position(click_pos)
 		
-		if _right_click_index < 0 || _right_click_index >= file_paths_in_dir.size():
+		if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 			return
-		var path = file_paths_in_dir[_right_click_index]
-		var is_favorited = ProjectManager.current_project.is_favorited(path)
+		var path = _file_paths_in_dir[_right_click_index]
+		var hash := ProjectManager.current_project.get_hash_for_path(path)
+		var is_favorited = ProjectManager.current_project.is_favorited(hash)
 		_context_menu.set_item_checked(0, is_favorited)
 		_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
 
 
 func _on_item_selected(index: int) -> void:
-	if index < 0 || index >= file_paths_in_dir.size():
+	if index < 0 || index >= _file_paths_in_dir.size():
 		return
-	var path := file_paths_in_dir[index]
+	var path := _file_paths_in_dir[index]
 	image_selected.emit(path)
+
+func get_file_paths_in_dir() -> PackedStringArray:
+	return _file_paths_in_dir.duplicate()
+
+func _on_file_moved(from_path: String, to_path: String) -> void:
+	if from_path in _file_paths_in_dir || to_path in _file_paths_in_dir:
+		refresh()
+
+func _on_file_removed(path: String) -> void:
+	if path in _file_paths_in_dir:
+		refresh()

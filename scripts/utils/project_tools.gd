@@ -13,3 +13,6 @@ static func compute_hash_from_file(path: String) -> String:
 	file.close()
 	
 	return hash
+
+static func sanitize_tag(tag: String) -> String:
+	return tag.strip_edges().to_lower().strip_escapes()

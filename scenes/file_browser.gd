@@ -19,7 +19,7 @@ func _ready() -> void:
 	ProjectManager.project_loaded.connect(_on_project_loaded)
 
 func _on_project_loaded() -> void:
-	directory_view.on_folder_selected(ProjectManager.current_project.project_path)
+	pass
 
 func _on_tree_item_selected(path: String) -> void:
 	file_list_view.load_images_in_folder(path)

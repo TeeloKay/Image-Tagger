@@ -4,6 +4,11 @@ var last_path: String = ""
 var tags: Array[StringName] = []
 var favorited: bool = false
 
+func _init():
+	last_path = ""
+	tags = []
+	favorited = false
+
 func add_tag(tag: StringName) -> void:
 	if tags.has(tag):
 		return

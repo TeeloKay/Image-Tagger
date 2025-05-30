@@ -69,9 +69,6 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Add"
 
-[node name="HSeparator" type="HSeparator" parent="TabContainer/Tags/ImageTagEditor"]
-layout_mode = 2
-
 [node name="PanelContainer" type="Panel" parent="TabContainer/Tags/ImageTagEditor"]
 layout_mode = 2
 size_flags_vertical = 3

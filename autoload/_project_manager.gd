@@ -9,12 +9,10 @@ var current_project: ProjectData
 var _current_meta_path: String = ""
 var _current_project_file_path: String = ""
 
-var accepted_files: Array = ["png", "jpg", "jpeg", "gif", "webp", "tga"]
 var _project_io: ProjectIO
 var _search_engine: SearchEngine
 
 var thumbnail_cache: ThumbnailCache
-var thumbnail_generator: ThumbnailGenerator
 var image_hasher: ImageHasher
 var file_handler: FileHandler
 
@@ -25,7 +23,6 @@ func _ready() -> void:
 	load_project_registry()
 	
 	thumbnail_cache 	= ThumbnailCache.new()
-	thumbnail_generator = ThumbnailGenerator.new()
 	file_handler		= FileHandler.new()
 	
 	_project_io 		= ProjectIO.new()
@@ -71,9 +68,6 @@ func get_valid_projects() -> Array[String]:
 	if !registry:
 		return []
 	return registry.get_valid_projects()
-
-func sanitize_tag(tag: String) -> String:
-	return tag.strip_edges().to_lower().strip_escapes()
 
 func search_images(query: String) -> Array:
 	return _search_engine.search_images(query)

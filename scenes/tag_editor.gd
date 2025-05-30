@@ -9,6 +9,8 @@ const COL_COLOR := 2
 @onready var _refresh_button: Button = %Refresh
 @onready var _color_picker: ColorPickerPopup = %ColorPickerPopup
 
+var _picker_icon := preload("res://assets/icons/ColorPick.svg")
+
 @export var project_data: ProjectData
 
 var _active_tag: StringName = &""
@@ -60,8 +62,7 @@ func _refresh_tags() -> void:
 func _add_tag_to_tree(tag: StringName, root: TreeItem) -> void:
 	var tag_data = project_data.get_tag_data(tag)
 	var item := _tag_tree.create_item(root)
-	var occurences := 0
-	##TODO: count hash occurences
+	var occurences: int = tag_data.hashes.size()
 	
 	item.set_text(COL_NAME, tag)
 	item.set_editable(COL_NAME, false)
@@ -71,7 +72,7 @@ func _add_tag_to_tree(tag: StringName, root: TreeItem) -> void:
 	
 	item.set_custom_bg_color(COL_COLOR, tag_data.color)
 	item.set_text(COL_COLOR, "#" + tag_data.color.to_html(false))
-	item.add_button(COL_COLOR,load("res://icons/ColorPick.svg"))
+	item.add_button(COL_COLOR,_picker_icon)
 		
 	_item_map[tag] = item
 
