@@ -1,0 +1,226 @@
+[gd_scene load_steps=6 format=3 uid="uid://fie0ld0my05u"]
+
+[ext_resource type="Script" uid="uid://6o2aqrv03o12" path="res://scenes/file_browser.gd" id="2_idj7w"]
+[ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://icons/Search.svg" id="3_kln2b"]
+[ext_resource type="Script" uid="uid://cbsqwjxaaq7n2" path="res://src/tag_editor.gd" id="4_dhrg8"]
+[ext_resource type="Script" uid="uid://b1cgy6hh5ypam" path="res://scenes/tag_editor.gd" id="4_jxsqx"]
+[ext_resource type="Script" uid="uid://bl5gos0i20xiu" path="res://scenes/responsive_item_list.gd" id="4_vcsgt"]
+
+[node name="VBoxContainer" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Node" type="Node" parent="." node_paths=PackedStringArray("_tree", "_list_view", "preview_rect")]
+script = ExtResource("2_idj7w")
+_tree = NodePath("../HBoxContainer/HSplitContainer/MarginContainer/VBoxContainer/Tree")
+_list_view = NodePath("../HBoxContainer/HSplitContainer/TabContainer/Images/ImageList")
+preview_rect = NodePath("../HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer/MarginContainer/ImagePreview")
+_accepted_files = PackedStringArray("png", "jpg", "jpeg", "gif", "webp")
+
+[node name="Toolbar" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Toolbar"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Toolbar/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="MenuButton" type="Button" parent="Toolbar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "Save"
+
+[node name="VSeparator" type="VSeparator" parent="Toolbar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="LayoutButton" type="OptionButton" parent="Toolbar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Grid"
+popup/item_0/id = 0
+popup/item_1/text = "List"
+popup/item_1/id = 1
+
+[node name="Label" type="Label" parent="Toolbar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+text = "icon size"
+
+[node name="IconSizeButton" type="OptionButton" parent="Toolbar/MarginContainer/HBoxContainer"]
+layout_mode = 2
+selected = 1
+item_count = 3
+popup/item_0/text = "Small"
+popup/item_0/id = 0
+popup/item_1/text = "Medium"
+popup/item_1/id = 1
+popup/item_2/text = "Large"
+popup/item_2/id = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+split_offset = 265
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/HSplitContainer"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/HSplitContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="HBoxContainer/HSplitContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "search files"
+right_icon = ExtResource("3_kln2b")
+
+[node name="Tree" type="Tree" parent="HBoxContainer/HSplitContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+
+[node name="TabContainer" type="TabContainer" parent="HBoxContainer/HSplitContainer"]
+layout_mode = 2
+current_tab = 1
+
+[node name="Images" type="MarginContainer" parent="HBoxContainer/HSplitContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="ImageList" type="ItemList" parent="HBoxContainer/HSplitContainer/TabContainer/Images"]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text_overrun_behavior = 4
+max_columns = 0
+same_column_width = true
+fixed_column_width = 200
+icon_mode = 0
+fixed_icon_size = Vector2i(96, 96)
+script = ExtResource("4_vcsgt")
+
+[node name="Tags" type="MarginContainer" parent="HBoxContainer/HSplitContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("4_jxsqx")
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/HSplitContainer/TabContainer/Tags"]
+layout_mode = 2
+
+[node name="TagTree" type="Tree" parent="HBoxContainer/HSplitContainer/TabContainer/Tags/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BoxContainer" type="BoxContainer" parent="HBoxContainer/HSplitContainer/TabContainer/Tags/VBoxContainer"]
+layout_mode = 2
+
+[node name="AddTag" type="Button" parent="HBoxContainer/HSplitContainer/TabContainer/Tags/VBoxContainer/BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PanelContainer3" type="PanelContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="FileName" type="Label" parent="HBoxContainer/VBoxContainer/PanelContainer3"]
+layout_mode = 2
+
+[node name="VSplitContainer" type="VSplitContainer" parent="HBoxContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+drag_area_margin_begin = 40
+drag_area_margin_end = 40
+drag_area_highlight_in_editor = true
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="ImagePreview" type="TextureRect" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer/MarginContainer"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PanelContainer2" type="Panel" parent="HBoxContainer/VBoxContainer/VSplitContainer"]
+custom_minimum_size = Vector2(0, 256)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TabContainer" type="TabContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Tags" type="VBoxContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer"]
+layout_mode = 2
+script = ExtResource("4_dhrg8")
+metadata/_tab_index = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags"]
+layout_mode = 2
+
+[node name="TagInput" type="LineEdit" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Add a new tag"
+keep_editing_on_text_submit = true
+
+[node name="PopupMenu" type="PopupMenu" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags/HBoxContainer/TagInput"]
+
+[node name="SubmitTag" type="Button" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add"
+
+[node name="HSeparator" type="HSeparator" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags"]
+layout_mode = 2
+
+[node name="TagContainer" type="FlowContainer" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ApplyButton" type="Button" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Apply changes
+"
+
+[node name="Metadata" type="RichTextLabel" parent="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[connection signal="image_selected" from="Node" to="HBoxContainer/VBoxContainer/VSplitContainer/PanelContainer2/MarginContainer/TabContainer/Tags" method="set_image_path"]
+[connection signal="pressed" from="Toolbar/MarginContainer/HBoxContainer/MenuButton" to="Node" method="_on_save_pressed"]
+[connection signal="item_selected" from="Toolbar/MarginContainer/HBoxContainer/LayoutButton" to="HBoxContainer/HSplitContainer/TabContainer/Images/ImageList" method="set_view_mode"]
+[connection signal="item_selected" from="Toolbar/MarginContainer/HBoxContainer/IconSizeButton" to="HBoxContainer/HSplitContainer/TabContainer/Images/ImageList" method="set_icon_size"]
+[connection signal="text_changed" from="HBoxContainer/HSplitContainer/MarginContainer/VBoxContainer/LineEdit" to="Node" method="_on_line_edit_text_changed"]
+[connection signal="item_selected" from="HBoxContainer/HSplitContainer/TabContainer/Images/ImageList" to="Node" method="_on_item_list_item_selected"]

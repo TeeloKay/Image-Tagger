@@ -1,0 +1,62 @@
+[gd_scene load_steps=2 format=3 uid="uid://ca60w4qtqete2"]
+
+[ext_resource type="Script" uid="uid://bx6g43glrbja" path="res://scenes/project_picker.gd" id="1_6ald2"]
+
+[node name="ProjectPicker" type="PanelContainer" node_paths=PackedStringArray("file_dialog")]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -192.0
+offset_top = -251.0
+offset_right = 192.0
+offset_bottom = 251.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6ald2")
+file_dialog = NodePath("FileDialog")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Open project"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+auto_height = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="NewProject" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "New Project"
+
+[node name="Refresh" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Refresh"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+auto_translate_mode = 1
+title = "Open a Directory"
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[connection signal="item_activated" from="MarginContainer/VBoxContainer/ItemList" to="." method="_on_project_item_activated"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/NewProject" to="." method="_on_new_project_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Refresh" to="MarginContainer/VBoxContainer" method="_on_refresh_pressed"]
+[connection signal="dir_selected" from="FileDialog" to="MarginContainer/VBoxContainer" method="_on_file_dialog_dir_selected"]

@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://d1b6npywbcmhv"]
+
+[ext_resource type="Script" uid="uid://w51jykngua7n" path="res://scenes/project_toolbar.gd" id="1_lhtiy"]
+
+[node name="Toolbar" type="HBoxContainer"]
+theme_override_constants/separation = 6
+script = ExtResource("1_lhtiy")
+
+[node name="FileMenuButton" type="MenuButton" parent="."]
+layout_mode = 2
+text = "File"
+switch_on_hover = true
+
+[node name="VSeparator" type="VSeparator" parent="."]
+layout_mode = 2
+
+[node name="FileDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+auto_translate_mode = 1
+title = "Open a Directory"
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="Button" type="Button" parent="."]
+layout_mode = 2
+text = "Rebuild tags"
+flat = true
+
+[connection signal="pressed" from="Button" to="." method="_on_rebuild_tags_pressed"]

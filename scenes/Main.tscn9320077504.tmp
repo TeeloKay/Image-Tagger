@@ -1,0 +1,284 @@
+[gd_scene load_steps=10 format=3 uid="uid://fie0ld0my05u"]
+
+[ext_resource type="Script" uid="uid://6o2aqrv03o12" path="res://scenes/file_browser.gd" id="1_c01mt"]
+[ext_resource type="PackedScene" uid="uid://d1b6npywbcmhv" path="res://scenes/project_toolbar.tscn" id="2_jlsqs"]
+[ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://icons/Search.svg" id="2_nxtc6"]
+[ext_resource type="Script" uid="uid://bl5gos0i20xiu" path="res://scenes/responsive_item_list.gd" id="3_jlsqs"]
+[ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/search_panel.tscn" id="4_jlsqs"]
+[ext_resource type="Script" uid="uid://b364mp4wtn4nm" path="res://scenes/directory_tree.gd" id="4_lhr70"]
+[ext_resource type="Script" uid="uid://b1cgy6hh5ypam" path="res://scenes/tag_editor.gd" id="4_q8u5g"]
+[ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/color_picker_popup.tscn" id="5_lhr70"]
+[ext_resource type="Script" uid="uid://cbsqwjxaaq7n2" path="res://src/image_tag_editor.gd" id="6_wp0k4"]
+
+[node name="Main" type="CanvasLayer"]
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.0980392, 0.12549, 0.152941, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="Node" type="Node" parent="VBoxContainer" node_paths=PackedStringArray("_tree", "_list_view", "preview_rect", "explorer_button", "file_name_label")]
+script = ExtResource("1_c01mt")
+_tree = NodePath("../Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryTree")
+_list_view = NodePath("../Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/ImageList")
+preview_rect = NodePath("../Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer/ImagePreview")
+explorer_button = NodePath("../Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer/ExplorerButton")
+file_name_label = NodePath("../Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer/FileName")
+_accepted_files = PackedStringArray("png", "jpg", "jpeg", "gif", "webp")
+
+[node name="Header" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Header"]
+layout_mode = 2
+
+[node name="Toolbar" parent="VBoxContainer/Header/MarginContainer" instance=ExtResource("2_jlsqs")]
+layout_mode = 2
+
+[node name="Body" type="MarginContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Body" type="HBoxContainer" parent="VBoxContainer/Body"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body/Body"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body/Body/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+split_offset = 265
+
+[node name="LeftMenu" type="TabContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Folders" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders"]
+layout_mode = 2
+
+[node name="DirectorySearch" type="LineEdit" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "search files"
+right_icon = ExtResource("2_nxtc6")
+
+[node name="DirectoryTree" type="Tree" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+script = ExtResource("4_lhr70")
+
+[node name="Search" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="SearchPanel" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Search" instance=ExtResource("4_jlsqs")]
+layout_mode = 2
+
+[node name="CenterMenu" type="TabContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+current_tab = 0
+
+[node name="Images" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="Images" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images"]
+layout_mode = 2
+
+[node name="LayoutButton" type="OptionButton" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/HBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Grid"
+popup/item_0/id = 0
+popup/item_1/text = "List"
+popup/item_1/id = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/HBoxContainer"]
+layout_mode = 2
+text = "icon size"
+
+[node name="IconSizeButton" type="OptionButton" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/HBoxContainer"]
+layout_mode = 2
+selected = 1
+item_count = 3
+popup/item_0/text = "Small"
+popup/item_0/id = 0
+popup/item_1/text = "Medium"
+popup/item_1/id = 1
+popup/item_2/text = "Large"
+popup/item_2/id = 2
+
+[node name="ImageList" type="ItemList" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images" node_paths=PackedStringArray("browser")]
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text_overrun_behavior = 4
+max_columns = 0
+same_column_width = true
+fixed_column_width = 200
+icon_mode = 0
+fixed_icon_size = Vector2i(96, 96)
+script = ExtResource("3_jlsqs")
+browser = NodePath("../../../../../../../../Node")
+
+[node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu"]
+visible = false
+layout_mode = 2
+script = ExtResource("4_q8u5g")
+metadata/_tab_index = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags"]
+layout_mode = 2
+
+[node name="TagTree" type="Tree" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+column_titles_visible = true
+hide_folding = true
+enable_recursive_folding = false
+hide_root = true
+
+[node name="BoxContainer" type="BoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags/VBoxContainer"]
+layout_mode = 2
+
+[node name="AddTag" type="Button" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags/VBoxContainer/BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add new tag"
+
+[node name="ColorPickerPopup" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags" instance=ExtResource("5_lhr70")]
+unique_name_in_owner = true
+visible = false
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer"]
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="FileName" type="Label" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+horizontal_alignment = 1
+
+[node name="ImagePreview" type="TextureRect" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+expand_mode = 2
+stretch_mode = 5
+
+[node name="ExplorerButton" type="Button" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open in Explorer"
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags"]
+layout_mode = 2
+script = ExtResource("6_wp0k4")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer"]
+layout_mode = 2
+
+[node name="TagInput" type="LineEdit" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Add a new tag"
+keep_editing_on_text_submit = true
+
+[node name="PopupMenu" type="PopupMenu" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer/HBoxContainer/TagInput"]
+
+[node name="SubmitTag" type="Button" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add"
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="Panel" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"DarkPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer/PanelContainer"]
+layout_mode = 2
+offset_right = 381.0
+offset_bottom = 470.0
+
+[node name="TagContainer" type="FlowContainer" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ApplyButton" type="Button" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Apply changes
+"
+
+[node name="PopupMenu" type="PopupMenu" parent="."]
+item_count = 4
+item_0/text = "item 1"
+item_0/id = 0
+item_1/id = 2
+item_1/separator = true
+item_2/text = "item 2"
+item_2/id = 1
+item_3/text = "item 3"
+item_3/id = 3
+
+[connection signal="image_selected" from="VBoxContainer/Node" to="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/VSplitContainer/TabContainer/Tags/VBoxContainer" method="set_image_path"]
+[connection signal="text_changed" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectorySearch" to="VBoxContainer/Node" method="_on_line_edit_text_changed"]
+[connection signal="results_ready" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Search/SearchPanel" to="VBoxContainer/Node" method="display_images"]
+[connection signal="item_selected" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/HBoxContainer/LayoutButton" to="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/ImageList" method="set_view_mode"]
+[connection signal="item_selected" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/HBoxContainer/IconSizeButton" to="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/Images/ImageList" method="set_icon_size"]

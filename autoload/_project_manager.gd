@@ -1,0 +1,89 @@
+extends Node
+
+const REGISTRY_PATH := "user://registry.tres"
+const META_DIR_NAME := ".artmeta"
+const PROJECT_FILE := "project.json"
+
+var registry: ProjectRegistry
+var current_project: ProjectData
+var _current_meta_path: String = ""
+var _current_project_file_path: String = ""
+
+var accepted_files: Array = ["png", "jpg", "jpeg", "gif", "webp", "tga"]
+var _project_io: ProjectIO
+var _search_engine: SearchEngine
+
+var thumbnail_cache: ThumbnailCache
+var thumbnail_generator: ThumbnailGenerator
+var image_hasher: ImageHasher
+var file_handler: FileHandler
+
+signal project_loaded
+
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	load_project_registry()
+	
+	thumbnail_cache 	= ThumbnailCache.new()
+	thumbnail_generator = ThumbnailGenerator.new()
+	file_handler		= FileHandler.new()
+	
+	_project_io 		= ProjectIO.new()
+	_search_engine 		= SearchEngine.new()
+	image_hasher 		= ImageHasher.new()
+	add_child(image_hasher,true)
+
+func load_project_registry():
+	if FileAccess.file_exists(REGISTRY_PATH):
+		registry = ResourceLoader.load(REGISTRY_PATH, "ProjectRegistry")
+		if registry:
+			return
+	registry = ProjectRegistry.new()
+	save_registry()
+
+func save_registry():
+	ResourceSaver.save(registry, REGISTRY_PATH)
+
+func save_current_project():
+	_project_io.save_project(current_project)
+	
+func open_project(project_path: String) -> void:
+	_current_meta_path = project_path.path_join(META_DIR_NAME)
+	_current_project_file_path = _current_meta_path.path_join(PROJECT_FILE)
+	
+	if !DirAccess.dir_exists_absolute(_current_meta_path):
+		DirAccess.make_dir_recursive_absolute(_current_meta_path)
+	
+	if FileAccess.file_exists(_current_project_file_path):
+		current_project = _project_io.load_project(project_path)
+	else:
+		current_project = ProjectData.new()
+		current_project.project_path = project_path
+		ResourceSaver.save(current_project,_current_project_file_path)
+	
+	image_hasher.initialize(current_project)
+	registry.register_project(project_path)
+	save_registry()
+	
+	project_loaded.emit()
+
+func get_valid_projects() -> Array[String]:
+	if !registry:
+		return []
+	return registry.get_valid_projects()
+
+func sanitize_tag(tag: String) -> String:
+	return tag.strip_edges().to_lower().strip_escapes()
+
+func search_images(query: String) -> Array:
+	return _search_engine.search_images(query)
+
+func to_relative_path(abs_path: String) -> String:
+	if current_project:
+		return current_project.to_relative_path(abs_path)
+	return abs_path
+
+func to_abolute_path(rel_path: String) -> String:
+	if current_project:
+		return current_project.to_relative_path(rel_path)
+	return rel_path

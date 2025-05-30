@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://cd7adillri8dg"]
+
+[ext_resource type="Script" uid="uid://00o0ce2rck0o" path="res://scenes/views/directory_view.gd" id="1_lhs58"]
+[ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://assets/icons/Search.svg" id="1_xatfl"]
+[ext_resource type="Script" uid="uid://b364mp4wtn4nm" path="res://scenes/directory_tree.gd" id="2_dt7d6"]
+
+[node name="DirectoryView" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_lhs58")
+
+[node name="DirectorySearch" type="LineEdit" parent="."]
+visible = false
+layout_mode = 2
+placeholder_text = "search files"
+right_icon = ExtResource("1_xatfl")
+
+[node name="DirectoryTree" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+script = ExtResource("2_dt7d6")

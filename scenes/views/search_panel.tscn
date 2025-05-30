@@ -1,0 +1,38 @@
+[gd_scene load_steps=3 format=3 uid="uid://bhs8lug25xk6b"]
+
+[ext_resource type="Script" uid="uid://cbpptgim85mr5" path="res://scenes/search_panel.gd" id="1_gutec"]
+[ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://assets/icons/Search.svg" id="1_lohjt"]
+
+[node name="SearchPanel" type="VBoxContainer"]
+custom_minimum_size = Vector2(256, 0)
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 147.0
+grow_vertical = 2
+script = ExtResource("1_gutec")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="SearchInput" type="LineEdit" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Search"
+right_icon = ExtResource("1_lohjt")
+
+[node name="SearchButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Search
+"
+
+[node name="Filters" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="."]
+layout_mode = 2
+size_flags_vertical = 3

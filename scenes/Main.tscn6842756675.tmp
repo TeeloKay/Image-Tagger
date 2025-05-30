@@ -1,0 +1,98 @@
+[gd_scene load_steps=4 format=3 uid="uid://fie0ld0my05u"]
+
+[ext_resource type="Texture2D" uid="uid://b7yg8ft85xsjw" path="res://icon.svg" id="1_r150o"]
+[ext_resource type="Script" uid="uid://6o2aqrv03o12" path="res://Scenes/file_browser.gd" id="2_idj7w"]
+[ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://Icons/Search.svg" id="3_kln2b"]
+
+[node name="Control" type="CanvasLayer"]
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/PanelContainer"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="MenuBar" type="MenuBar" parent="VBoxContainer/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="PopupMenu" type="PopupMenu" parent="VBoxContainer/PanelContainer/MarginContainer/MenuBar"]
+
+[node name="PopupMenu2" type="PopupMenu" parent="VBoxContainer/PanelContainer/MarginContainer/MenuBar"]
+auto_translate_mode = 1
+
+[node name="PopupMenu3" type="PopupMenu" parent="VBoxContainer/PanelContainer/MarginContainer/MenuBar"]
+auto_translate_mode = 1
+
+[node name="PopupMenu4" type="PopupMenu" parent="VBoxContainer/PanelContainer/MarginContainer/MenuBar"]
+auto_translate_mode = 1
+
+[node name="PopupMenu5" type="PopupMenu" parent="VBoxContainer/PanelContainer/MarginContainer/MenuBar"]
+auto_translate_mode = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="MenuButton" type="MenuButton" parent="VBoxContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+item_count = 1
+popup/item_0/text = "File"
+popup/item_0/icon = ExtResource("1_r150o")
+popup/item_0/id = 0
+
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+split_offset = 265
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+
+[node name="Node" type="Node" parent="VBoxContainer/HSplitContainer/VBoxContainer" node_paths=PackedStringArray("_tree")]
+script = ExtResource("2_idj7w")
+_tree = NodePath("../Tree")
+_accepted_files = PackedStringArray("png", "jpg", "jpeg", "gif")
+
+[node name="Tree" type="Tree" parent="VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+columns = 2
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer/HSplitContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "search files"
+right_icon = ExtResource("3_kln2b")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="VBoxContainer/HSplitContainer"]
+visible = false
+layout_mode = 2
+
+[node name="SubViewport" type="SubViewport" parent="VBoxContainer/HSplitContainer/SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size_2d_override_stretch = true
+render_target_update_mode = 0
+
+[node name="Control" type="Control" parent="VBoxContainer/HSplitContainer"]
+layout_mode = 2
+
+[node name="ItemList" type="ItemList" parent="VBoxContainer/HSplitContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[connection signal="text_changed" from="VBoxContainer/HSplitContainer/VBoxContainer/LineEdit" to="VBoxContainer/HSplitContainer/VBoxContainer/Node" method="_on_line_edit_text_changed"]

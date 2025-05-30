@@ -1,0 +1,57 @@
+[gd_scene load_steps=3 format=3 uid="uid://c74n6v23cjt7m"]
+
+[ext_resource type="Script" uid="uid://bl5gos0i20xiu" path="res://scenes/responsive_item_list.gd" id="1_a723t"]
+[ext_resource type="Script" uid="uid://dsxbjwyln1xd4" path="res://scenes/views/file_list_view.gd" id="1_aen7i"]
+
+[node name="FileListView" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_aen7i")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="LayoutButton" type="OptionButton" parent="HBoxContainer"]
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Grid"
+popup/item_0/id = 0
+popup/item_1/text = "List"
+popup/item_1/id = 1
+
+[node name="Label" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+text = "icon size"
+
+[node name="IconSizeButton" type="OptionButton" parent="HBoxContainer"]
+layout_mode = 2
+selected = 1
+item_count = 3
+popup/item_0/text = "Small"
+popup/item_0/id = 0
+popup/item_1/text = "Medium"
+popup/item_1/id = 1
+popup/item_2/text = "Large"
+popup/item_2/id = 2
+
+[node name="ImageList" type="ItemList" parent="." node_paths=PackedStringArray("list_view")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(512, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+text_overrun_behavior = 4
+max_columns = 0
+same_column_width = true
+fixed_column_width = 200
+icon_mode = 0
+fixed_icon_size = Vector2i(96, 96)
+script = ExtResource("1_a723t")
+list_view = NodePath("..")
+
+[connection signal="item_selected" from="HBoxContainer/LayoutButton" to="ImageList" method="set_view_mode"]
+[connection signal="item_selected" from="HBoxContainer/IconSizeButton" to="ImageList" method="set_icon_size"]

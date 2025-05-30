@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://bajibmipjnmdt"]
+
+[ext_resource type="Script" uid="uid://b1cgy6hh5ypam" path="res://scenes/tag_editor.gd" id="1_msd4s"]
+[ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/color_picker_popup.tscn" id="2_w0lxy"]
+
+[node name="TagEditor" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_msd4s")
+
+[node name="BoxContainer" type="BoxContainer" parent="."]
+layout_mode = 2
+
+[node name="AddTag" type="Button" parent="BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add new tag"
+
+[node name="Refresh" type="Button" parent="BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Refresh tags"
+
+[node name="TagTree" type="Tree" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 3
+column_titles_visible = true
+hide_folding = true
+enable_recursive_folding = false
+hide_root = true
+
+[node name="ColorPickerPopup" parent="." instance=ExtResource("2_w0lxy")]
+unique_name_in_owner = true
+visible = false
+
+[connection signal="pressed" from="BoxContainer/Refresh" to="." method="_on_refresh_pressed"]
