@@ -12,11 +12,9 @@ static func load_image(abs_path: String) -> Texture2D:
 	return _load_image(abs_path)
 
 static func _load_gif(path: String) -> AnimatedTexture:
-	print(path)
 	return GifManager.animated_texture_from_file(path)
 
 static func _load_image(path: String) -> Texture2D:
-	print(path)
 	var img = Image.new()
 	var err = img.load(path)
 	if err != OK:

@@ -26,6 +26,7 @@ func _ready() -> void:
 	project_data = ProjectManager.current_project
 	
 	_save_button.disabled = true
+	_discard_button.disabled = true
 
 func _initialize() -> void:
 	project_data = ProjectManager.current_project

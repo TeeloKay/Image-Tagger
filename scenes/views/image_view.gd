@@ -15,7 +15,7 @@ func _ready() -> void:
 
 func _enable() -> void:
 	explorer_button.disabled = false
-
+	
 func _disable() -> void:
 	explorer_button.disabled = true
 

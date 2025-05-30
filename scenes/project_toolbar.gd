@@ -2,7 +2,9 @@ class_name ProjectToolbar extends BoxContainer
 
 enum {
 	MENU_NEW_PROJECT,
-	MENU_OPEN_RECENT_PROJECT
+	MENU_OPEN_RECENT_PROJECT,
+	MENU_CLEAR_INDEX,
+	MENU_EXIT
 }
 
 @onready var file_dialog : FileDialog = %FileDialog
@@ -17,9 +19,12 @@ func _ready() -> void:
 
 func _build_menus():
 	_file.clear()
-	_file.add_item("New project", MENU_NEW_PROJECT)	
+	_file.add_item("New project", MENU_NEW_PROJECT)
 	_recent_submenu = PopupMenu.new()
 	_file.add_submenu_node_item("Open recent project", _recent_submenu, MENU_OPEN_RECENT_PROJECT)
+	_file.add_separator()
+	_file.add_item("Clear index", MENU_CLEAR_INDEX)
+	_file.add_item("Exit", MENU_EXIT)
 	
 	for project in ProjectManager.get_valid_projects():
 		_recent_submenu.add_item(project.replace(project.get_base_dir() + "/", ""))
@@ -30,15 +35,18 @@ func _build_menus():
 func _on_file_menu_item_pressed(id: int) -> void:
 	match id:
 		MENU_NEW_PROJECT:
-			print("new project")
 			_create_new_project()
 		MENU_OPEN_RECENT_PROJECT:
-			print("open recent project")
+			return
+		MENU_CLEAR_INDEX:
+			ProjectManager.current_project.clear_index()
+		MENU_EXIT:
+			get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
+			get_tree().quit()
 		_:
 			return
 
 func _on_recent_menu_item_pressed(id: int) -> void:
-	print(id)
 	var project := ProjectManager.get_valid_projects()[id]
 	ProjectManager.open_project(project)
 

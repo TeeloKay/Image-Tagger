@@ -28,4 +28,11 @@ layout_mode = 2
 text = "Rebuild tags"
 flat = true
 
+[node name="MenuButton" type="MenuButton" parent="."]
+layout_mode = 2
+text = "Project"
+item_count = 1
+popup/item_0/text = "purge indexed data"
+popup/item_0/id = 0
+
 [connection signal="pressed" from="Button" to="." method="_on_rebuild_tags_pressed"]

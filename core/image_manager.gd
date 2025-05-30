@@ -72,3 +72,6 @@ func get_info_for_hash(hash: String) -> ImageInfo:
 
 func has(hash: String) -> bool:
 	return _image_db.has(hash)
+
+func clear_index() -> void:
+	_path_to_hash = {}

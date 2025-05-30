@@ -23,6 +23,9 @@ func add_image(hash: String, path: String) -> void:
 	path = to_relative_path(path)
 	image_manager.register_image(path,hash)
 
+func clear_index() -> void:
+	image_manager.clear_index()
+
 #region Tags
 
 func set_tags_for_hash(hash: String, tags: Array[StringName]) -> void:

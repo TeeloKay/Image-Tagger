@@ -46,7 +46,6 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	var index := get_item_at_position(at_position)
 	# Absolute path
 	var path := list_view.get_file_paths_in_dir()[index]
-	print(path)
 	
 	var preview = TextureRect.new()
 	preview.pivot_offset = preview.size/2
