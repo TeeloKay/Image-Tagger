@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 ProjectManager="*res://autoload/_project_manager.gd"
 FileService="*res://autoload/_file_handler.gd"
+InputHandler="*res://autoload/_input_handler.gd"
 
 [display]
 
@@ -40,6 +41,14 @@ folder_colors={
 [gui]
 
 theme/custom="uid://d37f6ht67sx7o"
+
+[input]
+
+save_project={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"command_or_control_autoremap":true,"alt_pressed":false,"shift_pressed":false,"pressed":false,"keycode":0,"physical_keycode":83,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+]
+}
 
 [rendering]
 

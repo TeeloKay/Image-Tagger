@@ -1,13 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://bhs8lug25xk6b"]
+[gd_scene load_steps=4 format=3 uid="uid://bhs8lug25xk6b"]
 
 [ext_resource type="Script" uid="uid://cbpptgim85mr5" path="res://scenes/search_panel.gd" id="1_gutec"]
 [ext_resource type="Texture2D" uid="uid://lpm7nlylv3md" path="res://assets/icons/Search.svg" id="1_lohjt"]
+[ext_resource type="Texture2D" uid="uid://1da631jgdbft" path="res://assets/icons/Add.svg" id="3_8gh1c"]
 
 [node name="SearchPanel" type="VBoxContainer"]
 custom_minimum_size = Vector2(256, 0)
-anchors_preset = 9
+anchors_preset = 13
+anchor_left = 0.5
+anchor_right = 0.5
 anchor_bottom = 1.0
-offset_right = 147.0
+offset_left = -80.5
+offset_right = 80.5
+grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_gutec")
 
@@ -18,21 +23,52 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "Search"
+placeholder_text = "Search Files"
 right_icon = ExtResource("1_lohjt")
 
-[node name="SearchButton" type="Button" parent="HBoxContainer"]
+[node name="Filters" type="VBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InclusiveTags" type="VBoxContainer" parent="Filters"]
+layout_mode = 2
+
+[node name="InclusiveTagMenu" type="MenuButton" parent="Filters/InclusiveTags"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select tags to filter"
+icon = ExtResource("3_8gh1c")
+flat = false
+alignment = 0
+
+[node name="InclusiveTagContainer" type="FlowContainer" parent="Filters/InclusiveTags"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Filters/InclusiveTags"]
+layout_mode = 2
+
+[node name="ExclusiveTags" type="VBoxContainer" parent="Filters"]
+visible = false
+layout_mode = 2
+
+[node name="ExclusiveTagMenu" type="MenuButton" parent="Filters/ExclusiveTags"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select tags to exclude"
+icon = ExtResource("3_8gh1c")
+flat = false
+alignment = 0
+
+[node name="ExclusiveTagContainer" type="FlowContainer" parent="Filters/ExclusiveTags"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HSeparator2" type="HSeparator" parent="Filters/ExclusiveTags"]
+layout_mode = 2
+
+[node name="SearchButton" type="Button" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Search
 "
-
-[node name="Filters" type="VBoxContainer" parent="."]
-layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="."]
-layout_mode = 2
-
-[node name="Tree" type="Tree" parent="."]
-layout_mode = 2
-size_flags_vertical = 3

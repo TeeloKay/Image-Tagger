@@ -69,7 +69,7 @@ func get_valid_projects() -> Array[String]:
 		return []
 	return registry.get_valid_projects()
 
-func search_images(query: String) -> Array:
+func search_images(query: SearchQuery) -> Array:
 	return _search_engine.search_images(query)
 
 func to_relative_path(abs_path: String) -> String:
@@ -79,5 +79,5 @@ func to_relative_path(abs_path: String) -> String:
 
 func to_abolute_path(rel_path: String) -> String:
 	if current_project:
-		return current_project.to_relative_path(rel_path)
+		return current_project.to_abolute_path(rel_path)
 	return rel_path

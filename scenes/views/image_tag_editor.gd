@@ -1,10 +1,11 @@
 class_name ImageTagEditor extends Control
 
 @onready var _tag_container: FlowContainer = %TagContainer
-@onready var _tag_input: LineEdit = %TagInput
-@onready var _add_tag_button: Button = %SubmitTag
+@onready var _tag_input: TagInputContainer = %TagInputContainer
+
 @onready var _save_button: Button = %ApplyButton
 @onready var _discard_button: Button = %DiscardButton
+@onready var _tag_picker: MenuButton = $MenuButton
 
 @export var project_data: ProjectData
 
@@ -24,12 +25,20 @@ signal dirty_changed(is_dirty: bool)
 func _ready() -> void:
 	ProjectManager.project_loaded.connect(_initialize)
 	project_data = ProjectManager.current_project
-	
+	InputHandler.apply_changes.connect(save_changes)
+
+	_tag_picker.get_popup().id_pressed.connect(_on_tag_menu_id_pressed)
 	_save_button.disabled = true
 	_discard_button.disabled = true
 
 func _initialize() -> void:
 	project_data = ProjectManager.current_project
+	_tag_picker.get_popup().max_size = Vector2i(_tag_picker.size.x,200)
+	_tag_picker.get_popup().size = Vector2i(_tag_picker.size.x, 200)
+	var tags := project_data.get_tags()
+	for tag in tags:
+		_tag_picker.get_popup().add_item(tag)
+
 
 func set_image_path(path: String) -> void:
 	current_image_path = path
@@ -54,12 +63,7 @@ func discard_changes() -> void:
 	mark_clean()
 
 #region Tags
-func _on_add_tag_pressed() -> void:
-	var text = _tag_input.text
-	_on_add_tag(text)
-
-func _on_add_tag(text: String) -> void:
-	var tag := StringName(ProjectTools.sanitize_tag(text))
+func _on_add_tag(tag: StringName) -> void:
 	if tag.is_empty() || tag in _working_tags:
 		return
 	_tag_input.clear()
@@ -102,3 +106,9 @@ func _set_dirty(val: bool) -> void:
 	_discard_button.disabled = !_dirty
 	dirty_changed.emit(_dirty)
 #endregion
+
+func _on_tag_menu_id_pressed(id: int) -> void:
+	var tags := project_data.get_tags()
+	var tag := tags[id]
+	
+	_on_add_tag(tag)

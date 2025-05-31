@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://dl8q7fsbr8sr2"]
+[gd_scene load_steps=4 format=3 uid="uid://dl8q7fsbr8sr2"]
 
 [ext_resource type="Script" uid="uid://cbsqwjxaaq7n2" path="res://scenes/views/image_tag_editor.gd" id="1_intuo"]
 [ext_resource type="Script" uid="uid://cbvywtnq7naax" path="res://scenes/views/image_view.gd" id="1_kvsck"]
+[ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="3_d7d5o"]
 
 [node name="ImageView" type="VSplitContainer"]
 anchors_preset = 15
@@ -12,6 +13,7 @@ offset_right = -553.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+split_offset = 600
 script = ExtResource("1_kvsck")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -21,22 +23,24 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
 
-[node name="FileName" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="ExplorerButton" type="Button" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-horizontal_alignment = 1
+text = "Open in Explorer"
 
 [node name="ImagePreview" type="TextureRect" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-expand_mode = 2
+expand_mode = 1
 stretch_mode = 5
 
-[node name="ExplorerButton" type="Button" parent="MarginContainer/VBoxContainer"]
+[node name="FileName" type="Label" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
-text = "Open in Explorer"
+horizontal_alignment = 1
+autowrap_mode = 3
 
 [node name="TabContainer" type="TabContainer" parent="."]
 layout_mode = 2
@@ -51,38 +55,33 @@ unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("1_intuo")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Tags/ImageTagEditor"]
+[node name="MenuButton" type="MenuButton" parent="TabContainer/Tags/ImageTagEditor"]
 layout_mode = 2
-
-[node name="TagInput" type="LineEdit" parent="TabContainer/Tags/ImageTagEditor/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Add a new tag"
-keep_editing_on_text_submit = true
-
-[node name="PopupMenu" type="PopupMenu" parent="TabContainer/Tags/ImageTagEditor/HBoxContainer/TagInput"]
-auto_translate_mode = 1
-
-[node name="SubmitTag" type="Button" parent="TabContainer/Tags/ImageTagEditor/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Add"
+text = "Select a tag"
+flat = false
 
 [node name="PanelContainer" type="Panel" parent="TabContainer/Tags/ImageTagEditor"]
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"DarkPanel"
 
 [node name="MarginContainer" type="MarginContainer" parent="TabContainer/Tags/ImageTagEditor/PanelContainer"]
-layout_mode = 2
-offset_right = 381.0
-offset_bottom = 470.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="TagContainer" type="FlowContainer" parent="TabContainer/Tags/ImageTagEditor/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
+
+[node name="TagInputContainer" parent="TabContainer/Tags/ImageTagEditor" instance=ExtResource("3_d7d5o")]
+unique_name_in_owner = true
+layout_mode = 2
 
 [node name="HBoxContainer2" type="HBoxContainer" parent="TabContainer/Tags/ImageTagEditor"]
 layout_mode = 2
@@ -101,7 +100,7 @@ size_flags_horizontal = 3
 text = "Discard
 "
 
-[connection signal="text_submitted" from="TabContainer/Tags/ImageTagEditor/HBoxContainer/TagInput" to="TabContainer/Tags/ImageTagEditor" method="_on_add_tag"]
-[connection signal="pressed" from="TabContainer/Tags/ImageTagEditor/HBoxContainer/SubmitTag" to="TabContainer/Tags/ImageTagEditor" method="_on_add_tag_pressed"]
+[connection signal="tag_entered" from="TabContainer/Tags/ImageTagEditor/TagInputContainer" to="TabContainer/Tags/ImageTagEditor" method="_on_add_tag"]
+[connection signal="text_changed" from="TabContainer/Tags/ImageTagEditor/TagInputContainer" to="TabContainer/Tags/ImageTagEditor" method="_on_tag_input_text_changed"]
 [connection signal="pressed" from="TabContainer/Tags/ImageTagEditor/HBoxContainer2/ApplyButton" to="TabContainer/Tags/ImageTagEditor" method="save_changes"]
 [connection signal="pressed" from="TabContainer/Tags/ImageTagEditor/HBoxContainer2/DiscardButton" to="TabContainer/Tags/ImageTagEditor" method="save_changes"]

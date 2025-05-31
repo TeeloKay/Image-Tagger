@@ -63,7 +63,9 @@ func get_hash_for_path(image_path: String) -> String:
 	return hash
 
 func get_path_for_hash(hash: String) -> String:
-	return _image_db.get(hash, "")
+	if _image_db.has(hash):
+		return get_info_for_hash(hash).last_path
+	return ""
 
 func get_info_for_hash(hash: String) -> ImageInfo:
 	if !has(hash):

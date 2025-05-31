@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://c74n6v23cjt7m"]
+[gd_scene load_steps=4 format=3 uid="uid://c74n6v23cjt7m"]
 
 [ext_resource type="Script" uid="uid://bl5gos0i20xiu" path="res://scenes/responsive_item_list.gd" id="1_a723t"]
 [ext_resource type="Script" uid="uid://dsxbjwyln1xd4" path="res://scenes/views/file_list_view.gd" id="1_aen7i"]
+[ext_resource type="Script" uid="uid://jn6pyvbhupn6" path="res://scripts/utils/thumbnail_loader.gd" id="3_aokae"]
 
 [node name="FileListView" type="VBoxContainer"]
 anchors_preset = 15
@@ -10,6 +11,10 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_aen7i")
+
+[node name="ThumbnailLoader" type="Node" parent="."]
+script = ExtResource("3_aokae")
+metadata/_custom_type_script = "uid://jn6pyvbhupn6"
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 2

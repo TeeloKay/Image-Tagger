@@ -2,14 +2,19 @@ class_name SearchEngine extends Object
 
 var accepted_types := ["png", "jpg", "jpeg", "webp", "gif"]
 
-func search_images(query: String) -> Array[String]:
+func search_images(query: SearchQuery) -> Array[String]:
 	var results :Array[String] = []
+	var paths: Array[String] = []
 	var root := ProjectManager.current_project.project_path
-	var q := ProjectTools.sanitize_tag(query)
+	var project := ProjectManager.current_project
+	var q := ProjectTools.sanitize_tag(query.text)
 	
-	_recursive_search(root,q,results)
+	#_recursive_search(root,q,results)
+	_inclusive_tag_search(query.tags, results)
 	print(results)
-	return results
+	for result in results:
+		paths.append(project.get_path_for_hash(result))
+	return paths
 
 func _recursive_search(dir_path: String, query: String, out_results: Array[String]) -> void:
 	var results := []
@@ -50,3 +55,22 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Strin
 			out_results.append(rel_path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
+
+func _inclusive_tag_search(tags: Array[StringName], out_results: Array[String]) -> void:
+	for tag in tags:
+		var hashes := Array(ProjectManager.current_project.get_tag_data(tag).hashes)
+		if out_results.is_empty():
+			out_results.assign(hashes)
+			continue
+		out_results = get_array_intersection(hashes, out_results.duplicate())
+		
+func get_array_intersection(a: Array, b: Array) -> Array:
+	var dict := {}
+	for item in a:
+		dict[item] = true
+	
+	var result := []
+	for item in b:
+		if dict.has[item]:
+			result.append(item)
+	return result

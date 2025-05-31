@@ -8,6 +8,7 @@ class_name ImageDataView extends VSplitContainer
 
 @export var current_image: String = ""
 @export var current_hash: String = ""
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	explorer_button.pressed.connect(_on_explorer_button_pressed)
