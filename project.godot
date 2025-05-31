@@ -10,10 +10,12 @@ config_version=5
 
 [application]
 
-config/name="file_manager"
+config/name="Taggable"
+config/version="0.1.0.0"
 run/main_scene="uid://fie0ld0my05u"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
+config/windows_native_icon="uid://b7yg8ft85xsjw"
 
 [autoload]
 
