@@ -42,8 +42,8 @@ func _initialize() -> void:
 
 func set_image_path(path: String) -> void:
 	current_image_path = path
-	var hash := project_data.get_hash_for_path(path)
-	_original_tags = project_data.get_tags_for_hash(hash).duplicate()
+	var hash_val := project_data.get_hash_for_path(path)
+	_original_tags = project_data.get_tags_for_hash(hash_val).duplicate()
 	_working_tags = _original_tags.duplicate()
 	_refresh_tag_list()
 	mark_clean()

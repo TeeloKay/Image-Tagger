@@ -5,13 +5,13 @@ var category: String = ""
 var description: String = ""
 var hashes: PackedStringArray = []
 
-func add_hash(hash: String) -> void:
-	if hashes.has(hash):
+func add_hash(hash_val: String) -> void:
+	if hashes.has(hash_val):
 		return
-	hashes.append(hash)
+	hashes.append(hash_val)
 
-func remove_hash(hash: String) -> void:
-	var idx := hashes.find(hash)
+func remove_hash(hash_val: String) -> void:
+	var idx := hashes.find(hash_val)
 	if idx >= 0:
 		hashes.remove_at(idx)
 func serialize() -> Dictionary:

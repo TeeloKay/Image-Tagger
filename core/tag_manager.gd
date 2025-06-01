@@ -19,15 +19,15 @@ func add_tag(tag: StringName) -> void:
 		_tag_db[tag] = TagData.new()
 		tag_added.emit(_tag_db[tag])
 
-func add_hash_to_tag(hash: String, tag: StringName) -> void:
+func add_hash_to_tag(hash_val: String, tag: StringName) -> void:
 	add_tag(tag)
-	_tag_db[tag].add_hash(hash)
+	_tag_db[tag].add_hash(hash_val)
 	tags_changed.emit()
 
-func remove_hash_from_tag(hash: String, tag: StringName) -> void:
+func remove_hash_from_tag(hash_val: String, tag: StringName) -> void:
 	if tag.is_empty() || !_tag_db.has(tag):
 		return
-	_tag_db[tag].remove_hash(hash)
+	_tag_db[tag].remove_hash(hash_val)
 	tags_changed.emit()
 
 func get_tags() -> Array[StringName]:

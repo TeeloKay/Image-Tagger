@@ -17,8 +17,6 @@ func search_images(query: SearchQuery) -> Array[String]:
 	return paths
 
 func _recursive_search(dir_path: String, query: String, out_results: Array[String]) -> void:
-	var results := []
-	
 	var dir = DirAccess.open(dir_path)
 	if dir == null:
 		return
@@ -40,12 +38,12 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Strin
 		
 		var name_match := file_name.to_lower().contains(query)
 		var tag_match := false
-		var hash := ProjectManager.current_project.get_hash_for_path(rel_path)
-		if !hash:
+		var hash_val := ProjectManager.current_project.get_hash_for_path(rel_path)
+		if !hash_val:
 			file_name = dir.get_next()
 			continue
 			
-		var tags := ProjectManager.current_project.get_tags_for_hash(hash)
+		var tags := ProjectManager.current_project.get_tags_for_hash(hash_val)
 		for tag in tags:
 			if tag.contains(query):
 				tag_match = true

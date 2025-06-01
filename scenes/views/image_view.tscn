@@ -16,57 +16,56 @@ size_flags_vertical = 3
 split_offset = 600
 script = ExtResource("1_kvsck")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="ExplorerButton" type="Button" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Open in Explorer"
-
-[node name="ImagePreview" type="TextureRect" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_vertical = 3
-expand_mode = 1
-stretch_mode = 5
-
-[node name="FileName" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="FileName" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
 horizontal_alignment = 1
 autowrap_mode = 3
 
-[node name="TabContainer" type="TabContainer" parent="."]
+[node name="ImagePreview" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-current_tab = 0
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Tags" type="MarginContainer" parent="TabContainer"]
+[node name="ExplorerButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
-metadata/_tab_index = 0
+text = "Open in Explorer"
+flat = true
 
-[node name="ImageTagEditor" type="VBoxContainer" parent="TabContainer/Tags"]
+[node name="Tags" type="MarginContainer" parent="."]
+layout_mode = 2
+
+[node name="ImageTagEditor" type="VBoxContainer" parent="Tags"]
 unique_name_in_owner = true
 layout_mode = 2
 script = ExtResource("1_intuo")
 
-[node name="MenuButton" type="MenuButton" parent="TabContainer/Tags/ImageTagEditor"]
+[node name="MenuButton" type="MenuButton" parent="Tags/ImageTagEditor"]
 layout_mode = 2
 text = "Select a tag"
 flat = false
 
-[node name="PanelContainer" type="Panel" parent="TabContainer/Tags/ImageTagEditor"]
+[node name="PanelContainer" type="Panel" parent="Tags/ImageTagEditor"]
 custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 theme_type_variation = &"DarkPanel"
 
-[node name="MarginContainer" type="MarginContainer" parent="TabContainer/Tags/ImageTagEditor/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="Tags/ImageTagEditor/PanelContainer"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -74,33 +73,33 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TagContainer" type="FlowContainer" parent="TabContainer/Tags/ImageTagEditor/PanelContainer/MarginContainer"]
+[node name="TagContainer" type="FlowContainer" parent="Tags/ImageTagEditor/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TagInputContainer" parent="TabContainer/Tags/ImageTagEditor" instance=ExtResource("3_d7d5o")]
+[node name="TagInputContainer" parent="Tags/ImageTagEditor" instance=ExtResource("3_d7d5o")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="TabContainer/Tags/ImageTagEditor"]
+[node name="HBoxContainer2" type="HBoxContainer" parent="Tags/ImageTagEditor"]
 layout_mode = 2
 
-[node name="ApplyButton" type="Button" parent="TabContainer/Tags/ImageTagEditor/HBoxContainer2"]
+[node name="ApplyButton" type="Button" parent="Tags/ImageTagEditor/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Apply
 "
 
-[node name="DiscardButton" type="Button" parent="TabContainer/Tags/ImageTagEditor/HBoxContainer2"]
+[node name="DiscardButton" type="Button" parent="Tags/ImageTagEditor/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Discard
 "
 
-[connection signal="tag_entered" from="TabContainer/Tags/ImageTagEditor/TagInputContainer" to="TabContainer/Tags/ImageTagEditor" method="_on_add_tag"]
-[connection signal="text_changed" from="TabContainer/Tags/ImageTagEditor/TagInputContainer" to="TabContainer/Tags/ImageTagEditor" method="_on_tag_input_text_changed"]
-[connection signal="pressed" from="TabContainer/Tags/ImageTagEditor/HBoxContainer2/ApplyButton" to="TabContainer/Tags/ImageTagEditor" method="save_changes"]
-[connection signal="pressed" from="TabContainer/Tags/ImageTagEditor/HBoxContainer2/DiscardButton" to="TabContainer/Tags/ImageTagEditor" method="save_changes"]
+[connection signal="tag_entered" from="Tags/ImageTagEditor/TagInputContainer" to="Tags/ImageTagEditor" method="_on_add_tag"]
+[connection signal="text_changed" from="Tags/ImageTagEditor/TagInputContainer" to="Tags/ImageTagEditor" method="_on_tag_input_text_changed"]
+[connection signal="pressed" from="Tags/ImageTagEditor/HBoxContainer2/ApplyButton" to="Tags/ImageTagEditor" method="save_changes"]
+[connection signal="pressed" from="Tags/ImageTagEditor/HBoxContainer2/DiscardButton" to="Tags/ImageTagEditor" method="save_changes"]

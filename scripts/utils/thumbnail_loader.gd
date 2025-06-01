@@ -15,7 +15,7 @@ func queue_thumbnail(path: String) -> void:
 		return
 	_queue.append(path)
 
-func _process(delta: float) -> void:
+func _process(_delta: float) -> void:
 	var processed := 0
 	while processed < _images_per_frame && !_queue.is_empty():
 		var path: String = _queue.pop_front()

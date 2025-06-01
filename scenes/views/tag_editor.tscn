@@ -18,11 +18,19 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Add new tag"
+flat = true
+
+[node name="VSeparator" type="VSeparator" parent="BoxContainer"]
+layout_mode = 2
 
 [node name="Refresh" type="Button" parent="BoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Refresh tags"
+flat = true
+
+[node name="VSeparator2" type="VSeparator" parent="BoxContainer"]
+layout_mode = 2
 
 [node name="TagTree" type="Tree" parent="."]
 unique_name_in_owner = true

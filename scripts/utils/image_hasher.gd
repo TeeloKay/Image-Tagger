@@ -1,9 +1,6 @@
 class_name ImageHasher extends Node
 
 var project_data: ProjectData
-var _known_hashes: Dictionary[String,String] = {}
-
-signal hash_computed(pash: String, hash: String)
 
 func initialize(data: ProjectData) -> void:
 	project_data = data
@@ -12,7 +9,6 @@ func hash_image(rel_path: String) -> String:
 	var abs_path := project_data.to_abolute_path(rel_path)
 	
 	return _hash_file(abs_path)
-	var image := Image.new()
 
 func _hash_file(path: String) -> String:
 	if !FileAccess.file_exists(path):
@@ -30,4 +26,3 @@ func _hash_file(path: String) -> String:
 	ctx.update(bytes)
 	
 	return ctx.finish().hex_encode()
-	return ""

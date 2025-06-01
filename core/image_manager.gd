@@ -4,76 +4,76 @@ var _image_db: Dictionary[String, ImageInfo] = {}
 var _path_to_hash: Dictionary = {}
 
 signal images_updated
-signal image_added(hash: String)
-signal image_changed(hash: String)
+signal image_added(hash_val: String)
+signal image_changed(hash_val: String)
 signal image_moved(from: String, to: String)
-signal image_removed(hash: String)
+signal image_removed(hash_val: String)
 
 func _init() -> void:
 	_image_db = {}
 	_path_to_hash = {}
 
-func register_image(path: String, hash: String) -> void:
-	if hash in _image_db:
+func register_image(path: String, hash_val: String) -> void:
+	if hash_val in _image_db:
 		return
 	
 	var image_info := ImageInfo.new()
 	image_info.last_path = path
 	
-	_image_db[hash] = image_info
-	_path_to_hash[path] = hash
+	_image_db[hash_val] = image_info
+	_path_to_hash[path] = hash_val
 	
-	image_added.emit(hash)
+	image_added.emit(hash_val)
 
-func add_tag_to_image(hash: String, tag: StringName) -> void:
-	if !_image_db.has(hash):
+func add_tag_to_image(hash_val: String, tag: StringName) -> void:
+	if !_image_db.has(hash_val):
 		return
-	var info := get_info_for_hash(hash)
+	var info := get_info_for_hash(hash_val)
 	if info.tags.has(tag):
 		return
 	info.tags.append(tag)
-	image_changed.emit(hash)
+	image_changed.emit(hash_val)
 
-func remove_tag_from_image(hash: String, tag: StringName) -> void:
-	if !_image_db.has(hash):
+func remove_tag_from_image(hash_val: String, tag: StringName) -> void:
+	if !_image_db.has(hash_val):
 		return
-	var info := get_info_for_hash(hash)
+	var info := get_info_for_hash(hash_val)
 	if !info.tags.has(tag):
 		return
 	info.tags.erase(tag)
-	image_changed.emit(hash)
+	image_changed.emit(hash_val)
 
 func get_images() -> PackedStringArray:
 	return _image_db.keys()
 
-func update_hash_path(hash: String, path: String) -> void:
-	var old_path := _image_db[hash].last_path
-	_image_db[hash].last_path = path
-	_path_to_hash[path] = hash
+func update_hash_path(hash_val: String, path: String) -> void:
+	var old_path := _image_db[hash_val].last_path
+	_image_db[hash_val].last_path = path
+	_path_to_hash[path] = hash_val
 	_path_to_hash.erase(old_path)
 
 func get_hash_for_path(image_path: String) -> String:
 	if _path_to_hash.has(image_path):
-		var hash = String(_path_to_hash[image_path])
-		if hash != &"":
-			return hash
+		var hash_val = String(_path_to_hash[image_path])
+		if hash_val != &"":
+			return hash_val
 	
-	var hash = ProjectManager.image_hasher.hash_image(image_path)
-	_path_to_hash[image_path] = hash
-	return hash
+	var hash_val = ProjectManager.image_hasher.hash_image(image_path)
+	_path_to_hash[image_path] = hash_val
+	return hash_val
 
-func get_path_for_hash(hash: String) -> String:
-	if _image_db.has(hash):
-		return get_info_for_hash(hash).last_path
+func get_path_for_hash(hash_val: String) -> String:
+	if _image_db.has(hash_val):
+		return get_info_for_hash(hash_val).last_path
 	return ""
 
-func get_info_for_hash(hash: String) -> ImageInfo:
-	if !has(hash):
+func get_info_for_hash(hash_val: String) -> ImageInfo:
+	if !has(hash_val):
 		return ImageInfo.new()
-	return _image_db.get(hash,null)
+	return _image_db.get(hash_val,null)
 
-func has(hash: String) -> bool:
-	return _image_db.has(hash)
+func has(hash_val: String) -> bool:
+	return _image_db.has(hash_val)
 
 func clear_index() -> void:
 	_path_to_hash = {}

@@ -26,6 +26,8 @@ func _build_menus():
 	_file.add_item("Clear index", MENU_CLEAR_INDEX)
 	_file.add_item("Exit", MENU_EXIT)
 	
+	var projects := ProjectManager.get_valid_projects()
+	_file.set_item_disabled(MENU_OPEN_RECENT_PROJECT,projects.is_empty())
 	for project in ProjectManager.get_valid_projects():
 		_recent_submenu.add_item(project.replace(project.get_base_dir() + "/", ""))
 	

@@ -3,6 +3,7 @@ class_name TagEditor extends Control
 const COL_NAME := 0
 const COL_AMOUNT := 1
 const COL_COLOR := 2
+const COL_SYNONYMS := 3
 
 @onready var _tag_tree: Tree = %TagTree
 @onready var _add_button: Button = %AddTag
@@ -46,6 +47,7 @@ func _build_tree() -> void:
 	_tag_tree.set_column_expand(COL_AMOUNT, false)
 	_tag_tree.set_column_title(COL_COLOR, "Color")
 	_tag_tree.set_column_expand(COL_COLOR, false)
+	#_tag_tree.set_column_title(COL_SYNONYMS, "Synonyms")
 	
 	_tag_tree.set_column_custom_minimum_width(COL_AMOUNT,160)
 	_tag_tree.set_column_custom_minimum_width(COL_COLOR,100)

@@ -94,15 +94,15 @@ func _on_context_menu_item_pressed(id: int) -> void:
 		return
 	
 	var path = _file_paths_in_dir[_right_click_index]
-	var hash := ProjectManager.current_project.get_hash_for_path(path)
+	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
 	
 	match id:
 		0:
-			var is_fav = ProjectManager.current_project.is_favorited(hash)
+			var is_fav = ProjectManager.current_project.is_favorited(hash_val)
 			if is_fav:
-				ProjectManager.current_project.remove_from_favorites(hash)
+				ProjectManager.current_project.remove_from_favorites(hash_val)
 			else:
-				ProjectManager.current_project.add_to_favorites(hash)
+				ProjectManager.current_project.add_to_favorites(hash_val)
 			_context_menu.set_item_checked(0,!is_fav)
 			ProjectManager.save_current_project()
 		1:
@@ -123,8 +123,8 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 			return
 		
 		var path = _file_paths_in_dir[_right_click_index]
-		var hash := ProjectManager.current_project.get_hash_for_path(path)
-		_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash))
+		var hash_val := ProjectManager.current_project.get_hash_for_path(path)
+		_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
 		_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
 
 

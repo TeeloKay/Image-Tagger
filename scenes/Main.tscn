@@ -10,10 +10,12 @@
 
 [node name="Main" type="CanvasLayer" node_paths=PackedStringArray("directory_view", "file_list_view", "image_view")]
 script = ExtResource("1_c01mt")
-directory_view = NodePath("VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
-file_list_view = NodePath("VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/FileListView")
-image_view = NodePath("VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/ImageView")
+directory_view = NodePath("VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
+file_list_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
+image_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 _accepted_files = PackedStringArray("gif", "jpeg", "jpg", "png", "webp")
+
+[node name="Controllers" type="Node" parent="."]
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -44,69 +46,62 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Body" type="HBoxContainer" parent="VBoxContainer/Body"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body/Body"]
+[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body/Body/HSplitContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
-split_offset = 265
-
-[node name="LeftMenu" type="TabContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer"]
+[node name="LeftMenu" type="TabContainer" parent="VBoxContainer/Body/HSplitContainer"]
 layout_mode = 2
 current_tab = 0
 
-[node name="Folders" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu"]
+[node name="Folders" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/LeftMenu"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders"]
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders"]
 layout_mode = 2
 
-[node name="DirectoryView" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("3_q8u5g")]
+[node name="DirectoryView" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("3_q8u5g")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SearchPanel" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("4_jlsqs")]
+[node name="SearchPanel" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("4_jlsqs")]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 
-[node name="CenterMenu" type="TabContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer"]
+[node name="CenterMenu" type="TabContainer" parent="VBoxContainer/Body/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="Images" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu"]
+[node name="Images" type="HSplitContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu"]
 layout_mode = 2
+split_offset = 800
 metadata/_tab_index = 0
 
-[node name="FileListView" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images" instance=ExtResource("5_jlsqs")]
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 layout_mode = 2
 
-[node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu"]
+[node name="FileListView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" instance=ExtResource("5_jlsqs")]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ImageView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("8_q8u5g")]
+layout_mode = 2
+
+[node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="TagEditor" parent="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
+[node name="TagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/Body/HSplitContainer"]
-custom_minimum_size = Vector2(256, 0)
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="ImageView" parent="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer" instance=ExtResource("8_q8u5g")]
-layout_mode = 2
-
-[connection signal="results_ready" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel" to="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/FileListView" method="load_images"]
-[connection signal="image_selected" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/FileListView" to="." method="_on_file_list_view_image_selected"]
-[connection signal="image_selected" from="VBoxContainer/Body/Body/HSplitContainer/HSplitContainer/CenterMenu/Images/FileListView" to="VBoxContainer/Body/Body/HSplitContainer/VBoxContainer/ImageView" method="_on_image_selected"]
+[connection signal="results_ready" from="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel" to="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView" method="load_images"]
+[connection signal="image_selected" from="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView" to="." method="_on_file_list_view_image_selected"]
+[connection signal="image_selected" from="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView" to="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView" method="_on_image_selected"]

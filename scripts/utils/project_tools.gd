@@ -9,10 +9,10 @@ static func compute_hash_from_file(path: String) -> String:
 		return ""
 		
 	var file := FileAccess.open(path,FileAccess.READ)
-	var hash := file.get_sha256(path)
+	var hash_val := file.get_sha256(path)
 	file.close()
 	
-	return hash
+	return hash_val
 
 static func sanitize_tag(tag: String) -> String:
 	return tag.strip_edges().to_lower().strip_escapes()
