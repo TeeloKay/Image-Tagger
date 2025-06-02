@@ -30,5 +30,6 @@ script = ExtResource("2_dt7d6")
 unique_name_in_owner = true
 size = Vector2i(100, 60)
 
+[connection signal="text_changed" from="DirectoryFilter" to="." method="filter_tree"]
 [connection signal="button_clicked" from="DirectoryTree" to="." method="_on_directory_tree_button_clicked"]
 [connection signal="gui_input" from="DirectoryTree" to="." method="_on_directory_tree_gui_input"]
