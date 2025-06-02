@@ -1,6 +1,7 @@
 class_name DirectoryTree extends Tree
 
 signal data_dropped
+
 func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 	var target := get_item_at_position(at_position)
 	return data is ImageDragData && target != null

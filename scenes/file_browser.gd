@@ -7,8 +7,6 @@ class_name FileBrowser extends Node
 var current_open_folder: String = ""
 var file_paths_in_dir : PackedStringArray = []
 
-@export var _accepted_files: PackedStringArray
-
 signal image_selected(image_path: String)
 
 # Called when the node enters the scene tree for the first time.

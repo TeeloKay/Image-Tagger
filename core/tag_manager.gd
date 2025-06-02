@@ -6,6 +6,7 @@ signal tags_changed
 signal tag_added(tag: StringName)
 signal tag_removed(tag: StringName)
 signal tag_updated(tag: StringName)
+signal cleared
 
 func _init() -> void:
 	_tag_db = {}
@@ -42,5 +43,15 @@ func set_tag_color(tag: StringName, color: Color) -> void:
 	_tag_db[tag].color = color
 	tag_updated.emit(tag)
 
+func remove_tag(tag: StringName) -> void:
+	if !_tag_db.has(tag):
+		return
+	_tag_db.erase(tag)
+	tag_removed.emit(tag)
+
 func has(tag: StringName) -> bool:
 	return _tag_db.has(tag)
+
+func clear() -> void:
+	_tag_db.clear()
+	cleared.emit()

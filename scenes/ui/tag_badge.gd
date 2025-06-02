@@ -4,7 +4,6 @@
 	set = set_tag
 
 @onready var _tag_label: Label = $MarginContainer/HBoxContainer/Label
-@onready var _remove_button: Button = $MarginContainer/HBoxContainer/Button
 
 signal remove_requested(tag: StringName)
 

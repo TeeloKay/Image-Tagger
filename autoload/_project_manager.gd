@@ -28,6 +28,7 @@ func _ready() -> void:
 	_project_io 		= ProjectIO.new()
 	_search_engine 		= SearchEngine.new()
 	image_hasher 		= ImageHasher.new()
+	
 	add_child(image_hasher,true)
 
 func load_project_registry():

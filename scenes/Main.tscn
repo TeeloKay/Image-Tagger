@@ -13,9 +13,6 @@ script = ExtResource("1_c01mt")
 directory_view = NodePath("VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 file_list_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
 image_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
-_accepted_files = PackedStringArray("gif", "jpeg", "jpg", "png", "webp")
-
-[node name="Controllers" type="Node" parent="."]
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15

@@ -13,8 +13,9 @@ func _refresh_list() -> void:
 	print("refreshing project list")
 	for child in project_list.get_children():
 		child.queue_free()
+		
 	for project in ProjectManager.get_valid_projects():
-		var idx := project_list.add_item(project)
+		var _idx := project_list.add_item(project)
 
 func _on_new_project_pressed() -> void:
 	file_dialog.show()

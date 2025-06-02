@@ -41,3 +41,6 @@ func _on_explorer_button_pressed() -> void:
 	
 	var folder_path := current_image.get_base_dir()
 	OS.shell_open(folder_path)
+
+func apply_changes() -> void:
+	return
