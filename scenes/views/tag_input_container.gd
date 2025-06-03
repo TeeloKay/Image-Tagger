@@ -1,7 +1,4 @@
 class_name TagInputContainer extends HBoxContainer
-
-@export_range(1,20,1) var max_suggestions := 10
-
 @onready var _input: LineEdit = %TagInput
 @onready var _submit: Button = %SubmitTag
 
@@ -32,7 +29,6 @@ func _on_submit_pressed() -> void:
 	_on_text_submitted(_input.text)
 
 func _on_text_submitted(text: String) -> void:
-
 	var tag := ProjectTools.sanitize_tag(_input.text)
 	tag_entered.emit(tag)
 	clear()

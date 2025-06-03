@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://d1b6npywbcmhv"]
+[gd_scene load_steps=3 format=3 uid="uid://d1b6npywbcmhv"]
 
 [ext_resource type="Script" uid="uid://w51jykngua7n" path="res://scenes/project_toolbar.gd" id="1_lhtiy"]
-[ext_resource type="Script" uid="uid://brhdm8c73glnm" path="res://scripts/controllers/file_menu_controller.gd" id="2_b3tco"]
 [ext_resource type="Script" uid="uid://dg8k4wool6u77" path="res://scenes/help_menu.gd" id="3_1fgdu"]
 
 [node name="Toolbar" type="HBoxContainer"]
@@ -11,7 +10,6 @@ script = ExtResource("1_lhtiy")
 [node name="Controllers" type="Node" parent="."]
 
 [node name="FileMenuController" type="Node" parent="Controllers"]
-script = ExtResource("2_b3tco")
 
 [node name="ProjectMenuController" type="Node" parent="Controllers"]
 

@@ -5,6 +5,7 @@ var _image_icon := preload("res://assets/icons/Image.svg")
 
 @onready var _tree: DirectoryTree = %DirectoryTree
 @onready var _context_menu: PopupMenu = %ContextMenu
+@onready var _filter_input: LineEdit = %DirectoryFilter
 
 signal folder_selected(path: String)
 signal data_dropped(from: String, to: String)
@@ -100,3 +101,6 @@ func _show_context_menu(_item: TreeItem, pos: Vector2) -> void:
 	
 func _on_data_dropped(from: String, to: String) -> void:
 	data_dropped.emit(from, to)
+
+func clear_filter() -> void:
+	_filter_input.clear()

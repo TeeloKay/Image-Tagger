@@ -1,20 +1,17 @@
-[gd_scene load_steps=10 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=11 format=3 uid="uid://fie0ld0my05u"]
 
-[ext_resource type="Script" uid="uid://6o2aqrv03o12" path="res://scenes/file_browser.gd" id="1_c01mt"]
 [ext_resource type="PackedScene" uid="uid://d1b6npywbcmhv" path="res://scenes/project_toolbar.tscn" id="2_jlsqs"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
+[ext_resource type="Script" uid="uid://brhdm8c73glnm" path="res://scripts/controllers/file_menu_controller.gd" id="4_lhr70"]
+[ext_resource type="Script" uid="uid://beviaeeurwjjn" path="res://scripts/controllers/image_menu_controller.gd" id="4_wp0k4"]
 [ext_resource type="PackedScene" uid="uid://c74n6v23cjt7m" path="res://scenes/views/file_list_view.tscn" id="5_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
 
-[node name="Main" type="CanvasLayer" node_paths=PackedStringArray("directory_view", "file_list_view", "image_view")]
-script = ExtResource("1_c01mt")
-directory_view = NodePath("VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
-file_list_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-image_view = NodePath("VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
+[node name="Main" type="CanvasLayer"]
 
 [node name="Controllers" type="Node" parent="."]
 
@@ -27,6 +24,14 @@ metadata/_custom_type_script = "uid://bjvppx536xcr3"
 script = ExtResource("3_lhr70")
 directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 metadata/_custom_type_script = "uid://cwb25aw26wf6u"
+
+[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
+script = ExtResource("4_lhr70")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
+
+[node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
+script = ExtResource("4_wp0k4")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -113,5 +118,5 @@ metadata/_tab_index = 1
 [node name="TagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
 layout_mode = 2
 
-[connection signal="image_selected" from="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView" to="." method="_on_file_list_view_image_selected"]
-[connection signal="image_selected" from="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView" to="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView" method="_on_image_selected"]
+[connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory"]
+[connection signal="image_selected" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="set_image"]

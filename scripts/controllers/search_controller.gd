@@ -1,22 +1,20 @@
-class_name SearchController extends Node
+class_name SearchController extends MenuController
 
 @export var search_panel: SearchPanel
-
-var _project_data: ProjectData
 
 var _search_string := ""
 var _tags: Array[StringName] = []
 
 func _ready() -> void:
-	ProjectManager.project_loaded.connect(_on_project_loaded)
-
+	super._ready()
+	
 	search_panel.tag_remove_pressed.connect(remove_tag)
 	search_panel.tag_suggestion_pressed.connect(add_tag)
 	search_panel.search_pressed.connect(search)
 	search_panel.reset_pressed.connect(reset_query)
 
 func _on_project_loaded() -> void:
-	_project_data = ProjectManager.current_project
+	super._on_project_loaded()
 	search_panel.clear()
 	search_panel.set_available_tags(_project_data.get_tags())
 

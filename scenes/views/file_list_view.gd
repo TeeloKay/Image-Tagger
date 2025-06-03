@@ -1,9 +1,8 @@
 class_name FileListView extends Control
 
-@export_range(1,100,1) var lazy_load_speed : int= 20
-@onready var _list_view : ItemList = %ImageList
+
+@onready var _list_view: ItemList = %ImageList
 @onready var _context_menu: PopupMenu = %ContextMenu
-@onready var _thumbnail_loader: ThumbnailLoader = $ThumbnailLoader
 
 var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
@@ -11,65 +10,34 @@ var _lazy_load_index: int = 0
 var _right_click_index: int = -1
 
 var _cache: ThumbnailCache
+var _thumbnail_loader: ThumbnailLoader
 
-signal image_selected(image_path: String)
+signal item_selected(index: int)
 
 func _ready() -> void:
 	_cache = ProjectManager.thumbnail_cache
-	FileService.file_moved.connect(_on_file_moved)
-	FileService.file_removed.connect(_on_file_removed)
-	_thumbnail_loader.thumbnail_ready.connect(_on_thumbnail_ready)
+	_thumbnail_loader = ThumbnailLoader.new()
+	add_child(_thumbnail_loader, true, INTERNAL_MODE_BACK)
+
 	_build_context_menu()
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 	var index := _file_paths_in_dir.find(path)
 	if index >= 0:
-		_list_view.set_item_icon(index, thumbnail)
-	
-func load_images_in_folder(directory_path: String) -> void:
-	_current_dir = directory_path
-	_list_view.clear()
-	_file_paths_in_dir.clear()
-	_lazy_load_index = 0
-	
-	var dir = DirAccess.open(directory_path)
-	if !dir:
-		return
-	
-	dir.list_dir_begin()
-	var file_name = dir.get_next()
-	while file_name != "":
-		if !dir.current_is_dir():
-			var ext := file_name.get_extension()
-			if ext in ImageUtil.ACCEPTED_TYPES:
-				var full_path := directory_path.path_join(file_name)
-				_add_image_to_list(full_path, file_name)
-		file_name = dir.get_next()
-	dir.list_dir_end()
+		set_item_thumbnail(index, thumbnail)
 
-func load_images(image_paths: PackedStringArray) -> void:
-	_list_view.clear()
-	_file_paths_in_dir.clear()
-	_lazy_load_index = 0
-	for path in image_paths:
-		var full_path = _get_full_path(path)
-		print(full_path)
-		_add_image_to_list(full_path, path)
+func set_item_thumbnail(index, thumbnail) -> void:
+	_list_view.set_item_icon(index, thumbnail)
 
 func refresh() -> void:
-	if _current_dir:
-		load_images_in_folder(_current_dir)
+	pass
 
-func _add_image_to_list(full_path: String, file_name: String) -> void:
+func add_item_to_list(full_path: String, file_name: String) -> int:
 	var index := _list_view.add_item(file_name)
 	_file_paths_in_dir.append(full_path)
 	
 	var rel_path := _get_rel_path(full_path)
-	var thumbnail := _cache.get_image(rel_path)
-	if thumbnail:
-		_list_view.set_item_icon(index,thumbnail)
-		return
-	_thumbnail_loader.queue_thumbnail(full_path)
+	return index
 
 func _get_full_path(rel_path: String) -> String:
 	return ProjectManager.to_abolute_path(rel_path)
@@ -81,13 +49,16 @@ func _build_context_menu() -> void:
 	if !_context_menu:
 		return
 	
-	_context_menu.add_check_item("favorite",0)
+	_context_menu.add_check_item("favorite", 0)
 	_context_menu.add_separator()
 	_context_menu.add_item("Rename", 1)
 	_context_menu.add_item("Delete", 2)
 	
 	_context_menu.id_pressed.connect(_on_context_menu_item_pressed)
 	_list_view.gui_input.connect(_on_list_view_gui_input)
+
+func clear() -> void:
+	_list_view.clear()
 
 func _on_context_menu_item_pressed(id: int) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
@@ -103,7 +74,7 @@ func _on_context_menu_item_pressed(id: int) -> void:
 				ProjectManager.current_project.remove_from_favorites(hash_val)
 			else:
 				ProjectManager.current_project.add_to_favorites(hash_val)
-			_context_menu.set_item_checked(0,!is_fav)
+			_context_menu.set_item_checked(0, !is_fav)
 			ProjectManager.save_current_project()
 		1:
 			# TODO: remake
@@ -129,8 +100,7 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 
 
 func _on_item_selected(index: int) -> void:
-	if index >= 0 && index < _file_paths_in_dir.size():
-		image_selected.emit(_file_paths_in_dir[index])
+	item_selected.emit(index)
 
 func get_file_paths_in_dir() -> PackedStringArray:
 	return _file_paths_in_dir.duplicate()
