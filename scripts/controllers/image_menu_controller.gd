@@ -63,7 +63,7 @@ func _populate_tag_list() -> void:
 		image_view.add_tag(tag,data.color)
 
 func _on_add_tag_request(tag: String) -> void:
-	if !tag in _working_tags:
+	if !tag in _working_tags && tag != "":
 		var tag_data := _project_data.get_tag_data(tag)
 		_working_tags.append(tag)
 		image_view.add_tag(tag, tag_data.color)

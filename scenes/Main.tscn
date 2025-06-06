@@ -1,12 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=12 format=3 uid="uid://fie0ld0my05u"]
 
-[ext_resource type="PackedScene" uid="uid://d1b6npywbcmhv" path="res://scenes/project_toolbar.tscn" id="2_jlsqs"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
 [ext_resource type="Script" uid="uid://brhdm8c73glnm" path="res://scripts/controllers/file_menu_controller.gd" id="4_lhr70"]
 [ext_resource type="Script" uid="uid://beviaeeurwjjn" path="res://scripts/controllers/image_menu_controller.gd" id="4_wp0k4"]
 [ext_resource type="PackedScene" uid="uid://c74n6v23cjt7m" path="res://scenes/views/file_list_view.tscn" id="5_jlsqs"]
+[ext_resource type="Script" uid="uid://w51jykngua7n" path="res://scenes/project_toolbar.gd" id="5_wp0k4"]
+[ext_resource type="Script" uid="uid://dg8k4wool6u77" path="res://scenes/help_menu.gd" id="6_bjd11"]
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
@@ -55,8 +56,47 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Header"]
 layout_mode = 2
 
-[node name="Toolbar" parent="VBoxContainer/Header/MarginContainer" instance=ExtResource("2_jlsqs")]
+[node name="Toolbar" type="HBoxContainer" parent="VBoxContainer/Header/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 6
+script = ExtResource("5_wp0k4")
+
+[node name="FileMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+layout_mode = 2
+text = "File"
+switch_on_hover = true
+
+[node name="FileDialog" type="FileDialog" parent="VBoxContainer/Header/MarginContainer/Toolbar/FileMenuButton"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+title = "Open a Directory"
+ok_button_text = "Select Current Folder"
+file_mode = 2
+access = 2
+use_native_dialog = true
+
+[node name="ProjectMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+layout_mode = 2
+text = "Project"
+item_count = 1
+popup/item_0/text = "purge indexed data"
+popup/item_0/id = 0
+
+[node name="SettingsMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+layout_mode = 2
+text = "Settings"
+item_count = 1
+popup/item_0/text = "purge indexed data"
+popup/item_0/id = 0
+
+[node name="HelpMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+layout_mode = 2
+text = "Help
+"
+item_count = 1
+popup/item_0/text = "purge indexed data"
+popup/item_0/id = 0
+script = ExtResource("6_bjd11")
 
 [node name="Body" type="MarginContainer" parent="VBoxContainer"]
 layout_mode = 2

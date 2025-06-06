@@ -12,6 +12,8 @@ func _ready() -> void:
 	_input.text_submitted.connect(_on_text_submitted)
 	_submit.pressed.connect(_on_submit_pressed)
 
+	_submit.disabled = _input.text == ""
+
 func get_text() -> String:
 	return _input.text
 
@@ -24,6 +26,7 @@ func clear() -> void:
 
 func _on_text_changed(text: String) -> void:
 	text_changed.emit(text)
+	_submit.disabled = text == ""
 
 func _on_submit_pressed() -> void:
 	_on_text_submitted(_input.text)

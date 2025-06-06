@@ -7,7 +7,6 @@ class_name FileMenuController extends MenuController
 
 var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
-var _lazy_load_index: int = 0
 var _right_click_index: int = -1
 
 signal image_selected(image_path: String)
@@ -18,6 +17,8 @@ func _ready() -> void:
 
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
+
+	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
 func set_directory(dir_path: String) -> void:
 	_file_paths_in_dir.clear()
@@ -38,6 +39,7 @@ func show_files_in_directory(dir_path: String) -> void:
 			if ext in ImageUtil.ACCEPTED_TYPES:
 				var full_path := dir_path.path_join(file_name)
 				_add_item_to_list(full_path, file_name)
+				ThumbnailManager.queue_thumbnail(full_path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 		
@@ -61,7 +63,8 @@ func _on_file_removed(path: String) -> void:
 	pass
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
-	pass
+	var index := _file_paths_in_dir.find(path)
+	image_view.set_item_thumbnail(index,thumbnail) 
 
 func _on_item_selected(index: int) -> void:
 	if index >= 0 && index < _file_paths_in_dir.size():
