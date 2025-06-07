@@ -19,20 +19,20 @@ func _ready() -> void:
 	image_view.discard_pressed.connect(discard_changes)
 
 func set_image(path: String) -> void:
-	print(path)
 	if path.is_absolute_path():
-		print(path)
 		var _current_image = path
-		print(_current_image)
 		_current_hash = _project_data.get_hash_for_path(path)
 
 		var texture = ImageUtil.load_image(path)
 		image_view.set_texture(texture)
 		image_view.set_file_name(_current_image.get_file())
 		image_view.clear_tags()
+		image_view.enable()
 
 		_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
 		_working_tags = _original_tags.duplicate()
+		_working_tags.sort_custom(func(a,b): return String(a) < String(b))
+		print(_working_tags)
 		_populate_tag_list()
 		image_view.mark_clean()
 
@@ -70,7 +70,6 @@ func _on_add_tag_request(tag: String) -> void:
 		image_view.mark_dirty()
 
 func _on_remove_tag_request(tag: StringName) -> void:
-	print(tag)
 	if !tag in _working_tags:
 		return
 	_working_tags.erase(tag)

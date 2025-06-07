@@ -65,7 +65,6 @@ func _load_directory_recursively(path: String, parent: TreeItem) -> void:
 		var full_path = path.path_join(dir_name)
 		if dir.current_is_dir() && !dir_name.begins_with("."):
 			var item = _tree.create_item(parent)
-			print(full_path)
 			_build_tree_item(item, full_path)
 			_load_directory_recursively(full_path, item)
 		dir_name = dir.get_next()

@@ -2,7 +2,7 @@ class_name ImageDataView extends VSplitContainer
 
 @onready var file_name_label: Label = %FileName
 @onready var image_preview: TextureRect = %ImagePreview
-@onready var explorer_button: Button = %ExplorerButton
+@onready var _explorer_button: Button = %ExplorerButton
 
 @onready var _tag_container: FlowContainer = %TagContainer
 @onready var _tag_input: TagInputContainer = %TagInputContainer
@@ -28,7 +28,7 @@ signal discard_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	explorer_button.pressed.connect(_on_explorer_button_pressed)
+	_explorer_button.pressed.connect(_on_explorer_button_pressed)
 	_tag_input.tag_entered.connect(_on_add_tag_request)
 	_save_button.pressed.connect(func(): save_pressed.emit())
 	_discard_button.pressed.connect(func(): discard_pressed.emit())
@@ -37,8 +37,13 @@ func _ready() -> void:
 	_tag_picker.get_popup().max_size = Vector2i(_tag_picker.size.x,200)
 	_tag_picker.get_popup().size = Vector2i(_tag_picker.size.x, 200)
 
+	disable()
 
-	explorer_button.disabled = true
+func enable() -> void:
+	_explorer_button.disabled = false
+
+func disable() -> void:
+	_explorer_button.disabled = true
 	_save_button.disabled = true
 	_discard_button.disabled = true
 

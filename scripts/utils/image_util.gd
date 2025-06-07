@@ -49,3 +49,6 @@ static func generate_thumbnail(image: Image) -> Texture2D:
 	
 	image.resize(thumb_size.x,thumb_size.y, image.INTERPOLATE_BILINEAR)
 	return ImageTexture.create_from_image(image)
+
+static func is_valid_image(file_name: String) -> bool:
+	return file_name.get_extension() in ACCEPTED_TYPES

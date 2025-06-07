@@ -93,6 +93,9 @@ func is_favorited(hash_val: String) -> bool:
 #endregion
 #region Data Access
 
+func index_image_path(image_path: String, hash: String = "") -> void:
+	image_manager.index_image(image_path, hash)
+
 func get_hash_for_path(image_path: String) -> String:
 	var hash_val = image_manager.get_hash_for_path(to_relative_path(image_path))
 	return hash_val
@@ -128,6 +131,9 @@ func to_abolute_path(rel_path: String) -> String:
 ## returns packed array of image hashes
 func get_images() -> PackedStringArray:
 	return image_manager.get_images()
+
+func get_index() -> Dictionary:
+	return image_manager.get_index()
 
 #endregion
 #region Serialization

@@ -1,10 +1,16 @@
 class_name SearchEngine extends Object
 
 var accepted_types := ["png", "jpg", "jpeg", "webp", "gif"]
+var _search_chain: SearchHandler
+
+signal search_completed(results: PackedStringArray)
+
+func _init() -> void:
+	_search_chain = SearchByTag.new()
 
 func search_images(query: SearchQuery) -> Array[String]:
 	var results :Array[String] = []
-	var paths: Array[String] = []
+	var paths: PackedStringArray = []
 	var root := ProjectManager.current_project.project_path
 	var project := ProjectManager.current_project
 	var q := ProjectTools.sanitize_tag(query.text)
@@ -14,6 +20,7 @@ func search_images(query: SearchQuery) -> Array[String]:
 	print(results)
 	for result in results:
 		paths.append(project.get_path_for_hash(result))
+	search_completed.emit(results)
 	return paths
 
 func _recursive_search(dir_path: String, query: String, out_results: Array[String]) -> void:

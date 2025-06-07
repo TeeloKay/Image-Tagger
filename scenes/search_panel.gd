@@ -65,7 +65,6 @@ func clear() -> void:
 	_inclusive_menu.get_popup().clear(true)
 	
 func set_available_tags(tags: Array[StringName]) -> void:
-	print(tags)
 	var popup := _inclusive_menu.get_popup()
 	popup.clear()
 	for tag in tags:

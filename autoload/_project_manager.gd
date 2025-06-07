@@ -15,6 +15,7 @@ var _search_engine: SearchEngine
 var thumbnail_cache: ThumbnailCache
 var image_hasher: ImageHasher
 var file_handler: FileHandler
+var image_indexer: ImageIndexer
 
 signal project_loaded
 
@@ -28,6 +29,7 @@ func _ready() -> void:
 	_project_io 		= ProjectIO.new()
 	_search_engine 		= SearchEngine.new()
 	image_hasher 		= ImageHasher.new()
+	image_indexer		= ImageIndexer.new()
 	
 	add_child(image_hasher,true)
 
@@ -57,12 +59,13 @@ func open_project(project_path: String) -> void:
 	else:
 		current_project = ProjectData.new()
 		current_project.project_path = project_path
-		ResourceSaver.save(current_project,_current_project_file_path)
 	
 	image_hasher.initialize(current_project)
 	registry.register_project(project_path)
 	save_registry()
-	
+
+	image_indexer.index_project(current_project)	
+	save_current_project()
 	project_loaded.emit()
 
 func get_valid_projects() -> Array[String]:

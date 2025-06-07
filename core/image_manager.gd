@@ -70,10 +70,20 @@ func get_path_for_hash(hash_val: String) -> String:
 func get_info_for_hash(hash_val: String) -> ImageInfo:
 	if !has(hash_val):
 		return ImageInfo.new()
-	return _image_db.get(hash_val,null)
+	return _image_db.get(hash_val, null)
+
+func index_image(file_path: String, hash: String = "") -> void:
+	if !file_path in _path_to_hash:
+		_path_to_hash[file_path] = hash
 
 func has(hash_val: String) -> bool:
 	return _image_db.has(hash_val)
 
 func clear_index() -> void:
 	_path_to_hash = {}
+
+func get_index() -> Dictionary:
+	return _path_to_hash.duplicate()
+
+func sort_index() -> void:
+	_path_to_hash.sort()
