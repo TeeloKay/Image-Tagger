@@ -10,71 +10,71 @@ const INDEX 		:= "index"
 @export var favorites: Array = []
 @export var folder_tags: Dictionary
 
-var image_manager: ImageManager
-var tag_manager: TagManager
+var image_db: ImageDB
+var tag_db: TagDB
 
 signal index_updated
 
 func _init() -> void:
-	image_manager = ImageManager.new()
-	tag_manager = TagManager.new()
+	image_db = ImageDB.new()
+	tag_db = TagDB.new()
 
 func add_image(image_hash: String, path: String) -> void:
 	path = to_relative_path(path)
-	image_manager.register_image(path,image_hash)
+	image_db.register_image(path,image_hash)
 
 func clear_index() -> void:
-	image_manager.clear_index()
+	image_db.clear_index()
 
 #region Tags
 
 func set_tags_for_hash(image_hash: String, tags: Array[StringName]) -> void:
-	if !image_manager.has(image_hash):
+	if !image_db.has(image_hash):
 		return
-	var original_tags = image_manager.get_info_for_hash(image_hash).tags
+	var original_tags = image_db.get_info_for_hash(image_hash).tags
 	
 	for tag in tags:
 		if !tag in original_tags:
-			image_manager.add_tag_to_image(image_hash,tag)
-			tag_manager.add_hash_to_tag(image_hash,tag)
+			image_db.add_tag_to_image(image_hash,tag)
+			tag_db.add_hash_to_tag(image_hash,tag)
 	
 	for tag in original_tags:
 		if !tag in tags:
-			image_manager.remove_tag_from_image(image_hash,tag)
-			tag_manager.remove_hash_from_tag(image_hash,tag)
+			image_db.remove_tag_from_image(image_hash,tag)
+			tag_db.remove_hash_from_tag(image_hash,tag)
 	
 	ProjectManager.save_current_project()
 	
 
 func tag_image_by_hash(image_hash: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_manager.has(image_hash):
+	if tag.is_empty() || !image_db.has(image_hash):
 		return
-	tag_manager.add_tag(tag)
-	tag_manager.add_hash_to_tag(image_hash,tag)
-	image_manager.add_tag_to_image(image_hash,tag)
+	tag_db.add_tag(tag)
+	tag_db.add_hash_to_tag(image_hash,tag)
+	image_db.add_tag_to_image(image_hash,tag)
 
 func untag_image_by_hash(image_hash: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_manager.has(image_hash):
+	if tag.is_empty() || !image_db.has(image_hash):
 		return
-	tag_manager.remove_hash_from_tag(image_hash,tag)
-	image_manager.remove_tag_from_image(image_hash,tag)
+	tag_db.remove_hash_from_tag(image_hash,tag)
+	image_db.remove_tag_from_image(image_hash,tag)
 
 func get_tags_for_hash(image_hash: String) -> Array[StringName]:
-	return image_manager.get_info_for_hash(image_hash).tags
+	return image_db.get_info_for_hash(image_hash).tags
 
 func get_images_with_tag(tag: StringName) -> PackedStringArray:
-	if !tag_manager.has(tag):
+	if !tag_db.has(tag):
 		return []
-	return tag_manager.get_tag_data(tag).hashes
+	return tag_db.get_tag_data(tag).hashes
 
 func get_tags() -> Array[StringName]:
-	return tag_manager.get_tags()
+	return tag_db.get_tags()
 
 func get_tag_data(tag: StringName) -> TagData:
-	return tag_manager.get_tag_data(tag)
+	return tag_db.get_tag_data(tag)
 
 func add_tag(tag: StringName) -> void:
-	tag_manager.add_tag(tag)
+	tag_db.add_tag(tag)
 		
 #endregion
 #region Favorites
@@ -93,27 +93,27 @@ func is_favorited(image_hash: String) -> bool:
 #endregion
 #region Data Access
 
-func get_image_info(image_hash: String) -> ImageInfo:
-	return image_manager.get_image_info(image_hash)
+func get_image_data(image_hash: String) -> ImageData:
+	return image_db.get_image_data(image_hash)
 
 func index_image_path(image_path: String, image_hash: String) -> void:
-	image_manager.index_image(image_path, image_hash)
+	image_db.index_image(image_path, image_hash)
 
 func get_hash_for_path(image_path: String) -> String:
-	var image_hash = image_manager.get_hash_for_path(to_relative_path(image_path))
+	var image_hash = image_db.get_hash_for_path(to_relative_path(image_path))
 	return image_hash
 
 func get_path_for_hash(image_hash: String) -> String:
-	return image_manager.get_path_for_hash(image_hash)
+	return image_db.get_path_for_hash(image_hash)
 
-func get_info_for_hash(image_hash: String) -> ImageInfo:
-	return image_manager.get_info_for_hash(image_hash)
+func get_info_for_hash(image_hash: String) -> ImageData:
+	return image_db.get_info_for_hash(image_hash)
 
 func move_image_data(old_path: String, new_path: String) -> void:
 	old_path = to_relative_path(old_path)
 	new_path = to_relative_path(new_path)
-	var image_hash := image_manager.get_hash_for_path(old_path)
-	image_manager.update_hash_path(image_hash, new_path)
+	var image_hash := image_db.get_hash_for_path(old_path)
+	image_db.update_image_path(image_hash, new_path)
 
 #endregion
 #region Paths
@@ -133,10 +133,10 @@ func to_abolute_path(rel_path: String) -> String:
 
 ## returns packed array of image hashes
 func get_images() -> PackedStringArray:
-	return image_manager.get_images()
+	return image_db.get_images()
 
 func get_index() -> Dictionary:
-	return image_manager.get_index()
+	return image_db.get_index()
 
 #endregion
 #region Serialization
@@ -145,13 +145,13 @@ func serialize() -> Dictionary:
 	var img_dict := {}
 	var tag_dict := {}
 	
-	for key in image_manager.get_images():
-		img_dict[key] = image_manager.get_info_for_hash(key).serialize()
+	for key in image_db.get_images():
+		img_dict[key] = image_db.get_info_for_hash(key).serialize()
 		
-	for key in tag_manager.get_tags():
-		tag_dict[key] = tag_manager.get_tag_data(key).serialize()
+	for key in tag_db.get_tags():
+		tag_dict[key] = tag_db.get_tag_data(key).serialize()
 	
-	var index = image_manager._index
+	var index = image_db._index
 
 	var data := {
 		IMAGES: img_dict,
@@ -164,16 +164,16 @@ func serialize() -> Dictionary:
 
 func deserialize(data: Dictionary) -> void:
 	for key in data.get(IMAGES, {}):
-		var dat := ImageInfo.new()
+		var dat := ImageData.new()
 		dat.deserialize(data[IMAGES][key])
-		image_manager._image_db[key] = dat
+		image_db._image_db[key] = dat
 	
 	for key in data.get(TAGS, {}):
 		var dat := TagData.new()
 		dat.deserialize(data[TAGS][key])
-		tag_manager._tag_db[key] = dat
+		tag_db._db[key] = dat
 	
-	image_manager._index = data.get(INDEX, {})
+	image_db._index = data.get(INDEX, {})
 	favorites = data.get(FAVORITES, [])
 
 #endregion

@@ -34,7 +34,7 @@ func _update_index_hashes(project: ProjectData) -> void:
 	for image_hash in project.get_images():
 		if image_hash == "":
 			continue
-		var info: ImageInfo = project.get_image_info(image_hash)
+		var info: ImageData = project.get_image_data(image_hash)
 		if info == null:
 			continue
 		if info.last_path in project.image_manager._index:

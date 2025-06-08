@@ -1,4 +1,4 @@
-class_name ImageInfo extends RefCounted
+class_name ImageData extends RefCounted
 
 var last_path: String = ""
 var tags: Array[StringName] = []
@@ -32,8 +32,8 @@ func deserialize(dict: Dictionary) -> void:
 	for tag in dict["tags"]:
 		tags.append(StringName(tag))
 
-func duplicate() -> ImageInfo:
-	var dupe := ImageInfo.new()
+func duplicate() -> ImageData:
+	var dupe := ImageData.new()
 	dupe.last_path = last_path
 	dupe.tags = tags.duplicate()
 	dupe.favorited = favorited
