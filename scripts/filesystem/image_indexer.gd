@@ -8,7 +8,7 @@ func _ready() -> void:
 func index_project(project: ProjectData) -> void:
 	_scan_directory(project.project_path, project)
 	_update_index_hashes(project)
-	project.image_manager._index.sort()
+	project.image_db.sort_index()
 	
 func _scan_directory(path: String, project: ProjectData) -> void:
 	var dir := DirAccess.open(path)
@@ -34,8 +34,8 @@ func _update_index_hashes(project: ProjectData) -> void:
 	for image_hash in project.get_images():
 		if image_hash == "":
 			continue
-		var info: ImageData = project.get_image_data(image_hash)
-		if info == null:
+		var data: ImageData = project.get_image_data(image_hash)
+		if data == null:
 			continue
-		if info.last_path in project.image_manager._index:
-			project.index_image_path(info.last_path, image_hash)
+		if data.last_path in project.image_db._index:
+			project.index_image_path(data.last_path, image_hash)

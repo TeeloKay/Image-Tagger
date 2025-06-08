@@ -31,7 +31,7 @@ func clear_index() -> void:
 func set_tags_for_hash(image_hash: String, tags: Array[StringName]) -> void:
 	if !image_db.has(image_hash):
 		return
-	var original_tags = image_db.get_info_for_hash(image_hash).tags
+	var original_tags = image_db.get_image_data(image_hash).tags
 	
 	for tag in tags:
 		if !tag in original_tags:
@@ -60,7 +60,7 @@ func untag_image_by_hash(image_hash: String, tag: StringName) -> void:
 	image_db.remove_tag_from_image(image_hash,tag)
 
 func get_tags_for_hash(image_hash: String) -> Array[StringName]:
-	return image_db.get_info_for_hash(image_hash).tags
+	return image_db.get_image_data(image_hash).tags
 
 func get_images_with_tag(tag: StringName) -> PackedStringArray:
 	if !tag_db.has(tag):
@@ -106,9 +106,6 @@ func get_hash_for_path(image_path: String) -> String:
 func get_path_for_hash(image_hash: String) -> String:
 	return image_db.get_path_for_hash(image_hash)
 
-func get_info_for_hash(image_hash: String) -> ImageData:
-	return image_db.get_info_for_hash(image_hash)
-
 func move_image_data(old_path: String, new_path: String) -> void:
 	old_path = to_relative_path(old_path)
 	new_path = to_relative_path(new_path)
@@ -142,38 +139,20 @@ func get_index() -> Dictionary:
 #region Serialization
 
 func serialize() -> Dictionary:
-	var img_dict := {}
-	var tag_dict := {}
-	
-	for key in image_db.get_images():
-		img_dict[key] = image_db.get_info_for_hash(key).serialize()
-		
-	for key in tag_db.get_tags():
-		tag_dict[key] = tag_db.get_tag_data(key).serialize()
-	
-	var index = image_db._index
-
 	var data := {
-		IMAGES: img_dict,
-		TAGS: tag_dict,
-		INDEX: index,
+		IMAGES: image_db.serialize(),
+		TAGS: tag_db.serialize(),
 		FAVORITES: favorites
-	}
-	
+	}	
 	return data
 
 func deserialize(data: Dictionary) -> void:
-	for key in data.get(IMAGES, {}):
-		var dat := ImageData.new()
-		dat.deserialize(data[IMAGES][key])
-		image_db._image_db[key] = dat
-	
-	for key in data.get(TAGS, {}):
-		var dat := TagData.new()
-		dat.deserialize(data[TAGS][key])
-		tag_db._db[key] = dat
-	
-	image_db._index = data.get(INDEX, {})
+	image_db = ImageDB.new()
+	image_db.deserialize(data.get(IMAGES,{}))
+
+	tag_db = TagDB.new()
+	tag_db.deserialize(data.get(TAGS))
+
 	favorites = data.get(FAVORITES, [])
 
 #endregion

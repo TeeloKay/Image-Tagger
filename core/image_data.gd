@@ -33,8 +33,8 @@ func deserialize(dict: Dictionary) -> void:
 		tags.append(StringName(tag))
 
 func duplicate() -> ImageData:
-	var dupe := ImageData.new()
-	dupe.last_path = last_path
-	dupe.tags = tags.duplicate()
-	dupe.favorited = favorited
-	return dupe
+	var copy := ImageData.new()
+	copy.last_path = last_path
+	copy.tags = tags.duplicate()
+	copy.favorited = favorited
+	return copy

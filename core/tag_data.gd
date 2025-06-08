@@ -14,6 +14,7 @@ func remove_hash(hash_val: String) -> void:
 	var idx := hashes.find(hash_val)
 	if idx >= 0:
 		hashes.remove_at(idx)
+
 func serialize() -> Dictionary:
 	var dict := {
 		"color": color.to_html(false),
@@ -28,3 +29,11 @@ func deserialize(dict: Dictionary) -> void:
 	category = dict["category"]
 	description = dict["description"]
 	hashes = dict.get("hashes",[])
+
+func duplicate() -> TagData:
+	var copy := TagData.new()
+	copy.color = color
+	copy.category = category
+	copy.description = description
+	copy.hashes = hashes
+	return copy

@@ -1,5 +1,7 @@
 class_name TagDB extends Object
 
+const TAGS: String = "tags"
+
 var _db : Dictionary[StringName, TagData] = {}
 
 signal tags_changed
@@ -55,3 +57,19 @@ func has(tag: StringName) -> bool:
 func clear() -> void:
 	_db.clear()
 	cleared.emit()
+
+#region serialization
+func serialize() -> Dictionary:
+	var data = {}
+	data[TAGS] = {}
+	for tag in _db:
+		data[TAGS][tag] = get_tag_data(tag).serialize()
+	return data
+
+func deserialize(data: Dictionary) -> void:
+	if data.has(TAGS):
+		for tag in data[TAGS]:
+			var tag_data := TagData.new()
+			tag_data.deserialize(data[TAGS][tag])
+			_db[StringName(tag)] = tag_data
+#endregion
