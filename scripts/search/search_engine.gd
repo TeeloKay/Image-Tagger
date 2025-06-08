@@ -3,27 +3,27 @@ class_name SearchEngine extends Object
 var accepted_types := ["png", "jpg", "jpeg", "webp", "gif"]
 var _search_chain: SearchHandler
 
-signal search_completed(results: PackedStringArray)
+signal search_completed(results: Array[SearchResult])
 
 func _init() -> void:
 	_search_chain = SearchByTag.new()
 
-func search_images(query: SearchQuery) -> Array[String]:
-	var results :Array[String] = []
-	var paths: PackedStringArray = []
-	var _root := ProjectManager.current_project.project_path
+func search_images(query: SearchQuery) -> Array[SearchResult]:
+	var hashes: Array[String] = []
+	var results: Array[SearchResult] = []
+	var root := ProjectManager.current_project.project_path
 	var project := ProjectManager.current_project
-	var _q := ProjectTools.sanitize_tag(query.text)
+	var q := ProjectTools.sanitize_tag(query.text)
 	
 	#_recursive_search(root,q,results)
-	_inclusive_tag_search(query.tags, results)
-	print(results)
-	for result in results:
-		paths.append(project.get_path_for_hash(result))
+	_recursive_search(root, q, results)
+	for result in hashes:
+		var path = project.get_path_for_hash(result)
+		results.append(SearchResult.new(path, result))	
 	search_completed.emit(results)
-	return paths
+	return results
 
-func _recursive_search(dir_path: String, query: String, out_results: Array[String]) -> void:
+func _recursive_search(dir_path: String, query: String, out_results: Array[SearchResult]) -> void:
 	var dir = DirAccess.open(dir_path)
 	if dir == null:
 		return
@@ -39,7 +39,7 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Strin
 		var rel_path := ProjectManager.current_project.to_relative_path(full_path)
 		
 		if dir.current_is_dir():
-			_recursive_search(full_path,query,out_results)
+			_recursive_search(full_path, query, out_results)
 			file_name = dir.get_next()
 			continue
 		
@@ -57,7 +57,8 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Strin
 				break
 
 		if name_match || tag_match:
-			out_results.append(rel_path)
+			var result := SearchResult.new(rel_path, hash_val)
+			out_results.append(result)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 

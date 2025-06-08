@@ -10,7 +10,7 @@ var _current_meta_path: String = ""
 var _current_project_file_path: String = ""
 
 var _project_io: ProjectIO
-var _search_engine: SearchEngine
+var search_engine: SearchEngine
 
 var thumbnail_cache: ThumbnailCache
 var image_hasher: ImageHasher
@@ -25,7 +25,7 @@ func _ready() -> void:
 	thumbnail_cache 	= ThumbnailCache.new()
 	
 	_project_io 		= ProjectIO.new()
-	_search_engine 		= SearchEngine.new()
+	search_engine 		= SearchEngine.new()
 	image_hasher 		= ImageHasher.new()
 	image_indexer		= ImageIndexer.new()
 	
@@ -61,8 +61,8 @@ func open_project(project_path: String) -> void:
 	image_hasher.initialize(current_project)
 	registry.register_project(project_path)
 	save_registry()
-
-	image_indexer.index_project(current_project)	
+	
+	image_indexer.index_project(current_project)
 	save_current_project()
 	project_loaded.emit()
 
@@ -72,7 +72,7 @@ func get_valid_projects() -> Array[String]:
 	return registry.get_valid_projects()
 
 func search_images(query: SearchQuery) -> Array:
-	return _search_engine.search_images(query)
+	return search_engine.search_images(query)
 
 func to_relative_path(abs_path: String) -> String:
 	if current_project:

@@ -25,6 +25,8 @@ func search() -> void:
 	ProjectManager.search_images(query)
 
 func reset_query() -> void:
+	_search_string = ""
+	_tags.clear()
 	search_panel.clear_input()
 	search_panel.clear_badges()
 
@@ -32,10 +34,6 @@ func _on_tag_removed(tag: StringName) -> void:
 	if tag in _tags:
 		_tags.erase(tag)
 		search_panel.remove_tag(tag)
-
-func reset_panel() -> void:
-	_search_string = ""
-	_tags.clear()
 
 func remove_tag(tag: StringName) -> void:
 	if !tag.is_empty() && tag in _tags:

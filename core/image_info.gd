@@ -31,3 +31,10 @@ func deserialize(dict: Dictionary) -> void:
 	favorited = bool(dict.get("favorited",false))
 	for tag in dict["tags"]:
 		tags.append(StringName(tag))
+
+func duplicate() -> ImageInfo:
+	var dupe := ImageInfo.new()
+	dupe.last_path = last_path
+	dupe.tags = tags.duplicate()
+	dupe.favorited = favorited
+	return dupe

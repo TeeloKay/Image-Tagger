@@ -43,11 +43,6 @@ func add_item_to_list(full_path: String, file_name: String) -> int:
 	var rel_path := _get_rel_path(full_path)
 	return index
 
-func _get_full_path(rel_path: String) -> String:
-	return ProjectManager.to_abolute_path(rel_path)
-
-func _get_rel_path(full_path: String) -> String:
-	return ProjectManager.to_relative_path(full_path)
 
 func _build_context_menu() -> void:
 	if !_context_menu:
@@ -120,3 +115,9 @@ func _on_file_moved(from_path: String, to_path: String) -> void:
 func _on_file_removed(path: String) -> void:
 	if path in _file_paths_in_dir:
 		refresh()
+
+func _get_full_path(rel_path: String) -> String:
+	return ProjectManager.to_abolute_path(rel_path)
+
+func _get_rel_path(full_path: String) -> String:
+	return ProjectManager.to_relative_path(full_path)

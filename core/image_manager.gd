@@ -1,7 +1,7 @@
 class_name ImageManager extends RefCounted
 
 var _image_db: Dictionary[String, ImageInfo] = {}
-var _path_to_hash: Dictionary = {}
+var _index: Dictionary = {}
 
 signal images_updated
 signal image_added(hash_val: String)
@@ -11,7 +11,7 @@ signal image_removed(hash_val: String)
 
 func _init() -> void:
 	_image_db = {}
-	_path_to_hash = {}
+	_index = {}
 
 func register_image(path: String, hash_val: String) -> void:
 	if hash_val in _image_db:
@@ -21,7 +21,7 @@ func register_image(path: String, hash_val: String) -> void:
 	image_info.last_path = path
 	
 	_image_db[hash_val] = image_info
-	_path_to_hash[path] = hash_val
+	_index[path] = hash_val
 	
 	image_added.emit(hash_val)
 
@@ -49,17 +49,17 @@ func get_images() -> PackedStringArray:
 func update_hash_path(hash_val: String, path: String) -> void:
 	var old_path := _image_db[hash_val].last_path
 	_image_db[hash_val].last_path = path
-	_path_to_hash[path] = hash_val
-	_path_to_hash.erase(old_path)
+	_index[path] = hash_val
+	_index.erase(old_path)
 
 func get_hash_for_path(image_path: String) -> String:
-	var hash_val: String = _path_to_hash[image_path]
-	if _path_to_hash.has(image_path):
+	var hash_val: String = _index[image_path]
+	if _index.has(image_path):
 		if hash_val != &"":
 			return hash_val
 	
 	hash_val = ProjectManager.image_hasher.hash_image(image_path)
-	_path_to_hash[image_path] = hash_val
+	_index[image_path] = hash_val
 	return hash_val
 
 func get_path_for_hash(hash_val: String) -> String:
@@ -72,18 +72,22 @@ func get_info_for_hash(hash_val: String) -> ImageInfo:
 		return ImageInfo.new()
 	return _image_db.get(hash_val, null)
 
-func index_image(file_path: String, hash_val: String = "") -> void:
-	if !file_path in _path_to_hash:
-		_path_to_hash[file_path] = hash_val
+func index_image(file_path: String, hash_val: String) -> void:
+	_index[file_path] = hash_val
 
 func has(hash_val: String) -> bool:
 	return _image_db.has(hash_val)
 
 func clear_index() -> void:
-	_path_to_hash = {}
+	_index = {}
 
 func get_index() -> Dictionary:
-	return _path_to_hash.duplicate()
+	return _index.duplicate()
 
 func sort_index() -> void:
-	_path_to_hash.sort()
+	_index.sort()
+
+func get_image_info(image_hash: String) -> ImageInfo:
+	if image_hash in _image_db:
+		return _image_db[image_hash].duplicate()
+	return null

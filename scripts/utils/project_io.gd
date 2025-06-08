@@ -16,6 +16,8 @@ func save_project(project: ProjectData) -> void:
 		file.close()
 	else:
 		push_error("Failed to save project data to %s" % save_path)
+	
+	print("project saved")
 
 func load_project(path: String) -> ProjectData:
 	var project := ProjectData.new()
@@ -34,4 +36,5 @@ func load_project(path: String) -> ProjectData:
 		return project
 	
 	project.deserialize(result)
+	print("project loaded")
 	return project

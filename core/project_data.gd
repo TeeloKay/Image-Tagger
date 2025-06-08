@@ -19,48 +19,48 @@ func _init() -> void:
 	image_manager = ImageManager.new()
 	tag_manager = TagManager.new()
 
-func add_image(hash_val: String, path: String) -> void:
+func add_image(image_hash: String, path: String) -> void:
 	path = to_relative_path(path)
-	image_manager.register_image(path,hash_val)
+	image_manager.register_image(path,image_hash)
 
 func clear_index() -> void:
 	image_manager.clear_index()
 
 #region Tags
 
-func set_tags_for_hash(hash_val: String, tags: Array[StringName]) -> void:
-	if !image_manager.has(hash_val):
+func set_tags_for_hash(image_hash: String, tags: Array[StringName]) -> void:
+	if !image_manager.has(image_hash):
 		return
-	var original_tags = image_manager.get_info_for_hash(hash_val).tags
+	var original_tags = image_manager.get_info_for_hash(image_hash).tags
 	
 	for tag in tags:
 		if !tag in original_tags:
-			image_manager.add_tag_to_image(hash_val,tag)
-			tag_manager.add_hash_to_tag(hash_val,tag)
+			image_manager.add_tag_to_image(image_hash,tag)
+			tag_manager.add_hash_to_tag(image_hash,tag)
 	
 	for tag in original_tags:
 		if !tag in tags:
-			image_manager.remove_tag_from_image(hash_val,tag)
-			tag_manager.remove_hash_from_tag(hash_val,tag)
+			image_manager.remove_tag_from_image(image_hash,tag)
+			tag_manager.remove_hash_from_tag(image_hash,tag)
 	
 	ProjectManager.save_current_project()
 	
 
-func tag_image_by_hash(hash_val: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_manager.has(hash_val):
+func tag_image_by_hash(image_hash: String, tag: StringName) -> void:
+	if tag.is_empty() || !image_manager.has(image_hash):
 		return
 	tag_manager.add_tag(tag)
-	tag_manager.add_hash_to_tag(hash_val,tag)
-	image_manager.add_tag_to_image(hash_val,tag)
+	tag_manager.add_hash_to_tag(image_hash,tag)
+	image_manager.add_tag_to_image(image_hash,tag)
 
-func untag_image_by_hash(hash_val: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_manager.has(hash_val):
+func untag_image_by_hash(image_hash: String, tag: StringName) -> void:
+	if tag.is_empty() || !image_manager.has(image_hash):
 		return
-	tag_manager.remove_hash_from_tag(hash_val,tag)
-	image_manager.remove_tag_from_image(hash_val,tag)
+	tag_manager.remove_hash_from_tag(image_hash,tag)
+	image_manager.remove_tag_from_image(image_hash,tag)
 
-func get_tags_for_hash(hash_val: String) -> Array[StringName]:
-	return image_manager.get_info_for_hash(hash_val).tags
+func get_tags_for_hash(image_hash: String) -> Array[StringName]:
+	return image_manager.get_info_for_hash(image_hash).tags
 
 func get_images_with_tag(tag: StringName) -> PackedStringArray:
 	if !tag_manager.has(tag):
@@ -79,38 +79,41 @@ func add_tag(tag: StringName) -> void:
 #endregion
 #region Favorites
 
-func add_to_favorites(hash_val: String) -> void:
-	if !favorites.has(hash_val):
-		favorites.append(hash_val)
+func add_to_favorites(image_hash: String) -> void:
+	if !favorites.has(image_hash):
+		favorites.append(image_hash)
 
-func remove_from_favorites(hash_val: String) -> void:
-	if favorites.has(hash_val):
-		favorites.erase(hash_val)
+func remove_from_favorites(image_hash: String) -> void:
+	if favorites.has(image_hash):
+		favorites.erase(image_hash)
 
-func is_favorited(hash_val: String) -> bool:
-	return favorites.has(hash_val)
+func is_favorited(image_hash: String) -> bool:
+	return favorites.has(image_hash)
 
 #endregion
 #region Data Access
 
-func index_image_path(image_path: String, hash_val: String = "") -> void:
-	image_manager.index_image(image_path, hash_val)
+func get_image_info(image_hash: String) -> ImageInfo:
+	return image_manager.get_image_info(image_hash)
+
+func index_image_path(image_path: String, image_hash: String) -> void:
+	image_manager.index_image(image_path, image_hash)
 
 func get_hash_for_path(image_path: String) -> String:
-	var hash_val = image_manager.get_hash_for_path(to_relative_path(image_path))
-	return hash_val
+	var image_hash = image_manager.get_hash_for_path(to_relative_path(image_path))
+	return image_hash
 
-func get_path_for_hash(hash_val: String) -> String:
-	return image_manager.get_path_for_hash(hash_val)
+func get_path_for_hash(image_hash: String) -> String:
+	return image_manager.get_path_for_hash(image_hash)
 
-func get_info_for_hash(hash_val: String) -> ImageInfo:
-	return image_manager.get_info_for_hash(hash_val)
+func get_info_for_hash(image_hash: String) -> ImageInfo:
+	return image_manager.get_info_for_hash(image_hash)
 
 func move_image_data(old_path: String, new_path: String) -> void:
 	old_path = to_relative_path(old_path)
 	new_path = to_relative_path(new_path)
-	var hash_val := image_manager.get_hash_for_path(old_path)
-	image_manager.update_hash_path(hash_val, new_path)
+	var image_hash := image_manager.get_hash_for_path(old_path)
+	image_manager.update_hash_path(image_hash, new_path)
 
 #endregion
 #region Paths
@@ -148,7 +151,7 @@ func serialize() -> Dictionary:
 	for key in tag_manager.get_tags():
 		tag_dict[key] = tag_manager.get_tag_data(key).serialize()
 	
-	var index = image_manager._path_to_hash
+	var index = image_manager._index
 
 	var data := {
 		IMAGES: img_dict,
@@ -170,7 +173,7 @@ func deserialize(data: Dictionary) -> void:
 		dat.deserialize(data[TAGS][key])
 		tag_manager._tag_db[key] = dat
 	
-	image_manager._path_to_hash = data.get(INDEX, {})
+	image_manager._index = data.get(INDEX, {})
 	favorites = data.get(FAVORITES, [])
 
 #endregion

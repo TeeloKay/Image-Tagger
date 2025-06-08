@@ -20,6 +20,7 @@ func _ready() -> void:
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
 
+	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
 func set_directory(dir_path: String) -> void:
@@ -28,10 +29,10 @@ func set_directory(dir_path: String) -> void:
 	show_files_in_directory(_current_dir)
 
 func show_files_in_directory(dir_path: String) -> void:
-	_file_paths_in_dir.clear()
 	var dir = DirAccess.open(dir_path)
 	if !dir:
 		return
+	_file_paths_in_dir.clear()
 	image_view.clear()
 	dir.list_dir_begin()
 	var file_name := dir.get_next()
@@ -39,24 +40,34 @@ func show_files_in_directory(dir_path: String) -> void:
 		if !dir.current_is_dir():
 			var ext := file_name.get_extension()
 			if ext in ImageUtil.ACCEPTED_TYPES:
-				var full_path := dir_path.path_join(file_name)
-				_add_item_to_list(full_path, file_name)
-				ThumbnailManager.queue_thumbnail(full_path)
+				var abs_path := dir_path.path_join(file_name)
+				_add_item_to_list(abs_path, file_name)
+				ThumbnailManager.queue_thumbnail(abs_path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 		
-func _add_item_to_list(full_path: String, file_name: String) -> int:
-	_file_paths_in_dir.append(full_path)
-	var index: int = image_view.add_item_to_list(full_path, file_name)
+func show_search_results(results: Array[SearchResult]) -> void:
+	_file_paths_in_dir.clear()
+	image_view.clear()
+	if results.is_empty():
+		return
+	for result in results:
+		if result.image_path == "":
+			continue
+		var abs_path := ProjectManager.to_abolute_path(result.image_path)
+		print(result.image_path)
+		_add_item_to_list(abs_path, result.file_name)
+		ThumbnailManager.queue_thumbnail(abs_path)
+
+func _add_item_to_list(abs_path: String, file_name: String) -> int:
+	_file_paths_in_dir.append(abs_path)
+	var index: int = image_view.add_item_to_list(abs_path, file_name)
 	return index
 
 func refresh() -> void:
 	if _current_dir:
 		show_files_in_directory(_current_dir)
 	image_view.refresh()
-
-func show_files(_file_hashes: Array[String]) -> void:
-	pass
 
 func _on_file_move_request(from: String, to: String) -> void:
 	FileService.move_file(from, to)
