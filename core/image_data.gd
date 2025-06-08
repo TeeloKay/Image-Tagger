@@ -1,5 +1,9 @@
 class_name ImageData extends RefCounted
 
+const LAST_PATH 	:= "last_path"
+const TAGS 			:= "tags"
+const FAVORITES 	:= "favorites"
+
 var last_path: String = ""
 var tags: Array[StringName] = []
 var favorited: bool = false
@@ -18,18 +22,19 @@ func remove_tag(tag: StringName) -> void:
 	if tags.has(tag):
 		tags.erase(tag)
 
+
 func serialize() -> Dictionary:
 	var dict := {
-		"last_path": last_path,
-		"tags": tags,
-		"favorited": favorited
+		LAST_PATH: last_path,
+		TAGS: tags,
+		FAVORITES: favorited
 	}
 	return dict
 
 func deserialize(dict: Dictionary) -> void:
-	last_path = dict.get("last_path","")
-	favorited = bool(dict.get("favorited",false))
-	for tag in dict["tags"]:
+	last_path = dict.get(LAST_PATH,"")
+	favorited = bool(dict.get(FAVORITES,false))
+	for tag in dict[TAGS]:
 		tags.append(StringName(tag))
 
 func duplicate() -> ImageData:

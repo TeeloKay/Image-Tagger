@@ -31,7 +31,7 @@ func register_image(path: String, image_hash: String) -> void:
 func add_tag_to_image(image_hash: String, tag: StringName) -> void:
 	if !_db.has(image_hash):
 		return
-	var image_data := get_image_data(image_hash)
+	var image_data  := _db[image_hash]
 	if image_data.tags.has(tag):
 		return
 	image_data.tags.append(tag)
@@ -69,7 +69,7 @@ func has(image_hash: String) -> bool:
 func get_image_data(image_hash: String) -> ImageData:
 	if image_hash in _db:
 		return _db[image_hash].duplicate()
-	return null
+	return ImageData.new()
 
 func get_path_for_hash(image_hash: String) -> String:
 	if _db.has(image_hash):

@@ -44,7 +44,6 @@ func set_tags_for_hash(image_hash: String, tags: Array[StringName]) -> void:
 			tag_db.remove_hash_from_tag(image_hash,tag)
 	
 	ProjectManager.save_current_project()
-	
 
 func tag_image_by_hash(image_hash: String, tag: StringName) -> void:
 	if tag.is_empty() || !image_db.has(image_hash):

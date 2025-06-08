@@ -32,7 +32,6 @@ func set_image(path: String) -> void:
 		_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
 		_working_tags = _original_tags.duplicate()
 		_working_tags.sort_custom(func(a,b): return String(a) < String(b))
-		print(_working_tags)
 		_populate_tag_list()
 		image_view.mark_clean()
 

@@ -1,5 +1,10 @@
 class_name TagData extends RefCounted
 
+const COLOR 		:= "color"
+const CATEGORY 		:= "category"
+const DESCRIPTION 	:= "description"
+const HASHES 		:= "hashes"
+
 var color: Color = Color.SLATE_GRAY
 var category: String = ""
 var description: String = ""
@@ -17,18 +22,18 @@ func remove_hash(hash_val: String) -> void:
 
 func serialize() -> Dictionary:
 	var dict := {
-		"color": color.to_html(false),
-	 	"category": category,
-	 	"description": description,
-		"hashes": hashes
+		COLOR: color.to_html(false),
+	 	CATEGORY: category,
+	 	DESCRIPTION: description,
+		HASHES: hashes
 	}
 	return dict
 
 func deserialize(dict: Dictionary) -> void:
-	color = Color.html("#" + dict["color"])
-	category = dict["category"]
-	description = dict["description"]
-	hashes = dict.get("hashes",[])
+	color = Color.html("#" + dict[COLOR])
+	category = dict[CATEGORY]
+	description = dict[DESCRIPTION]
+	hashes = dict.get(HASHES,[])
 
 func duplicate() -> TagData:
 	var copy := TagData.new()
