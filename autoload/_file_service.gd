@@ -1,4 +1,4 @@
-class_name FileHandler extends Node
+extends Node
 
 signal file_moved(old_path: String, new_path: String)
 signal file_removed(path: String)
@@ -23,7 +23,7 @@ func move_file(old_path: String, new_path: String) -> void:
 	err = DirAccess.remove_absolute(old_path)
 	if err != OK:
 		push_error("failed to remove original file: ", old_path)
-	
+
 	file_moved.emit(old_path, new_path)
 
 ## Remove existing file. Requires absolute path.

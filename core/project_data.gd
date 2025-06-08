@@ -93,8 +93,8 @@ func is_favorited(hash_val: String) -> bool:
 #endregion
 #region Data Access
 
-func index_image_path(image_path: String, hash: String = "") -> void:
-	image_manager.index_image(image_path, hash)
+func index_image_path(image_path: String, hash_val: String = "") -> void:
+	image_manager.index_image(image_path, hash_val)
 
 func get_hash_for_path(image_path: String) -> String:
 	var hash_val = image_manager.get_hash_for_path(to_relative_path(image_path))

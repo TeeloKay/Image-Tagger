@@ -53,12 +53,12 @@ func update_hash_path(hash_val: String, path: String) -> void:
 	_path_to_hash.erase(old_path)
 
 func get_hash_for_path(image_path: String) -> String:
+	var hash_val: String = _path_to_hash[image_path]
 	if _path_to_hash.has(image_path):
-		var hash_val = String(_path_to_hash[image_path])
 		if hash_val != &"":
 			return hash_val
 	
-	var hash_val = ProjectManager.image_hasher.hash_image(image_path)
+	hash_val = ProjectManager.image_hasher.hash_image(image_path)
 	_path_to_hash[image_path] = hash_val
 	return hash_val
 
@@ -72,9 +72,9 @@ func get_info_for_hash(hash_val: String) -> ImageInfo:
 		return ImageInfo.new()
 	return _image_db.get(hash_val, null)
 
-func index_image(file_path: String, hash: String = "") -> void:
+func index_image(file_path: String, hash_val: String = "") -> void:
 	if !file_path in _path_to_hash:
-		_path_to_hash[file_path] = hash
+		_path_to_hash[file_path] = hash_val
 
 func has(hash_val: String) -> bool:
 	return _image_db.has(hash_val)

@@ -1,9 +1,8 @@
 class_name ImageDragData extends RefCounted
 
-var type: String = "image"
-var path: String = ""
+var file_path: String = ""
 var origin: Control
 
 func _init(origin: Control, path: String):
 	self.origin = origin
-	self.path = path
+	self.file_path = path

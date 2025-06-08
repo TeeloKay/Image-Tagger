@@ -14,19 +14,21 @@ signal image_selected(image_path: String)
 func _ready() -> void:
 	super._ready()
 	image_view.item_selected.connect(_on_item_selected)
+	image_view.refresh_pressed.connect(refresh)
 
+	image_view.file_moved.connect(_on_file_move_request)
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
 
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
 func set_directory(dir_path: String) -> void:
-	_file_paths_in_dir.clear()
 	if _current_dir != dir_path:
 		_current_dir = dir_path
 	show_files_in_directory(_current_dir)
 
 func show_files_in_directory(dir_path: String) -> void:
+	_file_paths_in_dir.clear()
 	var dir = DirAccess.open(dir_path)
 	if !dir:
 		return
@@ -53,18 +55,22 @@ func refresh() -> void:
 		show_files_in_directory(_current_dir)
 	image_view.refresh()
 
-func show_files(file_hashes: Array[String]) -> void:
+func show_files(_file_hashes: Array[String]) -> void:
 	pass
 
-func _on_file_moved(from: String, to: String) -> void:
-	pass
+func _on_file_move_request(from: String, to: String) -> void:
+	FileService.move_file(from, to)
+	refresh()
 
-func _on_file_removed(path: String) -> void:
+func _on_file_moved(_from: String, _to: String) -> void:
+	refresh()
+
+func _on_file_removed(_path: String) -> void:
 	pass
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 	var index := _file_paths_in_dir.find(path)
-	image_view.set_item_thumbnail(index,thumbnail) 
+	image_view.set_item_thumbnail(index, thumbnail)
 
 func _on_item_selected(index: int) -> void:
 	if index >= 0 && index < _file_paths_in_dir.size():

@@ -7,6 +7,7 @@ var _image_icon := preload("res://assets/icons/Image.svg")
 @onready var _context_menu: PopupMenu = %ContextMenu
 @onready var _filter_input: LineEdit = %DirectoryFilter
 
+
 signal folder_selected(path: String)
 signal data_dropped(from: String, to: String)
 

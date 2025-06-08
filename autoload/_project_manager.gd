@@ -14,7 +14,6 @@ var _search_engine: SearchEngine
 
 var thumbnail_cache: ThumbnailCache
 var image_hasher: ImageHasher
-var file_handler: FileHandler
 var image_indexer: ImageIndexer
 
 signal project_loaded
@@ -24,7 +23,6 @@ func _ready() -> void:
 	load_project_registry()
 	
 	thumbnail_cache 	= ThumbnailCache.new()
-	file_handler		= FileHandler.new()
 	
 	_project_io 		= ProjectIO.new()
 	_search_engine 		= SearchEngine.new()

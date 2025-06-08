@@ -46,23 +46,28 @@ func set_view_mode(mode: ViewMode) -> void:
 	view_mode = mode
 	_update_view_mode()
 
-func set_icon_size(size: IconSizes) -> void:
-	icon_size = size
-	_update_view_mode()
-
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var index := get_item_at_position(at_position)
-	# Absolute path
-	var path := list_view.get_file_paths_in_dir()[index]
+	var abs_path := list_view.get_file_paths_in_dir()[index]
+	print(list_view.get_file_paths_in_dir())
+	print(index, ": ", abs_path)
+
+	_build_drag_preview(index)
 	
+	var drag_data = ImageDragData.new(self,abs_path)
+	return drag_data
+
+func _build_drag_preview(index: int) -> void:
 	var preview = TextureRect.new()
 	preview.pivot_offset = preview.size/2
 	preview.texture =  get_item_icon(index)
 	preview.set_size(_get_icon_size())
+	preview.modulate = Color(1,1,1,0.75)
 	set_drag_preview(preview)
-	
-	var drag_data = ImageDragData.new(self,path)
-	return drag_data
+
+func set_icon_size(size: IconSizes) -> void:
+	icon_size = size
+	_update_view_mode()
 
 func _get_icon_size() -> Vector2i:
 	match icon_size:

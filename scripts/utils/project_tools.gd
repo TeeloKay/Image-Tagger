@@ -9,7 +9,7 @@ static func compute_hash_from_file(path: String) -> String:
 		return ""
 		
 	var file := FileAccess.open(path,FileAccess.READ)
-	var hash_val := file.get_sha256(path)
+	var hash_val := FileAccess.get_sha256(path)
 	file.close()
 	
 	return hash_val

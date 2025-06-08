@@ -10,7 +10,6 @@ func _ready() -> void:
 	_refresh_list()
 
 func _refresh_list() -> void:
-	print("refreshing project list")
 	for child in project_list.get_children():
 		child.queue_free()
 		

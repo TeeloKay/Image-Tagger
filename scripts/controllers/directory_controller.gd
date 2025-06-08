@@ -23,6 +23,7 @@ func _on_folder_selected(path: String) -> void:
 
 func _on_data_dropped(from: String, to: String) -> void:
 	print(from, " -> ", to)
+	FileService.move_file(from,to)
 
 func _on_delete_request(path: String) -> void:
 	var dir := DirAccess.open(path)

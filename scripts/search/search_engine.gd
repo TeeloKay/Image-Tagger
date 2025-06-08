@@ -11,9 +11,9 @@ func _init() -> void:
 func search_images(query: SearchQuery) -> Array[String]:
 	var results :Array[String] = []
 	var paths: PackedStringArray = []
-	var root := ProjectManager.current_project.project_path
+	var _root := ProjectManager.current_project.project_path
 	var project := ProjectManager.current_project
-	var q := ProjectTools.sanitize_tag(query.text)
+	var _q := ProjectTools.sanitize_tag(query.text)
 	
 	#_recursive_search(root,q,results)
 	_inclusive_tag_search(query.tags, results)

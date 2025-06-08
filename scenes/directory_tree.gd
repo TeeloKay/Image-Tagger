@@ -13,7 +13,6 @@ func _drop_data(at_position: Vector2, data: Variant) -> void:
 	
 	if data is ImageDragData:
 		var to_path: String = get_item_at_position(at_position).get_metadata(0)
-		var new_path := to_path.path_join(data.path.get_file())
-		data_dropped.emit(to_path, new_path)
-		FileService.move_file(data.path, new_path)
-		data_dropped.emit()
+		var new_path := to_path.path_join(data.file_path.get_file())
+		data_dropped.emit(data.file_path, new_path)
+
