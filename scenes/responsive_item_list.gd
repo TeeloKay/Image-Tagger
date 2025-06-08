@@ -47,7 +47,9 @@ func set_view_mode(mode: ViewMode) -> void:
 	_update_view_mode()
 
 func _get_drag_data(at_position: Vector2) -> Variant:
-	var index := get_item_at_position(at_position)
+	var index := get_item_at_position(at_position,true)
+	if index < 0:
+		return null
 	var abs_path := list_view.get_file_paths_in_dir()[index]
 	print(list_view.get_file_paths_in_dir())
 	print(index, ": ", abs_path)

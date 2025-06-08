@@ -13,6 +13,7 @@ var _cache: ThumbnailCache
 var _thumbnail_loader: ThumbnailLoader
 
 signal item_selected(index: int)
+signal multi_item_selected(index: int, selected: bool)
 signal file_moved(from: String, to: String)
 signal refresh_pressed
 
@@ -102,6 +103,9 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
 
+func _on_image_list_multi_selected(index:int, selected:bool) -> void:
+	multi_item_selected.emit(index,selected)
+
 func _on_refresh_pressed() -> void:
 	refresh_pressed.emit()
 
@@ -121,3 +125,4 @@ func _get_full_path(rel_path: String) -> String:
 
 func _get_rel_path(full_path: String) -> String:
 	return ProjectManager.to_relative_path(full_path)
+

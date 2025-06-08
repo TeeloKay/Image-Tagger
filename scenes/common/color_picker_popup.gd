@@ -5,7 +5,6 @@ class_name ColorPickerPopup extends PopupPanel
 @onready var _cancel_button: Button = %Cancel
 
 signal color_picked(color: Color)
-signal cancelled()
 
 @export_color_no_alpha var _initial_color: Color = Color.SLATE_GRAY
 
