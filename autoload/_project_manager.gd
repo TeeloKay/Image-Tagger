@@ -15,6 +15,7 @@ var search_engine: SearchEngine
 var thumbnail_cache: ThumbnailCache
 var image_hasher: ImageHasher
 var image_indexer: ImageIndexer
+var file_system_watcher: Node
 
 signal project_loaded
 
@@ -22,14 +23,23 @@ signal project_loaded
 func _ready() -> void:
 	load_project_registry()
 	
-	thumbnail_cache 	= ThumbnailCache.new()
+	thumbnail_cache = ThumbnailCache.new()
 	
-	_project_io 		= ProjectIO.new()
-	search_engine 		= SearchEngine.new()
-	image_hasher 		= ImageHasher.new()
-	image_indexer		= ImageIndexer.new()
-	
-	add_child(image_hasher,true)
+	_project_io = ProjectIO.new()
+	search_engine = SearchEngine.new()
+	image_hasher = ImageHasher.new()
+	image_indexer = ImageIndexer.new()
+
+	var watcher_script := load("res://scripts/filesystem/ProjectDirectoryWatcher.cs")
+	file_system_watcher = watcher_script.new()
+
+	add_child(file_system_watcher, true, INTERNAL_MODE_FRONT)
+	add_child(image_hasher, true, INTERNAL_MODE_FRONT)
+
+	file_system_watcher.FileCreated.connect(_on_file_created)
+	file_system_watcher.FileRenamed.connect(_on_file_renamed)
+	file_system_watcher.FileDeleted.connect(_on_file_deleted)
+	file_system_watcher.FileChanged.connect(_on_file_changed)
 
 func load_project_registry():
 	if FileAccess.file_exists(REGISTRY_PATH):
@@ -83,3 +93,6 @@ func to_abolute_path(rel_path: String) -> String:
 	if current_project:
 		return current_project.to_abolute_path(rel_path)
 	return rel_path
+
+func _on_file_changed(path: String) -> void:
+	print("file changed: ",path)

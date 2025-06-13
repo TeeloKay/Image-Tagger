@@ -1,9 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bajibmipjnmdt"]
+[gd_scene load_steps=2 format=3 uid="uid://bajibmipjnmdt"]
 
-[ext_resource type="Script" uid="uid://b1cgy6hh5ypam" path="res://scenes/tag_editor.gd" id="1_msd4s"]
-[ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/color_picker_popup.tscn" id="2_w0lxy"]
+[ext_resource type="Script" uid="uid://cc1pnp718pt1u" path="res://scenes/views/tag_editor_view.gd" id="1_msd4s"]
 
-[node name="TagEditor" type="VBoxContainer"]
+[node name="TagEditorView" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -41,9 +40,5 @@ column_titles_visible = true
 hide_folding = true
 enable_recursive_folding = false
 hide_root = true
-
-[node name="ColorPickerPopup" parent="." instance=ExtResource("2_w0lxy")]
-unique_name_in_owner = true
-visible = false
 
 [connection signal="pressed" from="BoxContainer/Refresh" to="." method="_on_refresh_pressed"]

@@ -30,6 +30,10 @@ window/size/viewport_width=1600
 window/size/viewport_height=900
 window/stretch/aspect="expand"
 
+[dotnet]
+
+project/assembly_name="Taggable"
+
 [file_customization]
 
 folder_colors={
