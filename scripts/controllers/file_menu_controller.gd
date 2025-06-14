@@ -19,6 +19,7 @@ func _ready() -> void:
 	image_view.file_moved.connect(_on_file_move_request)
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
+	FileService.file_created.connect(_on_file_created)
 
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
@@ -78,6 +79,9 @@ func _on_file_moved(_from: String, _to: String) -> void:
 
 func _on_file_removed(_path: String) -> void:
 	pass
+
+func _on_file_created(_path: String) -> void:
+	refresh()
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 	var index := _file_paths_in_dir.find(path)

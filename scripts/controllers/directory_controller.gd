@@ -10,6 +10,7 @@ func _ready() -> void:
 
 	directory_view.folder_selected.connect(_on_folder_selected)
 	directory_view.data_dropped.connect(_on_data_dropped)
+	get_window().files_dropped.connect(_on_files_dropped)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -23,7 +24,7 @@ func _on_folder_selected(path: String) -> void:
 
 func _on_data_dropped(from: String, to: String) -> void:
 	print(from, " -> ", to)
-	FileService.move_file(from,to)
+	FileService.move_file(from, to)
 
 func _on_delete_request(path: String) -> void:
 	var dir := DirAccess.open(path)
@@ -36,3 +37,26 @@ func _on_delete_request(path: String) -> void:
 func _update_view() -> void:
 	directory_view.build_directory_tree(_current_directory)
 	directory_view.clear_filter()
+
+func _on_files_dropped(files: PackedStringArray) -> void:
+	print(files)
+	for file in files:
+		if !ImageUtil.is_valid_image(file):
+			continue
+
+		var file_exists := true
+		var counter := 0
+		var extension := file.get_extension()
+		var file_path := ""
+		var file_name := file.get_file().get_basename()
+		var new_name := file_name
+
+		while file_exists:
+			file_path = _current_directory.path_join(new_name + "." + extension)
+			file_exists = FileAccess.file_exists(file_path)
+			if file_exists:
+				counter += 1
+				new_name = "%s_%d" % [file_name, counter]
+				print(new_name)
+		FileService.copy_file(file, file_path)
+		

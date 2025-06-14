@@ -11,12 +11,17 @@ class_name ImageMenuController extends MenuController
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
-	InputHandler.apply_changes.connect(save_changes)
+	InputHandler.apply_changes.connect(apply_changes)
 
 	image_view.tag_add_requested.connect(_on_add_tag_request)
 	image_view.tag_remove_requested.connect(_on_remove_tag_request)
-	image_view.save_pressed.connect(save_changes)
+	image_view.save_pressed.connect(apply_changes)
 	image_view.discard_pressed.connect(discard_changes)
+
+func _on_project_loaded() -> void:
+	super._on_project_loaded()
+	var tags := _project_data.get_tags()
+	image_view.set_tag_suggestions(tags)
 
 func set_image(path: String) -> void:
 	if path.is_absolute_path():
@@ -41,7 +46,7 @@ func _on_explorer_button_pressed() -> void:
 	var folder_path := current_image.get_base_dir()
 	OS.shell_open(folder_path)
 
-func save_changes() -> void:
+func apply_changes() -> void:
 	_project_data.add_image(_current_hash, current_image)
 	_project_data.set_tags_for_hash(_current_hash, _working_tags)
 	_original_tags = _working_tags

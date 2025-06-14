@@ -2,6 +2,10 @@ extends Node
 
 signal file_moved(old_path: String, new_path: String)
 signal file_removed(path: String)
+signal file_created(path: String)
+
+func _ready() -> void:
+	pass
 
 ## Move existing file from A to B. Requires absolute paths
 func move_file(old_path: String, new_path: String) -> void:
@@ -36,3 +40,14 @@ func remove_file(path: String) -> void:
 		push_error("Failed to remove file: ", path)
 	
 	file_removed.emit(path)
+
+func copy_file(path: String, new_path: String) -> void:
+	if !FileAccess.file_exists(path):
+		push_error("File does not exist: " + path)
+		return
+	
+	var err := DirAccess.copy_absolute(path, new_path)
+	if err != OK:
+		push_error("Failed to copy original file: ", path)
+	
+	file_created.emit(new_path)

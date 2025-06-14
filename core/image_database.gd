@@ -41,7 +41,7 @@ func add_tag_to_image(image_hash: String, tag: StringName) -> void:
 func remove_tag_from_image(image_hash: String, tag: StringName) -> void:
 	if !_db.has(image_hash):
 		return
-	var image_data := get_image_data(image_hash)
+	var image_data := _db[image_hash]
 	if !image_data.tags.has(tag):
 		return
 	image_data.tags.erase(tag)

@@ -34,9 +34,7 @@ func _ready() -> void:
 	_discard_button.pressed.connect(func(): discard_pressed.emit())
 	_tag_picker.get_popup().id_pressed.connect(_on_tag_menu_id_pressed)
 
-	_tag_picker.get_popup().max_size = Vector2i(_tag_picker.size.x,200)
-	_tag_picker.get_popup().size = Vector2i(_tag_picker.size.x, 200)
-
+	_tag_picker.resized.connect(_on_tag_picker_resized)
 	disable()
 
 func enable() -> void:
@@ -101,3 +99,7 @@ func mark_dirty() -> void:
 		_save_button.disabled = false
 		_discard_button.disabled = false
 		dirty_changed.emit(_is_dirty)
+
+func _on_tag_picker_resized() -> void:
+	_tag_picker.get_popup().size = Vector2i(_tag_picker.size.x, 200)
+	_tag_picker.get_popup().max_size = Vector2i(_tag_picker.size.x, 200)

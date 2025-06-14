@@ -46,6 +46,22 @@ func set_view_mode(mode: ViewMode) -> void:
 	view_mode = mode
 	_update_view_mode()
 
+func set_icon_size(icon_size: IconSizes) -> void:
+	icon_size = icon_size
+	_update_view_mode()
+
+func _get_icon_size() -> Vector2i:
+	match icon_size:
+		IconSizes.SMALL:
+			return small
+		IconSizes.MEDIUM:
+			return medium
+		IconSizes.LARGE:
+			return large
+		_: 
+			return medium
+
+#region Drag and Drop
 func _get_drag_data(at_position: Vector2) -> Variant:
 	var index := get_item_at_position(at_position,true)
 	if index < 0:
@@ -65,19 +81,7 @@ func _build_drag_preview(index: int) -> void:
 	preview.texture =  get_item_icon(index)
 	preview.set_size(_get_icon_size())
 	preview.modulate = Color(1,1,1,0.75)
-	set_drag_preview(preview)
+	set_drag_preview(preview)	
 
-func set_icon_size(size: IconSizes) -> void:
-	icon_size = size
-	_update_view_mode()
+#endregion
 
-func _get_icon_size() -> Vector2i:
-	match icon_size:
-		IconSizes.SMALL:
-			return small
-		IconSizes.MEDIUM:
-			return medium
-		IconSizes.LARGE:
-			return large
-		_: 
-			return medium
