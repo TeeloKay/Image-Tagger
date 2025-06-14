@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=14 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
@@ -12,7 +12,6 @@
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
-[ext_resource type="Script" uid="uid://cc1pnp718pt1u" path="res://scenes/views/tag_editor_view.gd" id="13_mwfav"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/color_picker_popup.tscn" id="14_3p2gp"]
 
 [node name="Main" type="CanvasLayer"]
@@ -166,7 +165,6 @@ metadata/_tab_index = 1
 
 [node name="TagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
 layout_mode = 2
-script = ExtResource("13_mwfav")
 
 [node name="ColorPickerPopup" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor" instance=ExtResource("14_3p2gp")]
 unique_name_in_owner = true

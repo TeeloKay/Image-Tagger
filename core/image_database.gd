@@ -77,7 +77,9 @@ func get_path_for_hash(image_hash: String) -> String:
 	return ""
 
 func get_hash_for_path(image_path: String) -> String:
-	var image_hash: String = _index[image_path]
+	var image_hash: String = ""
+	if _index.has(image_path):
+		image_hash = _index[image_path]
 	
 	image_hash = ProjectManager.image_hasher.hash_image(image_path)
 	update_image_path(image_hash, image_path)
