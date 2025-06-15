@@ -59,6 +59,11 @@ func update_image_path(image_hash: String, new_path: String) -> void:
 		_index.erase(old_path)
 	image_moved.emit(old_path, new_path)
 
+func remove_image(image_hash: String) -> void:
+	if !_db.has(image_hash):
+		return
+	_db.erase(image_hash)
+
 #region image data
 func get_images() -> PackedStringArray:
 	return _db.keys()

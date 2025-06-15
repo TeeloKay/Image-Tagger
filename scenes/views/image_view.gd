@@ -86,6 +86,12 @@ func clear_tags() -> void:
 	for child in _tag_container.get_children():
 		child.queue_free()
 
+func clear() -> void:
+	image_preview.texture = null
+	file_name_label.text = ""
+	clear_tags()
+	mark_clean()
+	
 func mark_clean() -> void:
 	if _is_dirty:
 		_is_dirty = false

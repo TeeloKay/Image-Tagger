@@ -1,16 +1,19 @@
 [gd_scene load_steps=2 format=3 uid="uid://xjnyl66p6obf"]
 
-[ext_resource type="Script" uid="uid://cd6slog7smrjj" path="res://scenes/common/color_picker_popup.gd" id="1_3ctat"]
+[ext_resource type="Script" uid="uid://cd6slog7smrjj" path="res://scenes/common/popups/color_picker_popup.gd" id="1_3ctat"]
 
 [node name="ColorPickerPopup" type="PopupPanel"]
 auto_translate_mode = 1
-size = Vector2i(276, 498)
+title = "Pick color"
+size = Vector2i(284, 506)
 visible = true
 script = ExtResource("1_3ctat")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-offset_right = 276.0
-offset_bottom = 498.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 280.0
+offset_bottom = 502.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2

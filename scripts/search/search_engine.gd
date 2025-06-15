@@ -15,7 +15,6 @@ func search_images(query: SearchQuery) -> Array[SearchResult]:
 	var project := ProjectManager.current_project
 	var q := ProjectTools.sanitize_tag(query.text)
 	
-	#_recursive_search(root,q,results)
 	_recursive_search(root, q, results)
 	for result in hashes:
 		var path = project.get_path_for_hash(result)

@@ -1,12 +1,14 @@
 class_name FileMenuController extends MenuController
 
 @export var image_view: FileListView
+@export var delete_popup: ConfirmationDialog
 
 ## how many thumbnails are loaded per frame. Higher speeds can lead to performance hitches when loading a new folder.
 @export_range(1, 100, 1) var lazy_load_speed: int = 5
 
 var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
+var _selected_files: PackedStringArray = []
 var _right_click_index: int = -1
 
 signal image_selected(image_path: String)
@@ -14,15 +16,22 @@ signal image_selected(image_path: String)
 func _ready() -> void:
 	super._ready()
 	image_view.item_selected.connect(_on_item_selected)
-	image_view.refresh_pressed.connect(refresh)
-
+	image_view.multi_item_selected.connect(_on_multi_item_selected)
+	image_view.refresh_request.connect(refresh)
 	image_view.file_moved.connect(_on_file_move_request)
+	image_view.file_remove_request.connect(_on_file_remove_request)
+	image_view.file_rename_request.connect(_on_file_rename_request)
+
+	delete_popup.confirmed.connect(_on_file_remove_confirmation)
+
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
+	
+	delete_popup.hide()
 
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
@@ -48,6 +57,7 @@ func show_files_in_directory(dir_path: String) -> void:
 	dir.list_dir_end()
 		
 func show_search_results(results: Array[SearchResult]) -> void:
+	print(results)
 	_file_paths_in_dir.clear()
 	image_view.clear()
 	if results.is_empty():
@@ -69,7 +79,7 @@ func refresh() -> void:
 	if _current_dir:
 		show_files_in_directory(_current_dir)
 	image_view.refresh()
-
+ 
 func _on_file_move_request(from: String, to: String) -> void:
 	FileService.move_file(from, to)
 	refresh()
@@ -89,4 +99,32 @@ func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 
 func _on_item_selected(index: int) -> void:
 	if index >= 0 && index < _file_paths_in_dir.size():
-		image_selected.emit(_file_paths_in_dir[index])
+		_selected_files.clear()
+		_selected_files.append(_file_paths_in_dir[index])
+		image_selected.emit(_selected_files[0])
+	
+func _on_multi_item_selected(index: int, selected: bool) -> void:
+	print(index, "- ", "selected" if selected else "deselected")
+	if index >= 0 && index < _file_paths_in_dir.size():
+		_selected_files.clear()
+		var selected_items := image_view.get_selected_items()
+		for idx in selected_items:
+			_selected_files.append(_file_paths_in_dir[idx])
+		image_selected.emit(_selected_files[0])
+
+func _on_file_remove_request() -> void:
+	if _selected_files.size() > 0:
+		print("requesting file removal")
+		delete_popup.popup_centered()
+
+func _on_file_remove_confirmation() -> void:
+	for file in _selected_files:
+		var hash = _project_data.get_hash_for_path(file)
+		_project_data.image_db.remove_image(hash)
+		FileService.remove_file(file)
+	refresh()
+	image_selected.emit("")
+
+func _on_file_rename_request() -> void:
+	if _selected_files.size() > 0:
+		print("requesting file renaming")

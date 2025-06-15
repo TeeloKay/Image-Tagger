@@ -24,6 +24,8 @@ func _on_project_loaded() -> void:
 	image_view.set_tag_suggestions(tags)
 
 func set_image(path: String) -> void:
+	if path.is_empty():
+		clear()
 	if path.is_absolute_path():
 		var _current_image = path
 		_current_hash = _project_data.get_hash_for_path(path)
@@ -59,6 +61,13 @@ func discard_changes() -> void:
 	_working_tags = _original_tags.duplicate()
 	_populate_tag_list()
 	image_view.mark_clean()
+
+func clear() -> void:
+	_working_tags 	= []
+	_original_tags 	= []
+	current_image 	= ""
+	_current_hash	= ""
+	image_view.clear()
 
 func _populate_tag_list() -> void:
 	image_view.clear_tags()
