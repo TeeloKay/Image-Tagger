@@ -12,8 +12,10 @@ var _tag_badge_scene = preload("res://scenes/ui/tag_badge.tscn")
 @onready var _inclusive_container: FlowContainer = %InclusiveTagContainer
 
 @export var popup_max_height: int = 160
+
 signal tag_remove_pressed(tag: StringName)
 signal tag_suggestion_pressed(tag: StringName)
+signal search_string_changed(string: String)
 signal search_pressed
 signal reset_pressed
 
@@ -22,6 +24,7 @@ func _ready() -> void:
 	_submit_button.pressed.connect(_on_search_pressed)
 	_search_input.text_submitted.connect(_on_search)
 	_reset_button.pressed.connect(_on_reset_pressed)
+	_search_input.text_changed.connect(func(string): search_string_changed.emit(string))
 
 	var popup := _inclusive_menu.get_popup()
 	popup.id_pressed.connect(_on_inclusive_id_pressed)
