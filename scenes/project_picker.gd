@@ -7,9 +7,9 @@ signal project_selected(path: String)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	_refresh_list()
+	_update_list()
 
-func _refresh_list() -> void:
+func _update_list() -> void:
 	for child in project_list.get_children():
 		child.queue_free()
 		
@@ -19,8 +19,8 @@ func _refresh_list() -> void:
 func _on_new_project_pressed() -> void:
 	file_dialog.show()
 
-func _on_refresh_pressed() -> void:
-	_refresh_list()
+func _on_update_pressed() -> void:
+	_update_list()
 
 func _on_project_item_activated(index: int) -> void:
 	project_selected.emit(ProjectManager.get_valid_projects()[index])

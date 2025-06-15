@@ -22,7 +22,7 @@ flat = true
 [node name="VSeparator" type="VSeparator" parent="BoxContainer"]
 layout_mode = 2
 
-[node name="Refresh" type="Button" parent="BoxContainer"]
+[node name="Update" type="Button" parent="BoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Refresh tags"
@@ -41,4 +41,4 @@ hide_folding = true
 enable_recursive_folding = false
 hide_root = true
 
-[connection signal="pressed" from="BoxContainer/Refresh" to="." method="_on_refresh_pressed"]
+[connection signal="pressed" from="BoxContainer/Update" to="." method="_on_refresh_pressed"]

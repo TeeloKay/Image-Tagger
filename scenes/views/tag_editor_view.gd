@@ -7,14 +7,14 @@ const COL_SYNONYMS := 3
 
 @onready var _tag_tree: Tree = %TagTree
 @onready var _add_button: Button = %AddTag
-@onready var _refresh_button: Button = %Refresh
+@onready var _update_button: Button = %Update
 
 var _picker_icon := preload("res://assets/icons/ColorPick.svg")
 
 @export var project_data: ProjectData
 
 signal tag_color_request(item: TreeItem, id: int, mouse_button_index: int)
-signal refresh_pressed 
+signal update_pressed 
 
 func _ready() -> void:
 	_build_tree()
@@ -24,11 +24,11 @@ func _ready() -> void:
 
 func enable() -> void:
 	_add_button.disabled = false
-	_refresh_button.disabled = false
+	_update_button.disabled = false
 
 func disable() -> void:
 	_add_button.disabled = true
-	_refresh_button.disabled = true
+	_update_button.disabled = true
 
 func _build_tree() -> void:
 	_tag_tree.columns = 3
@@ -76,5 +76,5 @@ func _on_tree_item_button_clicked(item: TreeItem, column: int, id: int, mouse_bu
 	
 	ProjectManager.save_current_project()
 
-func _on_refresh_pressed() -> void:
-	refresh_pressed.emit()
+func _on_update_pressed() -> void:
+	update_pressed.emit()

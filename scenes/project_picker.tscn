@@ -44,9 +44,9 @@ alignment = 1
 layout_mode = 2
 text = "New Project"
 
-[node name="Refresh" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="update" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
-text = "Refresh"
+text = "update"
 
 [node name="FileDialog" type="FileDialog" parent="."]
 auto_translate_mode = 1
@@ -58,5 +58,5 @@ use_native_dialog = true
 
 [connection signal="item_activated" from="MarginContainer/VBoxContainer/ItemList" to="." method="_on_project_item_activated"]
 [connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/NewProject" to="." method="_on_new_project_pressed"]
-[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/Refresh" to="MarginContainer/VBoxContainer" method="_on_refresh_pressed"]
+[connection signal="pressed" from="MarginContainer/VBoxContainer/HBoxContainer/update" to="MarginContainer/VBoxContainer" method="_on_update_pressed"]
 [connection signal="dir_selected" from="FileDialog" to="MarginContainer/VBoxContainer" method="_on_file_dialog_dir_selected"]

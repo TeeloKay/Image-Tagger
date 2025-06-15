@@ -39,6 +39,8 @@ func _update_view() -> void:
 	directory_view.clear_filter()
 
 func _on_files_dropped(files: PackedStringArray) -> void:
+	if _project_data == null || _current_directory == "":
+		return
 	print(files)
 	for file in files:
 		if !ImageUtil.is_valid_image(file):

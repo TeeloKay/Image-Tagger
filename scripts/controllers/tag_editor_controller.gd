@@ -9,7 +9,7 @@ var _item_map: Dictionary[StringName, TreeItem] = {}
 func _ready() -> void:
 	super._ready()
 
-	view.refresh_pressed.connect(update_tags)
+	view.update_pressed.connect(update_tags)
 	view.tag_color_request.connect(_on_tag_color_request)
 	
 	color_picker.color_picked.connect(_on_color_changed)

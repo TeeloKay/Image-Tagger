@@ -17,7 +17,7 @@ func _ready() -> void:
 	super._ready()
 	image_view.item_selected.connect(_on_item_selected)
 	image_view.multi_item_selected.connect(_on_multi_item_selected)
-	image_view.refresh_request.connect(refresh)
+	image_view.update_request.connect(update)
 	image_view.file_moved.connect(_on_file_move_request)
 	image_view.file_remove_request.connect(_on_file_remove_request)
 	image_view.file_rename_request.connect(_on_file_rename_request)
@@ -75,23 +75,23 @@ func _add_item_to_list(abs_path: String, file_name: String) -> int:
 	var index: int = image_view.add_item_to_list(abs_path, file_name)
 	return index
 
-func refresh() -> void:
+func update() -> void:
 	if _current_dir:
 		show_files_in_directory(_current_dir)
-	image_view.refresh()
+	image_view.update()
  
 func _on_file_move_request(from: String, to: String) -> void:
 	FileService.move_file(from, to)
-	refresh()
+	update()
 
 func _on_file_moved(_from: String, _to: String) -> void:
-	refresh()
+	update()
 
 func _on_file_removed(_path: String) -> void:
 	pass
 
 func _on_file_created(_path: String) -> void:
-	refresh()
+	update()
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 	var index := _file_paths_in_dir.find(path)
@@ -122,7 +122,7 @@ func _on_file_remove_confirmation() -> void:
 		var hash = _project_data.get_hash_for_path(file)
 		_project_data.image_db.remove_image(hash)
 		FileService.remove_file(file)
-	refresh()
+	update()
 	image_selected.emit("")
 
 func _on_file_rename_request() -> void:

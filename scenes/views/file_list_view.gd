@@ -1,6 +1,6 @@
 class_name FileListView extends Control
 
-@onready var _refresh_button: Button = %RefreshButton
+@onready var _update_button: Button = %UpdateButton
 @onready var _list_view: ItemList = %ImageList
 @onready var _context_menu: PopupMenu = %ContextMenu
 
@@ -16,7 +16,7 @@ signal multi_item_selected(index: int, selected: bool)
 signal file_moved(from: String, to: String)
 signal file_remove_request
 signal file_rename_request
-signal refresh_request
+signal update_request
 
 func _ready() -> void:
 	_cache = ProjectManager.thumbnail_cache
@@ -25,7 +25,7 @@ func _ready() -> void:
 
 	_build_context_menu()
 
-	_refresh_button.pressed.connect(_on_refresh_pressed)
+	_update_button.pressed.connect(_on_update_pressed)
 
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
@@ -36,7 +36,7 @@ func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 func set_item_thumbnail(index, thumbnail) -> void:
 	_list_view.set_item_icon(index, thumbnail)
 
-func refresh() -> void:
+func update() -> void:
 	pass
 
 func add_item_to_list(full_path: String, file_name: String) -> int:
@@ -113,8 +113,8 @@ func _on_item_selected(index: int) -> void:
 func _on_image_list_multi_selected(index: int, selected: bool) -> void:
 	multi_item_selected.emit(index, selected)
 
-func _on_refresh_pressed() -> void:
-	refresh_request.emit()
+func _on_update_pressed() -> void:
+	update_request.emit()
 
 func get_file_paths_in_dir() -> PackedStringArray:
 	return _file_paths_in_dir.duplicate()
@@ -125,7 +125,7 @@ func _on_file_moved(from_path: String, to_path: String) -> void:
 
 func _on_file_removed(path: String) -> void:
 	if path in _file_paths_in_dir:
-		refresh()
+		update()
 
 func _get_full_path(rel_path: String) -> String:
 	return ProjectManager.to_abolute_path(rel_path)
