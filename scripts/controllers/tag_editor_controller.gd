@@ -33,7 +33,7 @@ func add_tag_to_tree(tag: StringName) -> void:
 	_item_map[tag] = tree_item
 
 func update_tag(tag: StringName) -> void:
-	var data = _project_data.get_tag_data(tag)
+	var _data = _project_data.get_tag_data(tag)
 
 
 func _on_tag_color_request(item: TreeItem, _id: int, _mouse_button_index: int) -> void:

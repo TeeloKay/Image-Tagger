@@ -25,7 +25,7 @@ func add_image(image_hash: String, path: String) -> void:
 
 func remove_image(image_hash: String) -> void:
 	if image_db.has(image_hash):
-		for tag in image_db.get_image_data(image_hash):
+		for tag in image_db.get_image_data(image_hash).tags:
 			tag_db.remove_hash_from_tag(image_hash, tag)
 		image_db.remove_image(image_hash)
 
