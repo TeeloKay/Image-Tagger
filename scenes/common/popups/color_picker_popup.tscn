@@ -5,6 +5,7 @@
 [node name="ColorPickerPopup" type="PopupPanel"]
 auto_translate_mode = 1
 title = "Pick color"
+position = Vector2i(658, 197)
 size = Vector2i(284, 506)
 visible = true
 script = ExtResource("1_3ctat")

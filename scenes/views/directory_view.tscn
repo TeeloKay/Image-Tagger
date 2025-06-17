@@ -26,7 +26,7 @@ allow_rmb_select = true
 scroll_horizontal_enabled = false
 script = ExtResource("2_dt7d6")
 
-[node name="ContextMenu" type="PopupMenu" parent="DirectoryTree"]
+[node name="ContextMenu" type="PopupMenu" parent="."]
 unique_name_in_owner = true
 size = Vector2i(100, 60)
 

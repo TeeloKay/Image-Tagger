@@ -92,7 +92,7 @@ func _on_directory_tree_gui_input(event: InputEvent) -> void:
 			var item := _tree.get_item_at_position(click_pos)
 			
 			if item:
-				_show_context_menu(item, click_pos)
+				_show_context_menu(item, event.global_position)
 
 func _show_context_menu(_item: TreeItem, pos: Vector2) -> void:
 	_context_menu.position = pos

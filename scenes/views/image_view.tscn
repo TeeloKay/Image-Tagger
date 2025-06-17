@@ -25,12 +25,12 @@ layout_mode = 2
 [node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
 layout_mode = 2
 
-[node name="FileName" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="FileName" type="LineEdit" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(24, 0)
 layout_mode = 2
-horizontal_alignment = 1
-autowrap_mode = 3
+text = "filename.jpg"
+editable = false
+flat = true
 
 [node name="ImagePreview" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true

@@ -114,7 +114,6 @@ func _on_multi_item_selected(index: int, selected: bool) -> void:
 
 func _on_file_remove_request() -> void:
 	if _selected_files.size() > 0:
-		print("requesting file removal")
 		delete_popup.popup_centered()
 
 func _on_file_remove_confirmation() -> void:
