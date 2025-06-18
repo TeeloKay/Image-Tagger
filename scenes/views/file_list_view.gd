@@ -1,12 +1,19 @@
 class_name FileListView extends Control
 
-@onready var _update_button: Button = %UpdateButton
-@onready var _list_view: ItemList = %ImageList
-@onready var _context_menu: PopupMenu = %ContextMenu
+enum IconSizes {SMALL, MEDIUM, LARGE}
 
-var _current_dir: String = ""
-var _file_paths_in_dir: PackedStringArray = []
-var _right_click_index: int = -1
+@export_group("View settings")
+@export var small 		:= Vector2i(64, 64)
+@export var medium 		:= Vector2i(96, 96)
+@export var large 		:= Vector2i(128, 128)
+
+@onready var _update_button: Button 			= %UpdateButton
+@onready var _list_view: ResponsiveItemList 	= %ImageList
+@onready var _context_menu: PopupMenu 			= %ContextMenu
+
+var _current_dir: String 					= ""
+var _file_paths_in_dir: PackedStringArray 	= []
+var _right_click_index: int 				= -1
 
 var _cache: ThumbnailCache
 var _thumbnail_loader: ThumbnailLoader
@@ -135,3 +142,14 @@ func _get_rel_path(full_path: String) -> String:
 
 func get_selected_items() -> PackedInt32Array:
 	return _list_view.get_selected_items()
+
+func _on_icon_size_button_item_selected(index:int) -> void:
+	match index:
+		IconSizes.SMALL:
+			_list_view.set_icon_size(small)
+		IconSizes.MEDIUM:
+			_list_view.set_icon_size(medium)
+		IconSizes.LARGE:
+			_list_view.set_icon_size(large)
+		_:
+			_list_view.set_icon_size(medium)

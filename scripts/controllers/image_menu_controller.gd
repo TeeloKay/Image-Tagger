@@ -22,6 +22,7 @@ func _ready() -> void:
 	image_view.save_pressed.connect(apply_changes)
 	image_view.discard_pressed.connect(discard_changes)
 	image_view.name_change_request.connect(_on_rename_image_request)
+	image_view.open_in_explorer_pressed.connect(_on_explorer_button_pressed)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()

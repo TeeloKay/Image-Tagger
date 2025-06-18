@@ -21,13 +21,13 @@ var _tag_suggestions: Array[StringName]
 
 var _enabled: bool
 
-signal explorer_button_pressed
 signal name_change_request(name: String)
 signal tag_remove_requested(tag: StringName)
 signal tag_add_requested(tag: StringName)
 signal dirty_changed(is_dirty: bool)
 signal save_pressed
 signal discard_pressed
+signal open_in_explorer_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -96,7 +96,7 @@ func _on_tag_menu_id_pressed(id: int) -> void:
 	tag_add_requested.emit(tag)
 
 func _on_explorer_button_pressed() -> void:
-	explorer_button_pressed.emit()
+	open_in_explorer_pressed.emit()
 
 func _on_remove_tag_request(tag: StringName) -> void:
 	tag_remove_requested.emit(tag)
