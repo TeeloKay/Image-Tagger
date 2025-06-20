@@ -23,6 +23,7 @@ ProjectManager="*res://autoload/_project_manager.gd"
 FileService="*res://autoload/_file_service.gd"
 InputHandler="*res://autoload/_global_input_handler.gd"
 ThumbnailManager="*res://autoload/_thumbnail_manager.gd"
+Config="*res://autoload/_config_manager.gd"
 
 [display]
 

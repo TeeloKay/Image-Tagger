@@ -67,14 +67,13 @@ theme_override_constants/h_separation = 12
 select_mode = 1
 allow_reselect = true
 text_overrun_behavior = 4
-max_columns = 12
+max_columns = 11
 same_column_width = true
-fixed_column_width = 119
+fixed_column_width = 131
 icon_mode = 0
 fixed_icon_size = Vector2i(96, 96)
 script = ExtResource("1_a723t")
 list_view = NodePath("..")
-icon_size = 1
 
 [connection signal="item_selected" from="Toolbar/DisplayModeButton" to="ImageList" method="set_view_mode"]
 [connection signal="item_selected" from="Toolbar/IconSizeButton" to="." method="_on_icon_size_button_item_selected"]
