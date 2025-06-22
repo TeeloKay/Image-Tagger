@@ -13,8 +13,7 @@ func _convert(input_path: String, output_path: String) -> Error:
 	print(output_path)
 	if err != OK:
 		push_error("Failed to save PNG image: %s" % err)
-		return err
-	return OK
+	return err
 
 
 func get_target_extension() -> String:

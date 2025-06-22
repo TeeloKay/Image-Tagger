@@ -10,15 +10,12 @@ var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
 var _selected_files: PackedStringArray = []
 var _right_click_index: int = -1
-var _image_fixer: ImageRepairTool
 
 signal image_selected(image_path: String)
 
 func _ready() -> void:
 	super._ready()
-	
-	_image_fixer = ImageRepairTool.new()
-	
+
 	image_view.item_selected.connect(_on_item_selected)
 	image_view.multi_item_selected.connect(_on_multi_item_selected)
 	image_view.update_request.connect(update)
@@ -106,7 +103,6 @@ func _on_item_selected(index: int) -> void:
 	if index >= 0 && index < _file_paths_in_dir.size():
 		_selected_files.clear()
 		_selected_files.append(_file_paths_in_dir[index])
-		print(_image_fixer.detect_image_format(_file_paths_in_dir[index]))
 		image_selected.emit(_selected_files[0])
 	
 func _on_multi_item_selected(index: int, selected: bool) -> void:
@@ -117,8 +113,6 @@ func _on_multi_item_selected(index: int, selected: bool) -> void:
 		for idx in selected_items:
 			_selected_files.append(_file_paths_in_dir[idx])
 		image_selected.emit(_selected_files[0])
-		print(_image_fixer.detect_image_format(_file_paths_in_dir[index]))
-
 
 func _on_file_remove_request() -> void:
 	if _selected_files.size() > 0:
