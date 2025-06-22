@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Taggable"
-config/version="0.1.0.0"
+config/version="0.2.0.0"
 run/main_scene="uid://fie0ld0my05u"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://icon.svg"
