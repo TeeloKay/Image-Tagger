@@ -52,7 +52,6 @@ func _thread_process() -> void:
 		_mutex.unlock()
 
 		for path in local_queue:
-			print(path)
 			var thumbnail = get_image(path)
 			if thumbnail == null:
 				thumbnail = ImageUtil.generate_thumbnail_from_path(path)
@@ -92,6 +91,12 @@ func _add_image_to_cache(abs_path: String, texture: Texture2D) -> void:
 func clear() -> void:
 	_mutex.lock()
 	_cache.clear()
+	_queue.clear()
+	_mutex.unlock()
+	queue_cleared.emit()
+
+func clear_queue() -> void:
+	_mutex.lock()
 	_queue.clear()
 	_mutex.unlock()
 	queue_cleared.emit()

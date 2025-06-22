@@ -33,18 +33,18 @@ alignment = 1
 editable = false
 flat = true
 
+[node name="ExplorerButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Open in Explorer"
+
 [node name="ImagePreview" type="TextureRect" parent="PanelContainer/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
-
-[node name="ExplorerButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Open in Explorer"
-flat = true
 
 [node name="Tags" type="MarginContainer" parent="."]
 layout_mode = 2

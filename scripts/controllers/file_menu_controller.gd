@@ -36,6 +36,7 @@ func _ready() -> void:
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
 		_current_dir = dir_path
+	ThumbnailManager.clear_queue()
 	show_files_in_directory(_current_dir)
 
 func show_files_in_directory(dir_path: String) -> void:
@@ -127,3 +128,6 @@ func _on_file_remove_confirmation() -> void:
 func _on_file_rename_request() -> void:
 	if _selected_files.size() > 0:
 		print("requesting file renaming")
+
+func get_selection() -> PackedStringArray:
+	return _selected_files

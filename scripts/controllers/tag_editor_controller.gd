@@ -9,7 +9,7 @@ var _item_map: Dictionary[StringName, TreeItem] = {}
 func _ready() -> void:
 	super._ready()
 
-	view.update_pressed.connect(update_tags)
+	view.update_pressed.connect(update)
 	view.tag_color_request.connect(_on_tag_color_request)
 	
 	color_picker.color_picked.connect(_on_color_changed)
@@ -19,9 +19,9 @@ func _on_project_loaded() -> void:
 	enable()
 	_item_map = {}
 	_active_tag = &""
-	update_tags()
+	update()
 
-func update_tags() -> void:
+func update() -> void:
 	view.clear()
 	var tags := _project_data.get_tags()
 	for tag in tags:
@@ -48,7 +48,7 @@ func _on_color_changed(color: Color) -> void:
 	var data := _project_data.get_tag_data(_active_tag)
 	data.color = color
 
-	update_tags()
+	update()
 
 func enable() -> void:
 	view.enable()

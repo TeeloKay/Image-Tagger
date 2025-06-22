@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=48 format=3 uid="uid://d37f6ht67sx7o"]
+[gd_resource type="Theme" load_steps=50 format=3 uid="uid://d37f6ht67sx7o"]
 
 [ext_resource type="FontFile" uid="uid://dcfvk71wpmcae" path="res://assets/fonts/inter/static/Inter_28pt-Regular.ttf" id="1_e7bfs"]
 
@@ -504,6 +504,45 @@ grow_begin = -2.0
 grow_end = -2.0
 vertical = true
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rm32i"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.227451, 0.290196, 0.337255, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.305882, 0.368627, 0.415686, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 6.0
+expand_margin_top = 36.0
+expand_margin_right = 6.0
+expand_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uib8i"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.227451, 0.290196, 0.337255, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 6.0
+expand_margin_top = 36.0
+expand_margin_right = 6.0
+expand_margin_bottom = 6.0
+
 [resource]
 default_font = ExtResource("1_e7bfs")
 AcceptDialog/styles/embedded_border = SubResource("StyleBoxFlat_a754y")
@@ -520,6 +559,14 @@ Button/styles/normal = SubResource("StyleBoxFlat_50bnw")
 Button/styles/pressed = SubResource("StyleBoxFlat_juax2")
 DarkPanel/base_type = &"Panel"
 DarkPanel/styles/panel = SubResource("StyleBoxFlat_kw7xm")
+FlatButton/styles/disabled = null
+FlatButton/styles/hover = null
+FlatButton/styles/normal = null
+FlatButton/styles/pressed = null
+FlatMenuButton/styles/disabled = null
+FlatMenuButton/styles/hover = null
+FlatMenuButton/styles/normal = null
+FlatMenuButton/styles/pressed = null
 HScrollBar/styles/grabber = SubResource("StyleBoxFlat_65mqm")
 HScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_xhl1p")
 HScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_srpr5")
@@ -569,3 +616,5 @@ VScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_f0y68")
 VScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_ahn61")
 VScrollBar/styles/scroll = SubResource("StyleBoxFlat_4wtc2")
 VSeparator/styles/separator = SubResource("StyleBoxLine_e7bfs")
+Window/styles/embedded_border = SubResource("StyleBoxFlat_rm32i")
+Window/styles/embedded_unfocused_border = SubResource("StyleBoxFlat_uib8i")

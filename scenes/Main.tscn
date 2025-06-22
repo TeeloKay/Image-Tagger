@@ -1,5 +1,6 @@
-[gd_scene load_steps=15 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=17 format=3 uid="uid://fie0ld0my05u"]
 
+[ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
@@ -14,10 +15,19 @@
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/delete_popup.tscn" id="14_mwfav"]
+[ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 
 [node name="Main" type="CanvasLayer"]
 
 [node name="Controllers" type="Node" parent="."]
+
+[node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
+script = ExtResource("1_3p2gp")
+conversion_popup = NodePath("../../Popups/ConversionPopup")
+menu_button = NodePath("../../VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
+directory_controller = NodePath("../DirectoryController")
+file_controller = NodePath("../FileMenuController")
+metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
 
 [node name="SearchController" type="Node" parent="Controllers" node_paths=PackedStringArray("search_panel")]
 script = ExtResource("8_jlsqs")
@@ -100,6 +110,17 @@ text = "Project"
 layout_mode = 2
 disabled = true
 text = "Settings"
+item_count = 1
+popup/item_0/text = "Save thumbnails"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+
+[node name="ToolsMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+layout_mode = 2
+text = "Tools"
+item_count = 1
+popup/item_0/text = "Convert selection to PNG"
+popup/item_0/id = 0
 
 [node name="VSeparator2" type="VSeparator" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
@@ -189,6 +210,8 @@ size = Vector2i(255, 100)
 popup_window = true
 force_native = true
 dialog_text = "A file with this name already exists."
+
+[node name="ConversionPopup" parent="Popups" instance=ExtResource("16_cvmbd")]
 
 [connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory"]
 [connection signal="image_selected" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="set_image"]
