@@ -91,7 +91,7 @@ func _repair_selection() -> void:
 	for path in selection:
 		var ext := path.get_extension()
 		var detected_ext := _format_detector.detect_image_format(path)
-		if ext.to_lower() != detected_ext.to_lower():
+		if ext.to_lower() != detected_ext.to_lower() && !detected_ext.is_empty():
 			print(detected_ext)
 			var image_hash := _project_data.get_hash_for_path(path)
 			var new_path := path.get_basename() + "." + detected_ext
