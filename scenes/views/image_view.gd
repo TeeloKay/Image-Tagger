@@ -28,6 +28,7 @@ signal dirty_changed(is_dirty: bool)
 signal save_pressed
 signal discard_pressed
 signal open_in_explorer_pressed
+signal open_image_request
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -38,6 +39,7 @@ func _ready() -> void:
 	_save_button.pressed.connect(func(): save_pressed.emit())
 	_discard_button.pressed.connect(func(): discard_pressed.emit())
 	_tag_picker.get_popup().id_pressed.connect(_on_tag_menu_id_pressed)
+	_image_preview.gui_input.connect(_on_image_preview_gui_input)
 
 	_name_edit.text_submitted.connect(_on_name_change_request)
 
@@ -135,3 +137,9 @@ func _on_tag_picker_resized() -> void:
 func _on_name_change_request(new_name: String) -> void:
 	name_change_request.emit(new_name)
 	_name_edit.editable = false
+
+
+func _on_image_preview_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.double_click && event.button_index == MOUSE_BUTTON_LEFT:
+			open_image_request.emit()

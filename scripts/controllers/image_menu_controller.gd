@@ -23,6 +23,7 @@ func _ready() -> void:
 	image_view.discard_pressed.connect(discard_changes)
 	image_view.name_change_request.connect(_on_rename_image_request)
 	image_view.open_in_explorer_pressed.connect(_on_explorer_button_pressed)
+	image_view.open_image_request.connect(_on_open_image_request)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -58,6 +59,11 @@ func _on_explorer_button_pressed() -> void:
 		return
 	var folder_path := current_image.get_base_dir()
 	OS.shell_open(folder_path)
+
+func _on_open_image_request() -> void:
+	if current_image.is_empty():
+		return
+	OS.shell_open(current_image)
 
 func apply_changes() -> void:
 	_project_data.add_image(_current_hash, current_image)
