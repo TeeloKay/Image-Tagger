@@ -5,8 +5,9 @@ class_name ImageConversionStrategy extends RefCounted
 func _ready() -> void:
 	pass # Replace with function body.
 
-func _convert(input_path: String, output_path: String) -> void:
+func _convert(input_path: String, output_path: String) -> Error:
 	push_error("Convert() not implemented.")
+	return ERR_UNAVAILABLE
 
 func _is_compatible(input_path: String) -> bool:
 	return true

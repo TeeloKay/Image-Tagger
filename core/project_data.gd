@@ -104,7 +104,7 @@ func get_image_data(image_hash: String) -> ImageData:
 func index_image_path(image_path: String, image_hash: String) -> void:
 	image_db.index_image(image_path, image_hash)
 
-func get_hash_for_path(image_path: String) -> String:
+func get_hash_for_path(image_path: String, force_new: bool = false) -> String:
 	var image_hash = image_db.get_hash_for_path(to_relative_path(image_path))
 	return image_hash
 

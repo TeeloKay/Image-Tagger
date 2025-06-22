@@ -15,11 +15,12 @@ func _init() -> void:
 	_index = {}
 
 ## add image to database.
-func register_image(path: String, image_hash: String) -> void:
+func register_image(path: String, image_hash: String, image_data: ImageData = null) -> void:
 	if image_hash in _db:
 		return
-	
-	var image_data := ImageData.new()
+
+	if image_data == null:
+		image_data = ImageData.new()
 	image_data.last_path = path
 	
 	_db[image_hash] = image_data
@@ -27,11 +28,14 @@ func register_image(path: String, image_hash: String) -> void:
 	
 	image_registered.emit(image_hash)
 
+func set_image_data(image_hash: String, image_data: ImageData) -> void:
+	_db[image_hash] = image_data
+
 ## add a tag to an image.
 func add_tag_to_image(image_hash: String, tag: StringName) -> void:
 	if !_db.has(image_hash):
 		return
-	var image_data  := _db[image_hash]
+	var image_data := _db[image_hash]
 	if image_data.tags.has(tag):
 		return
 	image_data.tags.append(tag)
@@ -49,7 +53,7 @@ func remove_tag_from_image(image_hash: String, tag: StringName) -> void:
 
 ## update latest image path.
 func update_image_path(image_hash: String, new_path: String) -> void:
-	var old_path: = ""
+	var old_path := ""
 	if !_db.has(image_hash):
 		register_image(new_path, image_hash)
 		old_path = _db[image_hash].last_path
@@ -81,9 +85,9 @@ func get_path_for_hash(image_hash: String) -> String:
 		return get_image_data(image_hash).last_path
 	return ""
 
-func get_hash_for_path(image_path: String) -> String:
+func get_hash_for_path(image_path: String, force_new: bool = false) -> String:
 	var image_hash: String = ""
-	if _index.has(image_path):
+	if _index.has(image_path) && !force_new:
 		image_hash = _index[image_path]
 	
 	image_hash = ProjectManager.image_hasher.hash_image(image_path)
@@ -109,8 +113,8 @@ func sort_index() -> void:
 #region serialization
 func serialize() -> Dictionary:
 	var data := {}
-	data[IMAGES] 	= {}
-	data[INDEX] 	= {}
+	data[IMAGES] = {}
+	data[INDEX] = {}
 	for image_hash in _db:
 		data[IMAGES][image_hash] = get_image_data(image_hash).serialize()
 	for path in _index:
