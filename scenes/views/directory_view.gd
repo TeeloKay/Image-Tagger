@@ -10,6 +10,8 @@ var _image_icon := preload("res://assets/icons/Image.svg")
 signal folder_selected(path: String)
 signal data_dropped(from: String, to: String)
 
+signal add_folder_request(parent: String)
+
 func _ready() -> void:
 	_tree.set_column_expand(0, true)
 	_tree.set_column_custom_minimum_width(0, 128)
@@ -20,6 +22,8 @@ func _ready() -> void:
 	_context_menu.add_item("Add folder", 0)
 	_context_menu.add_item("Rename", 1)
 	_context_menu.add_item("Delete", 2)
+	
+	_context_menu.id_pressed.connect(_on_context_menu_pressed)
 
 
 func filter_tree(filter: String) -> void:
@@ -103,3 +107,18 @@ func _on_data_dropped(from: String, to: String) -> void:
 
 func clear_filter() -> void:
 	_filter_input.clear()
+
+func _on_context_menu_pressed(id: int) -> void:
+	match id:
+		0:
+			print("add folder")
+			add_folder_request.emit("")
+			pass
+		1:
+			print("rename")
+			pass
+		2:
+			print("delete")
+			pass
+		_:
+			return

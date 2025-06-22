@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=18 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/delete_popup.tscn" id="14_mwfav"]
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
+[ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
 
 [node name="Main" type="CanvasLayer"]
 
@@ -212,6 +213,9 @@ force_native = true
 dialog_text = "A file with this name already exists."
 
 [node name="ConversionPopup" parent="Popups" instance=ExtResource("16_cvmbd")]
+visible = false
+
+[node name="CreateFolderDialog" parent="Popups" instance=ExtResource("17_ft6cd")]
 
 [connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory"]
 [connection signal="image_selected" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="set_image"]
