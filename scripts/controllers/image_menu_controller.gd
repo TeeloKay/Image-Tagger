@@ -33,6 +33,8 @@ func set_image(path: String) -> void:
 	if path.is_empty():
 		clear()
 	if path.is_absolute_path():
+		if current_image == path:
+			return
 		current_image = path
 		var _current_image = path
 		_current_hash = _project_data.get_hash_for_path(path)

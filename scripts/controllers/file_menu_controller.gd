@@ -17,7 +17,7 @@ func _ready() -> void:
 	super._ready()
 
 	image_view.item_selected.connect(_on_item_selected)
-	image_view.multi_item_selected.connect(_on_multi_item_selected)
+	image_view.selection_updated.connect(_on_selection_updated)
 	image_view.update_request.connect(update)
 	image_view.file_moved.connect(_on_file_move_request)
 	image_view.file_remove_request.connect(_on_file_remove_request)
@@ -104,15 +104,13 @@ func _on_item_selected(index: int) -> void:
 		_selected_files.clear()
 		_selected_files.append(_file_paths_in_dir[index])
 		image_selected.emit(_selected_files[0])
-	
-func _on_multi_item_selected(index: int, selected: bool) -> void:
-	print(index, "- ", "selected" if selected else "deselected")
-	if index >= 0 && index < _file_paths_in_dir.size():
-		_selected_files.clear()
-		var selected_items := image_view.get_selected_items()
-		for idx in selected_items:
-			_selected_files.append(_file_paths_in_dir[idx])
-		image_selected.emit(_selected_files[0])
+
+func _on_selection_updated() -> void:
+	_selected_files.clear()
+	var selected_items := image_view.get_selected_items()
+	for idx in selected_items:
+		_selected_files.append(_file_paths_in_dir[idx])
+	image_selected.emit(_selected_files[0])
 
 func _on_file_remove_request() -> void:
 	if _selected_files.size() > 0:

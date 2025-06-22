@@ -24,6 +24,7 @@ signal file_moved(from: String, to: String)
 signal file_remove_request
 signal file_rename_request
 signal update_request
+signal selection_updated
 
 func _ready() -> void:
 	_cache = ProjectManager.thumbnail_cache
@@ -112,13 +113,21 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 		file_remove_request.emit()
 	if event.is_action_pressed("rename"):
 		file_rename_request.emit()
-
+	if event.is_action_pressed("select_all"):
+		for i in _file_paths_in_dir.size():
+			_list_view.select(i,false)
+			print(i)
+			selection_updated.emit()
+	if event.is_action_pressed("ui_cancel"):
+		_list_view.deselect_all()
 
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
+	selection_updated.emit()
 
 func _on_image_list_multi_selected(index: int, selected: bool) -> void:
 	multi_item_selected.emit(index, selected)
+	selection_updated.emit()
 
 func _on_update_pressed() -> void:
 	update_request.emit()
