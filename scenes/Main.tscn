@@ -14,7 +14,7 @@
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
-[ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/delete_popup.tscn" id="14_mwfav"]
+[ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/confirm_dialog.tscn" id="14_mwfav"]
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
 
@@ -40,10 +40,9 @@ script = ExtResource("3_lhr70")
 directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 
-[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "delete_popup")]
+[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
 script = ExtResource("4_lhr70")
 image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-delete_popup = NodePath("../../Popups/DeletePopup")
 
 [node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")
@@ -199,8 +198,7 @@ visible = false
 
 [node name="Popups" type="Node" parent="."]
 
-[node name="DeletePopup" parent="Popups" instance=ExtResource("14_mwfav")]
-unique_name_in_owner = true
+[node name="ConfirmationPopup" parent="Popups" instance=ExtResource("14_mwfav")]
 visible = false
 ok_button_text = "Delete"
 

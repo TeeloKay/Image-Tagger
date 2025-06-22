@@ -1,7 +1,9 @@
 class_name FileMenuController extends MenuController
 
+@onready var confirm_prefab := preload("res://scenes/common/popups/confirm_dialog.tscn")
 @export var image_view: FileListView
-@export var delete_popup: ConfirmationDialog
+
+var _active_dialog: ConfirmationDialog
 
 ## how many thumbnails are loaded per frame. Higher speeds can lead to performance hitches when loading a new folder.
 @export_range(1, 100, 1) var lazy_load_speed: int = 5
@@ -23,16 +25,12 @@ func _ready() -> void:
 	image_view.file_remove_request.connect(_on_file_remove_request)
 	image_view.file_rename_request.connect(_on_file_rename_request)
 
-	delete_popup.confirmed.connect(_on_file_remove_confirmation)
-
 	FileService.file_moved.connect(_on_file_moved)
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
-	
-	delete_popup.hide()
 
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
@@ -114,7 +112,13 @@ func _on_selection_updated() -> void:
 
 func _on_file_remove_request() -> void:
 	if _selected_files.size() > 0:
-		delete_popup.popup_centered()
+		_active_dialog= confirm_prefab.instantiate() as ConfirmationDialog
+		add_child(_active_dialog)
+		_active_dialog.title 		= "Delete file(s)"
+		_active_dialog.dialog_text 	= "Are you certain you want to delete the selected files? This cannot be undone."
+		_active_dialog.confirmed.connect(_on_file_remove_confirmation)
+		_active_dialog.get_cancel_button().pressed.connect(_on_request_cancelled)
+		_active_dialog.popup_centered()
 
 func _on_file_remove_confirmation() -> void:
 	for file in _selected_files:
@@ -130,3 +134,7 @@ func _on_file_rename_request() -> void:
 
 func get_selection() -> PackedStringArray:
 	return _selected_files
+
+func _on_request_cancelled() -> void:
+	if _active_dialog:
+		_active_dialog.queue_free()

@@ -62,3 +62,24 @@ func _on_files_dropped(files: PackedStringArray) -> void:
 				print(new_name)
 		FileService.copy_file(file, file_path)
 		
+func create_new_folder(new_path: String) -> void:
+	new_path = _project_data.to_abolute_path(new_path)
+	var err := DirAccess.make_dir_absolute(new_path)
+	if err != OK:
+		push_error("Could not generate directory: ", err)
+
+
+func delete_folder(path: String) -> void:
+	if !DirAccess.dir_exists_absolute(path):
+		return
+	var err := DirAccess.remove_absolute(path)
+	if err != OK:
+		push_error("Could not delete directory: ", err)
+
+
+func move_folder(old_path: String, new_path: String) -> void:
+	if !DirAccess.dir_exists_absolute(old_path) || DirAccess.dir_exists_absolute(new_path):
+		return
+	var err := DirAccess.rename_absolute(old_path, new_path)
+	if err != OK:
+		push_error("Could not rename directory: ", err)

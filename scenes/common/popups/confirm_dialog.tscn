@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://bobv8ipx77jmy"]
+
+[node name="ConfirmDialog" type="ConfirmationDialog"]
+title = "Delete files"
+initial_position = 1
+size = Vector2i(565, 100)
+visible = true
+dialog_text = "Are you certain you want to delete the selected files? This cannot be undone."
