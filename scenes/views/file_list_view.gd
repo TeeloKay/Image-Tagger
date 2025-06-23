@@ -143,6 +143,10 @@ func _on_file_removed(path: String) -> void:
 	if path in _file_paths_in_dir:
 		update()
 
+func set_scroll_position(position: Vector2i) -> void:
+	_list_view.get_h_scroll_bar().value = position.x
+	_list_view.get_v_scroll_bar().value = position.y
+
 func _get_full_path(rel_path: String) -> String:
 	return ProjectManager.to_abolute_path(rel_path)
 

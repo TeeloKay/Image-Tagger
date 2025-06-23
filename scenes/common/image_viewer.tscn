@@ -1,4 +1,4 @@
-[gd_scene load_steps=2 format=3 uid="uid://divx5nynxhc87"]
+[gd_scene load_steps=2 format=3 uid="uid://b56wfmq3mfg67"]
 
 [ext_resource type="Texture2D" uid="uid://okimr0afoeoe" path="res://assets/teal-pink-black.png" id="1_varwv"]
 
@@ -11,7 +11,6 @@ current_screen = 0
 wrap_controls = true
 transient = true
 popup_window = true
-force_native = true
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15

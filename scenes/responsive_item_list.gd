@@ -67,4 +67,3 @@ func _build_drag_preview(index: int) -> void:
 	set_drag_preview(preview)	
 
 #endregion
-

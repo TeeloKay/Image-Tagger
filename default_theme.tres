@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=50 format=3 uid="uid://d37f6ht67sx7o"]
+[gd_resource type="Theme" load_steps=52 format=3 uid="uid://d37f6ht67sx7o"]
 
 [ext_resource type="FontFile" uid="uid://dcfvk71wpmcae" path="res://assets/fonts/inter/static/Inter_28pt-Regular.ttf" id="1_e7bfs"]
 
@@ -120,6 +120,24 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_e7bfs"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7qpyc"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.51)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 5
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_65mqm"]
 bg_color = Color(0.415686, 0.690196, 1, 1)
@@ -548,7 +566,7 @@ default_font = ExtResource("1_e7bfs")
 AcceptDialog/styles/embedded_border = SubResource("StyleBoxFlat_a754y")
 AcceptDialog/styles/embedded_unfocused_border = SubResource("StyleBoxFlat_1ahxn")
 AcceptDialog/styles/panel = SubResource("StyleBoxFlat_skw02")
-Button/colors/font_color = Color(0.878431, 0.901961, 0.921569, 1)
+Button/colors/font_color = Color(0.7134, 0.79953, 0.87, 1)
 Button/colors/font_disabled_color = Color(0.486275, 0.545098, 0.6, 1)
 Button/colors/font_hover_color = Color(1, 1, 1, 1)
 Button/colors/font_hover_pressed_color = Color(1, 1, 1, 1)
@@ -563,10 +581,10 @@ FlatButton/styles/disabled = null
 FlatButton/styles/hover = null
 FlatButton/styles/normal = null
 FlatButton/styles/pressed = null
-FlatMenuButton/styles/disabled = null
-FlatMenuButton/styles/hover = null
-FlatMenuButton/styles/normal = null
-FlatMenuButton/styles/pressed = null
+FlatMenuButton/styles/disabled = SubResource("StyleBoxEmpty_e7bfs")
+FlatMenuButton/styles/hover = SubResource("StyleBoxEmpty_e7bfs")
+FlatMenuButton/styles/normal = SubResource("StyleBoxEmpty_e7bfs")
+FlatMenuButton/styles/pressed = SubResource("StyleBoxFlat_7qpyc")
 HScrollBar/styles/grabber = SubResource("StyleBoxFlat_65mqm")
 HScrollBar/styles/grabber_highlight = SubResource("StyleBoxFlat_xhl1p")
 HScrollBar/styles/grabber_pressed = SubResource("StyleBoxFlat_srpr5")

@@ -37,6 +37,7 @@ func set_directory(dir_path: String) -> void:
 		_current_dir = dir_path
 	ThumbnailManager.clear_queue()
 	show_files_in_directory(_current_dir)
+	image_view.set_scroll_position(Vector2i.ZERO)
 
 func show_files_in_directory(dir_path: String) -> void:
 	var dir = DirAccess.open(dir_path)

@@ -11,6 +11,7 @@ signal folder_selected(path: String)
 signal data_dropped(from: String, to: String)
 
 signal add_folder_request(parent: String)
+signal update_request
 
 func _ready() -> void:
 	_tree.set_column_expand(0, true)
@@ -25,11 +26,14 @@ func _ready() -> void:
 	
 	_context_menu.id_pressed.connect(_on_context_menu_pressed)
 
+func _gui_input(event: InputEvent) -> void:
+	if event.is_action_pressed("update"):
+		update_request.emit()
 
 func filter_tree(filter: String) -> void:
 	var root := _tree.get_root()
 	filter = filter.to_lower().strip_edges().strip_escapes()
-	_recursive_filter(root,filter)
+	_recursive_filter(root, filter)
 
 func _recursive_filter(item: TreeItem, filter: String) -> bool:
 	var has_match := false
