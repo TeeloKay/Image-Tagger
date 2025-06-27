@@ -28,12 +28,13 @@ signal selection_updated
 signal sort_mode_changed(mode: int)
 
 func _ready() -> void:
-
 	_build_context_menu()
 	_build_sort_menu()
 
 	_update_button.pressed.connect(_on_update_pressed)
 	_sort_menu.get_popup().id_pressed.connect(_on_sort_menu_item_pressed)
+
+	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
@@ -48,10 +49,17 @@ func update() -> void:
 	pass
 
 func add_item_to_list(full_path: String, file_data: FileData) -> int:
+	##TODO: look to see if we can't improve this, I feel this can lead to issues in certain circumstances.
 	var index: int = _list_view.add_item(file_data.name)
 	_file_paths_in_dir.append(full_path)
+
+	var size := FileUtil.human_readable_size(file_data.size)
+	var date := Time.get_datetime_string_from_unix_time(file_data.modified)
+	var tooltip := "size: %s \n modified: %s" % [size, date]
+	_list_view.set_item_tooltip(index, tooltip)
+
+	ThumbnailManager.queue_thumbnail(full_path)
 	
-	var rel_path := _get_rel_path(full_path)
 	return index
 
 
@@ -86,6 +94,7 @@ func _on_sort_menu_item_pressed(id: int) -> void:
 func clear() -> void:
 	_file_paths_in_dir.clear()
 	_list_view.clear()
+	ThumbnailManager.clear_queue()
 
 func _on_context_menu_item_pressed(id: int) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():

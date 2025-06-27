@@ -5,7 +5,7 @@ var _cache: Dictionary[String,Texture2D] = {}
 var _pending_results: Dictionary[String, Texture2D] = {}
 
 var images_per_batch: int 	= 6
-var max_cache_size: int 	= 1024
+var max_cache_size: int 	= 4096
 
 var _semaphore: Semaphore	= null
 var _thread: Thread 		= null

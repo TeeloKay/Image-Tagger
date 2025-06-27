@@ -17,7 +17,6 @@ func _on_project_loaded() -> void:
 
 
 
-
 func _on_selection_changed() -> void:
 	var selection := file_controller.get_selection()
 	if selection.size() == 1:

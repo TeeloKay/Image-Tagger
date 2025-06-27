@@ -12,8 +12,6 @@ func _ready() -> void:
 	_line_edit.text_changed.connect(_on_input_changed)
 	_regex = RegEx.new()
 	_regex.compile("^\\.?[a-zA-Z0-9_~ ]*$")
-	if _regex.is_valid():
-		print("valid")
 
 
 func _on_input_changed(text: String) -> void:
@@ -24,5 +22,4 @@ func _on_input_changed(text: String) -> void:
 		return
 	var new_path := parent_folder.path_join(search.get_string())
 	if !search.get_string().is_empty() || DirAccess.dir_exists_absolute(new_path):
-		print(search.get_string())
 		self.get_ok_button().disabled = false
