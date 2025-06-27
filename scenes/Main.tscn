@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=20 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
@@ -10,51 +10,17 @@
 [ext_resource type="PackedScene" uid="uid://c74n6v23cjt7m" path="res://scenes/views/file_list_view.tscn" id="5_jlsqs"]
 [ext_resource type="Script" uid="uid://w51jykngua7n" path="res://scenes/project_toolbar.gd" id="5_wp0k4"]
 [ext_resource type="Script" uid="uid://dg8k4wool6u77" path="res://scenes/help_menu.gd" id="6_bjd11"]
+[ext_resource type="Script" uid="uid://8bv6r2etb1ah" path="res://scripts/controllers/bulk_tag_editor_controller.gd" id="7_nfivy"]
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
+[ext_resource type="PackedScene" uid="uid://cykwccqg380hc" path="res://scenes/views/bulk_tag_editor.tscn" id="13_bb450"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/confirm_dialog.tscn" id="14_mwfav"]
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
 
 [node name="Main" type="CanvasLayer"]
-
-[node name="Controllers" type="Node" parent="."]
-
-[node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
-script = ExtResource("1_3p2gp")
-conversion_popup = NodePath("../../Popups/ConversionPopup")
-menu_button = NodePath("../../VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
-directory_controller = NodePath("../DirectoryController")
-file_controller = NodePath("../FileMenuController")
-metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
-
-[node name="SearchController" type="Node" parent="Controllers" node_paths=PackedStringArray("search_panel")]
-script = ExtResource("8_jlsqs")
-search_panel = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel")
-metadata/_custom_type_script = "uid://bjvppx536xcr3"
-
-[node name="DirectoryController" type="Node" parent="Controllers" node_paths=PackedStringArray("directory_view")]
-script = ExtResource("3_lhr70")
-directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
-metadata/_custom_type_script = "uid://cwb25aw26wf6u"
-
-[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
-script = ExtResource("4_lhr70")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-
-[node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
-script = ExtResource("4_wp0k4")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
-_error_dialog = NodePath("../../Popups/ErrorDialog")
-file_menu_controller = NodePath("../FileMenuController")
-
-[node name="TagEditorController" type="Node" parent="Controllers" node_paths=PackedStringArray("view", "color_picker")]
-script = ExtResource("5_bjd11")
-view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor")
-color_picker = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor/ColorPickerPopup")
-metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -173,8 +139,9 @@ metadata/_tab_index = 0
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 layout_mode = 2
 
-[node name="FileListView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" instance=ExtResource("5_jlsqs")]
+[node name="FileListView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
 layout_mode = 2
+_controller = NodePath("../../../../../../../Controllers/FileMenuController")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 custom_minimum_size = Vector2(256, 0)
@@ -182,6 +149,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="ImageView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("8_q8u5g")]
+layout_mode = 2
+
+[node name="BulkTagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("13_bb450")]
 layout_mode = 2
 
 [node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu"]
@@ -215,5 +185,48 @@ visible = false
 
 [node name="CreateFolderDialog" parent="Popups" instance=ExtResource("17_ft6cd")]
 
+[node name="Controllers" type="Node" parent="."]
+
+[node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
+script = ExtResource("1_3p2gp")
+conversion_popup = NodePath("../../Popups/ConversionPopup")
+menu_button = NodePath("../../VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
+directory_controller = NodePath("../DirectoryController")
+file_controller = NodePath("../FileMenuController")
+metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
+
+[node name="SearchController" type="Node" parent="Controllers" node_paths=PackedStringArray("search_panel")]
+script = ExtResource("8_jlsqs")
+search_panel = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel")
+metadata/_custom_type_script = "uid://bjvppx536xcr3"
+
+[node name="DirectoryController" type="Node" parent="Controllers" node_paths=PackedStringArray("directory_view")]
+script = ExtResource("3_lhr70")
+directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
+metadata/_custom_type_script = "uid://cwb25aw26wf6u"
+
+[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
+script = ExtResource("4_lhr70")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
+sort_mode = 2
+
+[node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
+script = ExtResource("4_wp0k4")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
+_error_dialog = NodePath("../../Popups/ErrorDialog")
+file_menu_controller = NodePath("../FileMenuController")
+
+[node name="TagOverviewController" type="Node" parent="Controllers" node_paths=PackedStringArray("view", "color_picker")]
+script = ExtResource("5_bjd11")
+view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor")
+color_picker = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor/ColorPickerPopup")
+metadata/_custom_type_script = "uid://b37wppbdqh0qm"
+
+[node name="BulkTagEditorController" type="Node" parent="Controllers" node_paths=PackedStringArray("file_controller", "image_view")]
+script = ExtResource("7_nfivy")
+file_controller = NodePath("../FileMenuController")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
+metadata/_custom_type_script = "uid://8bv6r2etb1ah"
+
 [connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory"]
-[connection signal="image_selected" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="set_image"]
+[connection signal="selection_changed" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="_on_file_menu_controller_selection_changed"]

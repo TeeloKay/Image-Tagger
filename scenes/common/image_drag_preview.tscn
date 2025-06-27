@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=3 uid="uid://b5n1meh4yudlq"]
+
+[ext_resource type="Script" uid="uid://bqy0uhxk75scr" path="res://scenes/common/image_drag_preview.gd" id="1_x8c3l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_87tdy"]
+bg_color = Color(0.0980392, 0.12549, 0.152941, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[node name="ImageDragPreview" type="TextureRect"]
+custom_minimum_size = Vector2(60, 60)
+script = ExtResource("1_x8c3l")
+
+[node name="Panel" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_87tdy")
+
+[node name="Label" type="Label" parent="Panel"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1

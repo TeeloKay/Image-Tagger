@@ -46,6 +46,11 @@ popup/item_2/id = 2
 [node name="VSeparator" type="VSeparator" parent="Toolbar"]
 layout_mode = 2
 
+[node name="SortButton" type="MenuButton" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Sort"
+
 [node name="UpdateButton" type="Button" parent="Toolbar"]
 unique_name_in_owner = true
 layout_mode = 2

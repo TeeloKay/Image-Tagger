@@ -140,3 +140,12 @@ func _on_rename_image_request(new_file: String) -> void:
 	_project_data.image_db.update_image_path(_current_hash, _project_data.to_relative_path(new_path))
 	set_image(new_path)
 	file_menu_controller.update()
+
+
+func _on_file_menu_controller_selection_changed() -> void:
+	var selection := file_menu_controller.get_selection()
+	if selection.is_empty():
+		clear()
+		return
+	set_image(selection[selection.size() - 1])
+

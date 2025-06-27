@@ -15,6 +15,8 @@ func _ready() -> void:
 	directory_view.folder_selected.connect(_on_folder_selected)
 	directory_view.data_dropped.connect(_on_data_dropped)
 	directory_view.update_request.connect(_update_view)
+	directory_view.rename_request.connect(_on_rename_request)
+	directory_view.delete_request.connect(_on_delete_request)
 
 	get_window().files_dropped.connect(_on_files_dropped)
 
@@ -27,30 +29,44 @@ func _on_project_loaded() -> void:
 
 func _on_folder_selected(path: String) -> void:
 	_current_directory = path
+	if _current_directory == "":
+		path_selected.emit(_project_data.project_path)
 	path_selected.emit(_current_directory)
 
-func _on_data_dropped(from: String, to: String) -> void:
-	print(from, " -> ", to)
-	FileService.move_file(from, to)
+## Method for handling files dropped into a directory through the internal drag & drop system
+## Will attempt to move all the files from their original location to the new directory.
+func _on_data_dropped(files: PackedStringArray, target_dir: String) -> void:
+	print("moving %d files" % files.size())
+	for file in files:
+		var new_path := target_dir.path_join(file.get_file())
+		print(file, " -> ", new_path)
+		FileService.move_file(file, new_path, true)
 
-func _on_delete_request(path: String) -> void:
-	var dir := DirAccess.open(path)
+func _on_rename_request() -> void:
+	print("requesting rename of current directory")
+
+func _on_delete_request() -> void:
+	var dir := DirAccess.open(_current_directory)
 	if !dir:
-		push_error("Error opening directory at path: ", path)
+		push_error("Error opening directory at path: ", _current_directory)
 		return
 	_active_dialog = _confirm_dialog.instantiate() as ConfirmationDialog
 	add_child(_active_dialog)
 	_active_dialog.title = "Delete folder"
-	_active_dialog.dialog_text = "Are you certain you want to delete this folder and all of its contents?: " + path
-	_active_dialog.confirmed.connect(func(): delete_folder(path))
+	_active_dialog.dialog_text = "Are you certain you want to delete this folder and all of its contents?: " + _current_directory
+	_active_dialog.confirmed.connect(func(): delete_folder(_current_directory))
 	_active_dialog.get_cancel_button().pressed.connect(_on_request_cancelled)
-	print("deleting directory and all its contents (not)")
+	_on_folder_selected("")
+
+	_update_view()
 
 func _update_view() -> void:
 	print("updating view")
-	directory_view.build_directory_tree(_current_directory)
+	directory_view.build_directory_tree(_project_data.project_path)
 	directory_view.clear_filter()
 
+## Method for handling files dropped into the project from outside.
+## Will attempt to copy and save all files in the currently open directory.
 func _on_files_dropped(files: PackedStringArray) -> void:
 	if _project_data == null || _current_directory == "":
 		return
@@ -84,6 +100,7 @@ func create_new_folder(new_path: String) -> void:
 
 
 func delete_folder(path: String) -> void:
+	print(path)
 	if !DirAccess.dir_exists_absolute(path):
 		return
 	var err := DirAccess.remove_absolute(path)

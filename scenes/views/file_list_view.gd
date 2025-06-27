@@ -2,21 +2,21 @@ class_name FileListView extends Control
 
 enum IconSizes {SMALL, MEDIUM, LARGE}
 
+@export var _controller: FileMenuController
+
 @export_group("View settings")
-@export var small 		:= Vector2i(64, 64)
-@export var medium 		:= Vector2i(96, 96)
-@export var large 		:= Vector2i(128, 128)
+@export var small := Vector2i(64, 64)
+@export var medium := Vector2i(96, 96)
+@export var large := Vector2i(128, 128)
 
-@onready var _update_button: Button 			= %UpdateButton
-@onready var _list_view: ResponsiveItemList 	= %ImageList
-@onready var _context_menu: PopupMenu 			= %ContextMenu
+@onready var _update_button: Button = %UpdateButton
+@onready var _list_view: ResponsiveItemList = %ImageList
+@onready var _context_menu: PopupMenu = %ContextMenu
+@onready var _sort_menu: MenuButton = %SortButton
 
-var _current_dir: String 					= ""
-var _file_paths_in_dir: PackedStringArray 	= []
-var _right_click_index: int 				= -1
-
-var _cache: ThumbnailCache
-var _thumbnail_loader: ThumbnailLoader
+var _current_dir: String = ""
+var _file_paths_in_dir: PackedStringArray = []
+var _right_click_index: int = -1
 
 signal item_selected(index: int)
 signal multi_item_selected(index: int, selected: bool)
@@ -25,15 +25,15 @@ signal file_remove_request
 signal file_rename_request
 signal update_request
 signal selection_updated
+signal sort_mode_changed(mode: int)
 
 func _ready() -> void:
-	_cache = ProjectManager.thumbnail_cache
-	_thumbnail_loader = ThumbnailLoader.new()
-	add_child(_thumbnail_loader, true, INTERNAL_MODE_BACK)
 
 	_build_context_menu()
+	_build_sort_menu()
 
 	_update_button.pressed.connect(_on_update_pressed)
+	_sort_menu.get_popup().id_pressed.connect(_on_sort_menu_item_pressed)
 
 
 func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
@@ -47,8 +47,8 @@ func set_item_thumbnail(index, thumbnail) -> void:
 func update() -> void:
 	pass
 
-func add_item_to_list(full_path: String, file_name: String) -> int:
-	var index := _list_view.add_item(file_name)
+func add_item_to_list(full_path: String, file_data: FileData) -> int:
+	var index: int = _list_view.add_item(file_data.name)
 	_file_paths_in_dir.append(full_path)
 	
 	var rel_path := _get_rel_path(full_path)
@@ -66,6 +66,22 @@ func _build_context_menu() -> void:
 	
 	_context_menu.id_pressed.connect(_on_context_menu_item_pressed)
 	_list_view.gui_input.connect(_on_list_view_gui_input)
+
+func _build_sort_menu() -> void:
+	if !_sort_menu:
+		return
+	var popup := _sort_menu.get_popup()
+	for key in FileMenuController.SortMode.keys():
+		popup.add_radio_check_item(str(key).capitalize())
+
+	var sort_mode := _controller.sort_mode
+	popup.toggle_item_checked(sort_mode)
+
+func _on_sort_menu_item_pressed(id: int) -> void:
+	var popup := _sort_menu.get_popup()
+	for val in FileMenuController.SortMode.values():
+		popup.set_item_checked(val, val == id)
+	sort_mode_changed.emit(id)
 
 func clear() -> void:
 	_file_paths_in_dir.clear()
@@ -90,7 +106,7 @@ func _on_context_menu_item_pressed(id: int) -> void:
 		1:
 			file_rename_request.emit()
 			pass
-		2: 
+		2:
 			file_remove_request.emit()
 			pass
 		_:
@@ -115,7 +131,7 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 		file_rename_request.emit()
 	if event.is_action_pressed("select_all"):
 		for i in _file_paths_in_dir.size():
-			_list_view.select(i,false)
+			_list_view.select(i, false)
 			print(i)
 			selection_updated.emit()
 	if event.is_action_pressed("ui_cancel"):
@@ -156,7 +172,13 @@ func _get_rel_path(full_path: String) -> String:
 func get_selected_items() -> PackedInt32Array:
 	return _list_view.get_selected_items()
 
-func _on_icon_size_button_item_selected(index:int) -> void:
+func get_selected_item_paths() -> PackedStringArray:
+	var items: PackedStringArray = []
+	for index in get_selected_items():
+		items.append(_file_paths_in_dir[index])
+	return items
+
+func _on_icon_size_button_item_selected(index: int) -> void:
 	match index:
 		IconSizes.SMALL:
 			_list_view.set_icon_size(small)

@@ -8,7 +8,7 @@ signal file_deleted(path: String)
 signal file_modified(path: String)
 
 var _previous_files: Dictionary = {}
-var _timer := 0.0
+var _timer: Timer
 
 func _ready() -> void:
 	if !DirAccess.dir_exists_absolute(watch_path):
@@ -17,12 +17,31 @@ func _ready() -> void:
 	
 	_previous_files = _scan_directory(watch_path)
 
-func _process(delta: float) -> void:
-	_timer += delta
-	if _timer >= poll_interval:
-		_timer = 0.0
-		_check_for_changes()
+	_timer = Timer.new()
+	add_child(_timer, true, INTERNAL_MODE_FRONT)
+	_timer.autostart = false
+	_timer.one_shot = false
+	_timer.timeout.connect(_check_for_changes)
 
+
+func _check_for_changes() -> void:
+	print("checking")
+	var current_files := _scan_directory(watch_path)
+
+	# Detect deleted files
+	for file_path in _previous_files.keys():
+		if !current_files.has(file_path):
+			emit_signal("file_deleted", file_path)
+
+	# Detect created or modified files
+	for file_path in current_files.keys():
+		if !_previous_files.has(file_path):
+			emit_signal("file_created", file_path)
+		elif _previous_files[file_path] != current_files[file_path]:
+			emit_signal("file_modified", file_path)
+
+	_previous_files = current_files
+	
 func _scan_directory(path: String) -> Dictionary:
 	var files := {}
 	var dir := DirAccess.open(path)
@@ -46,20 +65,3 @@ func _scan_directory(path: String) -> Dictionary:
 	dir.list_dir_end()
 	return files
 
-func _check_for_changes() -> void:
-	print("checking")
-	var current_files := _scan_directory(watch_path)
-
-	# Detect deleted files
-	for file_path in _previous_files.keys():
-		if !current_files.has(file_path):
-			emit_signal("file_deleted", file_path)
-
-	# Detect created or modified files
-	for file_path in current_files.keys():
-		if !_previous_files.has(file_path):
-			emit_signal("file_created", file_path)
-		elif _previous_files[file_path] != current_files[file_path]:
-			emit_signal("file_modified", file_path)
-
-	_previous_files = current_files

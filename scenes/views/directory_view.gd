@@ -8,9 +8,11 @@ var _image_icon := preload("res://assets/icons/Image.svg")
 @onready var _filter_input: LineEdit = %DirectoryFilter
 
 signal folder_selected(path: String)
-signal data_dropped(from: String, to: String)
+signal data_dropped(files: PackedStringArray, target_dir: String)
 
-signal add_folder_request(parent: String)
+signal add_folder_request()
+signal delete_request()
+signal rename_request()
 signal update_request
 
 func _ready() -> void:
@@ -106,8 +108,8 @@ func _show_context_menu(_item: TreeItem, pos: Vector2) -> void:
 	_context_menu.position = pos
 	_context_menu.popup()
 	
-func _on_data_dropped(from: String, to: String) -> void:
-	data_dropped.emit(from, to)
+func _on_data_dropped(files: PackedStringArray, target_dir: String) -> void:
+	data_dropped.emit(files,target_dir)
 
 func clear_filter() -> void:
 	_filter_input.clear()
@@ -116,13 +118,15 @@ func _on_context_menu_pressed(id: int) -> void:
 	match id:
 		0:
 			print("add folder")
-			add_folder_request.emit("")
+			add_folder_request.emit()
 			pass
 		1:
 			print("rename")
+			rename_request.emit()
 			pass
 		2:
 			print("delete")
+			delete_request.emit()
 			pass
 		_:
 			return

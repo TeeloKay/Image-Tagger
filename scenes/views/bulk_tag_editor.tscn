@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://cykwccqg380hc"]
+
+[ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="1_brqga"]
+
+[node name="BulkTagEditor" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TagSelector" type="MenuButton" parent="VBoxContainer"]
+layout_mode = 2
+text = "Select tag"
+
+[node name="TagContainer" type="HFlowContainer" parent="VBoxContainer"]
+custom_minimum_size = Vector2(240, 120)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="TagInputContainer" parent="VBoxContainer" instance=ExtResource("1_brqga")]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="Apply" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Apply to all
+"
+
+[node name="Discard" type="Button" parent="VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Discard changes"
