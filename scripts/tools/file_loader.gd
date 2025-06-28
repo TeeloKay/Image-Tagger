@@ -2,6 +2,7 @@ class_name FileLoader extends Node
 
 var _queue: Array[String] = []
 var _cache: Dictionary[String, FileData] = {}
+var _is_processing := false
 
 @export_range(1, 1024, 1) var max_cache_size: int = 512
 @export_range(1, 100, 1, "or_greater") var batch_size: int = 12
@@ -17,15 +18,12 @@ func add_file_to_queue(path: String) -> void:
 
 ## Add series of file paths to queue.
 func populate_queue(paths: Array[String]) -> void:
-	print(paths)
 	clear_queue()
 	_queue.assign(paths)
-	print(_queue.size())
 
 func _process(_delta: float) -> void:
 	if _queue.size() > 0:
 		var temp_queue := []
-		print(temp_queue)
 		for i in batch_size:
 			if _queue.is_empty():
 				break
@@ -33,8 +31,10 @@ func _process(_delta: float) -> void:
 		
 		for path in temp_queue:
 			_load_file(path)
+
 		if _queue.size() == 0:
 			queue_cleared.emit()
+			queue_complete.emit()
 
 func _load_file(path: String) -> void:
 	if path in _cache:
@@ -43,8 +43,6 @@ func _load_file(path: String) -> void:
 	var file_name := path.get_file()
 	var modified := FileAccess.get_modified_time(path)
 	var size := FileAccess.get_file_as_bytes(path).size()
-	print(path)
-	print("file_name: modified ", modified, ", size ", size)
 	var file_data := FileData.new(file_name, modified, size)
 	_add_file_data_to_cache(path, file_data)
 

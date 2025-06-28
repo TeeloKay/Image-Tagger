@@ -1,18 +1,18 @@
 class_name ImageDataView extends VSplitContainer
 
-@onready var _name_edit: LineEdit 			= %FileName
-@onready var _image_preview: TextureRect 	= %ImagePreview
-@onready var _explorer_button: Button 		= %ExplorerButton
+@onready var _name_edit: LineEdit = %FileName
+@onready var _image_preview: TextureRect = %ImagePreview
+@onready var _explorer_button: Button = %ExplorerButton
 
-@onready var _tag_container: FlowContainer 	= %TagContainer
-@onready var _tag_input: TagInputContainer 	= %TagInputContainer
+@onready var _tag_container: FlowContainer = %TagContainer
+@onready var _tag_input: TagInputContainer = %TagInputContainer
 
-@onready var _save_button: Button 			= %ApplyButton
-@onready var _discard_button: Button 		= %DiscardButton
-@onready var _tag_picker: MenuButton 		= %MenuButton
+@onready var _save_button: Button = %ApplyButton
+@onready var _discard_button: Button = %DiscardButton
+@onready var _tag_picker: MenuButton = %MenuButton
 
-@export var current_image: String 			= ""
-@export var current_hash: String 			= ""
+@export var current_image: String = ""
+@export var current_hash: String = ""
 
 
 var _is_dirty: bool = false
@@ -66,7 +66,7 @@ func _input(event: InputEvent) -> void:
 		var name_length := current_image.get_file().get_basename().length()
 		print(current_image.get_file())
 		print(name_length)
-		_name_edit.select(0,name_length)
+		_name_edit.select(0, name_length)
 		_name_edit.caret_column = name_length
 
 func set_texture(texture: Texture2D) -> void:
@@ -131,8 +131,8 @@ func mark_dirty() -> void:
 		dirty_changed.emit(_is_dirty)
 
 func _on_tag_picker_resized() -> void:
-	_tag_picker.get_popup().size = Vector2i(_tag_picker.size.x, 200)
-	_tag_picker.get_popup().max_size = Vector2i(_tag_picker.size.x, 200)
+	_tag_picker.get_popup().size = Vector2i(int(_tag_picker.size.x), 200)
+	_tag_picker.get_popup().max_size = Vector2i(int(_tag_picker.size.x), 200)
 
 func _on_name_change_request(new_name: String) -> void:
 	name_change_request.emit(new_name)

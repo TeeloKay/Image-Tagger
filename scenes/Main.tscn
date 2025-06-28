@@ -206,13 +206,13 @@ script = ExtResource("3_lhr70")
 directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 
-[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_file_loader")]
+[node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
 script = ExtResource("4_lhr70")
 image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-_file_loader = NodePath("FileLoader")
 sort_mode = 2
 
 [node name="FileLoader" type="Node" parent="Controllers/FileMenuController"]
+unique_name_in_owner = true
 script = ExtResource("17_1nqs0")
 metadata/_custom_type_script = "uid://cwejjc3pnkuoo"
 
