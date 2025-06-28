@@ -74,7 +74,7 @@ func _build_sort_menu() -> void:
 	if !_sort_menu:
 		return
 	var popup := _sort_menu.get_popup()
-	for key in FileMenuController.SortMode.keys():
+	for key in FileDataHandler.SortMode.keys():
 		popup.add_radio_check_item(str(key).capitalize())
 
 	var sort_mode := _controller.sort_mode
@@ -158,13 +158,13 @@ func _on_icon_size_button_item_selected(index: int) -> void:
 
 func _on_sort_menu_item_pressed(id: int) -> void:
 	var popup := _sort_menu.get_popup()
-	for val in FileMenuController.SortMode.values():
+	for val in FileDataHandler.SortMode.values():
 		popup.set_item_checked(val, val == id)
 	sort_mode_changed.emit(id)
 
 func _on_type_filter_button_item_pressed(id: int) -> void:
 	var popup := _type_filter_button.get_popup()
-	
+
 
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
