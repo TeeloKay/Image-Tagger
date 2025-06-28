@@ -19,10 +19,14 @@ var _files: Array[String] = []
 ## Dictionary of image meta data.
 var _file_data: Dictionary[String, FileData] = {}
 
+signal life_loaded(file: String, file_data: FileData)
+
 func get_files() -> Array[String]:
 	return _files.duplicate()
 
 func get_files_filtered(type_filter: Array) -> PackedStringArray:
+	if type_filter.is_empty():
+		return PackedStringArray(_files)
 	var filtered_files: PackedStringArray = []
 	for file in _files:
 		if file.get_extension() in type_filter:

@@ -21,5 +21,8 @@ func _on_selection_changed() -> void:
 	var selection := file_controller.get_selection()
 	if selection.size() == 1:
 		print("one image selected")
+		print(selection[0])
 		return
 	print("more than one image selected")
+	for item in selection:
+		print(item)

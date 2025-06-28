@@ -1,8 +1,8 @@
 class_name ImageDragData extends RefCounted
 
 var files: PackedStringArray = []
-var origin: Control
+var source: Control
 
-func _init(origin: Control, files: PackedStringArray):
-	self.origin = origin
+func _init(source: Control, files: PackedStringArray):
+	self.source = source
 	self.files = files

@@ -1,15 +1,12 @@
 class_name FileMenuController extends MenuController
 
 @onready var _confirm_prefab := preload("res://scenes/common/popups/confirm_dialog.tscn")
-@onready var _file_loader: FileLoader = %FileLoader
 
 @export var image_view: FileListView
-
-
-@export var sort_mode: FileDataHandler.SortMode = FileDataHandler.SortMode.SORT_BY_NAME_ASC:
+@export var sort_mode: FileDataHandler.SortMode:
 	set = set_sort_mode, get = get_sort_mode
 
-@export var extension_filter: PackedStringArray = ImageUtil.ACCEPTED_TYPES:
+@export var extension_filter: PackedStringArray = []:
 	set = set_extension_filter
 
 var _active_dialog: ConfirmationDialog
@@ -20,9 +17,12 @@ var _selected_files: PackedStringArray = []
 
 var _viewed_files: Dictionary[String, bool] = {}
 
-var _is_loading := false
 
 var _data_handler: FileDataHandler
+@onready var _file_loader: FileLoader = %FileLoader
+
+var _is_loading := false
+var _selection_update_pending := false
 
 signal image_selected(image_path: String)
 signal selection_changed()
@@ -32,13 +32,14 @@ func _ready() -> void:
 
 	_data_handler = FileDataHandler.new()
 
-	image_view.item_selected.connect(_on_item_selected)
 	image_view.selection_updated.connect(_on_selection_updated)
+	image_view.item_selected.connect(_on_item_selected)
 	image_view.update_request.connect(rebuild_view_from_file_list)
 	image_view.file_moved.connect(_on_file_move_request)
 	image_view.file_remove_request.connect(_on_file_remove_request)
 	image_view.file_rename_request.connect(_on_file_rename_request)
 	image_view.sort_mode_changed.connect(set_sort_mode)
+	image_view.filter_item_pressed.connect(_on_filter_item_pressed)
 
 	_file_loader.file_loaded.connect(_register_file_data)
 	_file_loader.queue_complete.connect(_on_file_loader_queue_completed)
@@ -60,7 +61,7 @@ func show_files_in_directory(dir_path: String) -> void:
 	clear()
 
 	_data_handler.assign_files(get_files_in_directory(dir_path))
-	_file_loader.populate_queue(_data_handler.get_files())
+	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
 	_is_loading = true
 		
 func show_search_results(results: Array[SearchResult]) -> void:
@@ -71,7 +72,7 @@ func show_search_results(results: Array[SearchResult]) -> void:
 	for result in results:
 		if result.image_path == "":
 			_data_handler.add_file(result.image_path)
-	_file_loader.populate_queue(_data_handler.get_files())
+	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
 	_is_loading = true
 
 func get_files_in_directory(dir_path: String) -> PackedStringArray:
@@ -91,7 +92,6 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 
 func _register_file_data(path: String, file_data: FileData) -> void:
 	_data_handler.register_file(path, file_data)
-	# _add_item_to_view(path, file_data)
 
 	if !_viewed_files.has(path) && path.get_extension() in extension_filter:
 		_viewed_files[path] = true
@@ -118,9 +118,10 @@ func _on_file_created(_path: String) -> void:
 
 #region selection
 func _on_item_selected(index: int) -> void:
+	print("item selected")
 	if index >= 0 && index < _data_handler.get_file_count():
 		_selected_files.clear()
-		_selected_files.append(_data_handler.get_file_at_index(index))
+		_selected_files.append(_data_handler.get_files_filtered(extension_filter)[index])
 		if !_selected_files.is_empty():
 			image_selected.emit(_selected_files[0])
 		else:
@@ -128,10 +129,18 @@ func _on_item_selected(index: int) -> void:
 		selection_changed.emit()
 
 func _on_selection_updated() -> void:
+	if _selection_update_pending:
+		return
+	_selection_update_pending = true
+	call_deferred("_apply_selection_update")
+	
+func _apply_selection_update() -> void:
+	_selection_update_pending = false
 	_selected_files.clear()
 	var selected_items := image_view.get_selected_items()
+	var items := _data_handler.get_files_filtered(extension_filter)
 	for idx in selected_items:
-		_selected_files.append(_data_handler.get_file_at_index(idx))
+		_selected_files.append(items[idx])
 	image_selected.emit(_selected_files[0])
 	selection_changed.emit()
 
@@ -188,6 +197,7 @@ func clear_view() -> void:
 	_viewed_files.clear()
 	image_view.clear()
 
+#region Getters & Setters
 func set_sort_mode(mode: FileDataHandler.SortMode) -> void:
 	_data_handler.sort_mode = mode
 	## cannot sort while loading files
@@ -203,6 +213,8 @@ func get_sort_mode() -> FileDataHandler.SortMode:
 
 func set_extension_filter(filter: PackedStringArray) -> void:
 	extension_filter = filter
+
+#endregion
 
 func rebuild_view_from_file_list() -> void:
 	if _is_loading:
@@ -220,3 +232,16 @@ func _on_project_reset() -> void:
 	_file_loader.clear_cache()
 	_data_handler.clear()
 	_viewed_files.clear()
+
+#region UI callbacks
+func _on_filter_item_pressed(id: int) -> void:
+	var valid_types := ImageUtil.ACCEPTED_TYPES
+	var selected_type = valid_types[id]
+	var index := extension_filter.find(selected_type)
+	if index == -1:
+		extension_filter.append(selected_type)
+	else:
+		extension_filter.remove_at(index)
+	rebuild_view_from_file_list()
+
+#endregion

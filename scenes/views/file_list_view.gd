@@ -16,7 +16,6 @@ enum {FAVORITE, RENAME, DELETE}
 @onready var _sort_menu: MenuButton = %SortButton
 @onready var _type_filter_button: MenuButton = %TypeFilterButton
 
-var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
 var _right_click_index: int = -1
 
@@ -28,6 +27,7 @@ signal file_rename_request
 signal update_request
 signal selection_updated
 signal sort_mode_changed(mode: int)
+signal filter_item_pressed(id: int)
 
 func _ready() -> void:
 	_build_context_menu()
@@ -36,10 +36,8 @@ func _ready() -> void:
 
 	_update_button.pressed.connect(_on_update_pressed)
 	_sort_menu.get_popup().id_pressed.connect(_on_sort_menu_item_pressed)
-	_type_filter_button.get_popup().id_pressed.connect(_on_type_filter_button_item_pressed)
 
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
-
 
 func update() -> void:
 	pass
@@ -48,9 +46,9 @@ func add_item_to_list(full_path: String, file_data: FileData) -> int:
 	var index: int = _list_view.add_item(file_data.name)
 	_file_paths_in_dir.append(full_path)
 
-	var size := FileUtil.human_readable_size(file_data.size)
+	var file_size := FileUtil.human_readable_size(file_data.size)
 	var date := Time.get_datetime_string_from_unix_time(file_data.modified)
-	var tooltip := "size: %s \n modified: %s" % [size, date]
+	var tooltip := "size: %s \nmodified: %s" % [file_size, date]
 	_list_view.set_item_tooltip(index, tooltip)
 
 	ThumbnailManager.queue_thumbnail(full_path)
@@ -85,11 +83,12 @@ func _build_type_filter_button() -> void:
 		return
 	var popup := _type_filter_button.get_popup()
 	popup.clear()
-	var counter := 0
 	for type in ImageUtil.ACCEPTED_TYPES:
 		popup.add_check_item(type)
-		popup.set_item_checked(counter, true)
-		counter += 1
+	
+	popup.hide_on_checkable_item_selection = false
+	popup.hide_on_item_selection = false
+	popup.id_pressed.connect(_on_type_filter_button_item_pressed)
 #endregion
 
 func clear() -> void:
@@ -164,7 +163,8 @@ func _on_sort_menu_item_pressed(id: int) -> void:
 
 func _on_type_filter_button_item_pressed(id: int) -> void:
 	var popup := _type_filter_button.get_popup()
-
+	popup.toggle_item_checked(id)
+	filter_item_pressed.emit(id)
 
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
