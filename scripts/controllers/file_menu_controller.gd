@@ -18,8 +18,8 @@ var _selected_files: PackedStringArray = []
 var _viewed_files: Dictionary[String, bool] = {}
 
 
+var _file_loader: FileLoader
 var _data_handler: FileDataHandler
-@onready var _file_loader: FileLoader = %FileLoader
 
 var _is_loading := false
 var _selection_update_pending := false
@@ -30,25 +30,31 @@ signal selection_changed()
 func _ready() -> void:
 	super._ready()
 
+	_file_loader = FileLoader.new()
 	_data_handler = FileDataHandler.new()
 
-	image_view.selection_updated.connect(_on_selection_updated)
 	image_view.item_selected.connect(_on_item_selected)
+	image_view.selection_updated.connect(_on_selection_updated)
+
 	image_view.update_request.connect(rebuild_view_from_file_list)
-	image_view.file_moved.connect(_on_file_move_request)
-	image_view.file_remove_request.connect(_on_file_remove_request)
-	image_view.file_rename_request.connect(_on_file_rename_request)
 	image_view.sort_mode_changed.connect(set_sort_mode)
 	image_view.filter_item_pressed.connect(_on_filter_item_pressed)
 
 	_file_loader.file_loaded.connect(_register_file_data)
 	_file_loader.queue_complete.connect(_on_file_loader_queue_completed)
 
+	image_view.file_moved.connect(_on_file_move_request)
+	image_view.file_remove_request.connect(_on_file_remove_request)
+	image_view.file_rename_request.connect(_on_file_rename_request)
+
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	# ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
+
+func _process(delta: float) -> void:
+	_file_loader.process(delta)
 
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
@@ -106,13 +112,14 @@ func _on_file_move_request(from: String, to: String) -> void:
 	FileService.move_file(from, to)
 	rebuild_view_from_file_list()
 
-func _on_file_moved(_from: String, _to: String) -> void:
-	rebuild_view_from_file_list()
-
 func _on_file_removed(_path: String) -> void:
+	_data_handler.remove_file(_path)
 	rebuild_view_from_file_list()
 
 func _on_file_created(_path: String) -> void:
+	if _path.get_base_dir() != _current_dir:
+		return
+	_file_loader.add_file_to_queue(_path)
 	rebuild_view_from_file_list()
 #endregion
 

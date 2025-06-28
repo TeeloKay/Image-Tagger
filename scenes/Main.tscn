@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=20 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="Script" uid="uid://cwb25aw26wf6u" path="res://scripts/controllers/directory_controller.gd" id="3_lhr70"]
@@ -18,7 +18,6 @@
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/confirm_dialog.tscn" id="14_mwfav"]
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
-[ext_resource type="Script" uid="uid://cwejjc3pnkuoo" path="res://scripts/tools/file_loader.gd" id="17_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
 
 [node name="Main" type="CanvasLayer"]
@@ -209,11 +208,6 @@ metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 [node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
 script = ExtResource("4_lhr70")
 image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-
-[node name="FileLoader" type="Node" parent="Controllers/FileMenuController"]
-unique_name_in_owner = true
-script = ExtResource("17_1nqs0")
-metadata/_custom_type_script = "uid://cwejjc3pnkuoo"
 
 [node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")

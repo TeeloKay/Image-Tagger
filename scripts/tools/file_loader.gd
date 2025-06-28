@@ -1,4 +1,4 @@
-class_name FileLoader extends Node
+class_name FileLoader extends RefCounted
 
 var _queue: Array[String] = []
 var _cache: Dictionary[String, FileData] = {}
@@ -21,7 +21,7 @@ func populate_queue(paths: Array[String]) -> void:
 	clear_queue()
 	_queue.assign(paths)
 
-func _process(_delta: float) -> void:
+func process(_delta: float) -> void:
 	if _queue.size() > 0:
 		var temp_queue := []
 		for i in batch_size:

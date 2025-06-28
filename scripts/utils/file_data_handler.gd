@@ -19,8 +19,6 @@ var _files: Array[String] = []
 ## Dictionary of image meta data.
 var _file_data: Dictionary[String, FileData] = {}
 
-signal life_loaded(file: String, file_data: FileData)
-
 func get_files() -> Array[String]:
 	return _files.duplicate()
 
@@ -45,6 +43,15 @@ func add_file(file: String) -> void:
 	if file in _files:
 		return
 	_files.append(file)
+
+func remove_file(file: String) -> void:
+	print(file)
+	var index := _files.find(file)
+	if index == -1:
+		return
+	_files.remove_at(index)
+	if file in _file_data:
+		_file_data.erase(file)
 
 func register_file(file: String, file_data: FileData) -> void:
 	add_file(file)
