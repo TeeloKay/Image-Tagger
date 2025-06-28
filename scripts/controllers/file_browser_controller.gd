@@ -1,8 +1,8 @@
-class_name FileMenuController extends MenuController
+class_name FileBrowserController extends MenuController
 
 @onready var _confirm_prefab := preload("res://scenes/common/popups/confirm_dialog.tscn")
 
-@export var image_view: FileListView
+@export var image_view: FileBrowserView
 @export var sort_mode: FileDataHandler.SortMode:
 	set = set_sort_mode, get = get_sort_mode
 

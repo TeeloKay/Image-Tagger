@@ -2,7 +2,7 @@
 
 enum ViewMode {GRID, LIST}
 
-@export var list_view: FileListView
+@export var list_view: FileBrowserView
 @export var view_mode: ViewMode = ViewMode.GRID:
 	set = set_view_mode
 

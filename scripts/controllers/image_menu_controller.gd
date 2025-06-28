@@ -10,7 +10,7 @@ class_name ImageMenuController extends MenuController
 
 @export var _error_dialog: AcceptDialog
 
-@export var file_menu_controller : FileMenuController
+@export var file_menu_controller : FileBrowserController
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

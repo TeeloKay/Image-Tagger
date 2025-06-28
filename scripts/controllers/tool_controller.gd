@@ -5,7 +5,7 @@ enum {PNG = 0, WEBP = 1, JPEG = 2}
 @export var conversion_popup: ImageConversionPopup
 @export var menu_button: MenuButton
 @export var directory_controller: DirectoryController
-@export var file_controller: FileMenuController
+@export var file_controller: FileBrowserController
 
 var _image_converter: ImageConverter = null
 var _format_detector: ImageFormatDetector = null

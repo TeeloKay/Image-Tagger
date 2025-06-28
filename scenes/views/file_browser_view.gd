@@ -1,9 +1,9 @@
-class_name FileListView extends Control
+class_name FileBrowserView extends Control
 
 enum IconSizes {SMALL, MEDIUM, LARGE}
 enum {FAVORITE, RENAME, DELETE}
 
-@export var _controller: FileMenuController
+@export var _controller: FileBrowserController
 
 @export_group("View settings")
 @export var small := Vector2i(64, 64)

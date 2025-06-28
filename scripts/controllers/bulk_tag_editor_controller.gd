@@ -1,6 +1,6 @@
 class_name BulkTagEditorController extends MenuController
 
-@export var file_controller: FileMenuController
+@export var file_controller: FileBrowserController
 @export var image_view: ImageDataView
 
 func _ready() -> void:

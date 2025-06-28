@@ -139,7 +139,7 @@ metadata/_tab_index = 0
 [node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 layout_mode = 2
 
-[node name="FileListView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
+[node name="FileBrowser" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
 layout_mode = 2
 _controller = NodePath("../../../../../../../Controllers/FileMenuController")
 
@@ -207,7 +207,7 @@ metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 
 [node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
 script = ExtResource("4_lhr70")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
+image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileBrowser")
 
 [node name="ImageMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")
