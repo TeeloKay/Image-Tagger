@@ -1,6 +1,7 @@
 class_name FileListView extends Control
 
 enum IconSizes {SMALL, MEDIUM, LARGE}
+enum {FAVORITE, RENAME, DELETE}
 
 @export var _controller: FileMenuController
 
@@ -37,14 +38,6 @@ func _ready() -> void:
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
 
-func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
-	var index := _file_paths_in_dir.find(path)
-	if index >= 0:
-		set_item_thumbnail(index, thumbnail)
-
-func set_item_thumbnail(index, thumbnail) -> void:
-	_list_view.set_item_icon(index, thumbnail)
-
 func update() -> void:
 	pass
 
@@ -67,10 +60,10 @@ func _build_context_menu() -> void:
 	if !_context_menu:
 		return
 	
-	_context_menu.add_check_item("favorite", 0)
+	_context_menu.add_check_item("favorite", FAVORITE)
 	_context_menu.add_separator()
-	_context_menu.add_item("Rename", 1)
-	_context_menu.add_item("Delete", 2)
+	_context_menu.add_item("Rename", RENAME)
+	_context_menu.add_item("Delete", DELETE)
 	
 	_context_menu.id_pressed.connect(_on_context_menu_item_pressed)
 	_list_view.gui_input.connect(_on_list_view_gui_input)
@@ -85,17 +78,73 @@ func _build_sort_menu() -> void:
 	var sort_mode := _controller.sort_mode
 	popup.toggle_item_checked(sort_mode)
 
-func _on_sort_menu_item_pressed(id: int) -> void:
-	var popup := _sort_menu.get_popup()
-	for val in FileMenuController.SortMode.values():
-		popup.set_item_checked(val, val == id)
-	sort_mode_changed.emit(id)
 
 func clear() -> void:
 	_file_paths_in_dir.clear()
 	_list_view.clear()
 	ThumbnailManager.clear_queue()
 
+#region getters & setters
+func get_selected_items() -> PackedInt32Array:
+	return _list_view.get_selected_items()
+
+func set_item_thumbnail(index, thumbnail) -> void:
+	_list_view.set_item_icon(index, thumbnail)
+
+func get_file_paths_in_dir() -> PackedStringArray:
+	return _file_paths_in_dir.duplicate()
+
+func set_scroll_position(position: Vector2i) -> void:
+	_list_view.get_h_scroll_bar().value = position.x
+	_list_view.get_v_scroll_bar().value = position.y
+
+func get_selected_item_paths() -> PackedStringArray:
+	var items: PackedStringArray = []
+	for index in get_selected_items():
+		items.append(_file_paths_in_dir[index])
+	return items
+#endregion
+
+#region utility
+func _get_full_path(rel_path: String) -> String:
+	return ProjectManager.to_abolute_path(rel_path)
+
+func _get_rel_path(full_path: String) -> String:
+	return ProjectManager.to_relative_path(full_path)
+#endregion
+
+#region listeners
+func _on_icon_size_button_item_selected(index: int) -> void:
+	match index:
+		IconSizes.SMALL:
+			_list_view.set_icon_size(small)
+		IconSizes.MEDIUM:
+			_list_view.set_icon_size(medium)
+		IconSizes.LARGE:
+			_list_view.set_icon_size(large)
+		_:
+			_list_view.set_icon_size(medium)
+
+func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
+	var index := _file_paths_in_dir.find(path)
+	if index >= 0:
+		set_item_thumbnail(index, thumbnail)
+
+func _on_sort_menu_item_pressed(id: int) -> void:
+	var popup := _sort_menu.get_popup()
+	for val in FileMenuController.SortMode.values():
+		popup.set_item_checked(val, val == id)
+	sort_mode_changed.emit(id)
+
+func _on_file_moved(from_path: String, to_path: String) -> void:
+	file_moved.emit(from_path, to_path)
+	print("file moved")
+
+func _on_file_removed(path: String) -> void:
+	if path in _file_paths_in_dir:
+		update()
+
+#TODO: move logic from this class to the file menu controller
 func _on_context_menu_item_pressed(id: int) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 		return
@@ -104,7 +153,7 @@ func _on_context_menu_item_pressed(id: int) -> void:
 	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
 	
 	match id:
-		0:
+		FAVORITE:
 			var is_fav = ProjectManager.current_project.is_favorited(hash_val)
 			if is_fav:
 				ProjectManager.current_project.remove_from_favorites(hash_val)
@@ -112,10 +161,10 @@ func _on_context_menu_item_pressed(id: int) -> void:
 				ProjectManager.current_project.add_to_favorites(hash_val)
 			_context_menu.set_item_checked(0, !is_fav)
 			ProjectManager.save_current_project()
-		1:
+		RENAME:
 			file_rename_request.emit()
 			pass
-		2:
+		DELETE:
 			file_remove_request.emit()
 			pass
 		_:
@@ -123,17 +172,9 @@ func _on_context_menu_item_pressed(id: int) -> void:
 
 func _on_list_view_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_MASK_RIGHT && event.is_pressed():
-		var evt := event as InputEventMouseButton
-		var click_pos := evt.position
-		_right_click_index = _list_view.get_item_at_position(click_pos)
-		
-		if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
-			return
-		
-		var path = _file_paths_in_dir[_right_click_index]
-		var hash_val := ProjectManager.current_project.get_hash_for_path(path)
-		_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
-		_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
+		var click_pos: Vector2 = event.position
+		_show_context_menu(click_pos)
+
 	if event.is_action_pressed("delete"):
 		file_remove_request.emit()
 	if event.is_action_pressed("rename"):
@@ -141,10 +182,19 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 	if event.is_action_pressed("select_all"):
 		for i in _file_paths_in_dir.size():
 			_list_view.select(i, false)
-			print(i)
 			selection_updated.emit()
 	if event.is_action_pressed("ui_cancel"):
 		_list_view.deselect_all()
+
+func _show_context_menu(click_position: Vector2) -> void:
+	_right_click_index = _list_view.get_item_at_position(click_position)
+	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
+		return
+		
+	var path = _file_paths_in_dir[_right_click_index]
+	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
+	_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
+	_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
 
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
@@ -156,44 +206,4 @@ func _on_image_list_multi_selected(index: int, selected: bool) -> void:
 
 func _on_update_pressed() -> void:
 	update_request.emit()
-
-func get_file_paths_in_dir() -> PackedStringArray:
-	return _file_paths_in_dir.duplicate()
-
-func _on_file_moved(from_path: String, to_path: String) -> void:
-	file_moved.emit(from_path, to_path)
-	print("file moved")
-
-func _on_file_removed(path: String) -> void:
-	if path in _file_paths_in_dir:
-		update()
-
-func set_scroll_position(position: Vector2i) -> void:
-	_list_view.get_h_scroll_bar().value = position.x
-	_list_view.get_v_scroll_bar().value = position.y
-
-func _get_full_path(rel_path: String) -> String:
-	return ProjectManager.to_abolute_path(rel_path)
-
-func _get_rel_path(full_path: String) -> String:
-	return ProjectManager.to_relative_path(full_path)
-
-func get_selected_items() -> PackedInt32Array:
-	return _list_view.get_selected_items()
-
-func get_selected_item_paths() -> PackedStringArray:
-	var items: PackedStringArray = []
-	for index in get_selected_items():
-		items.append(_file_paths_in_dir[index])
-	return items
-
-func _on_icon_size_button_item_selected(index: int) -> void:
-	match index:
-		IconSizes.SMALL:
-			_list_view.set_icon_size(small)
-		IconSizes.MEDIUM:
-			_list_view.set_icon_size(medium)
-		IconSizes.LARGE:
-			_list_view.set_icon_size(large)
-		_:
-			_list_view.set_icon_size(medium)
+#endregion
