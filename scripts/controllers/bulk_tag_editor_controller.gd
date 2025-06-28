@@ -1,12 +1,11 @@
 class_name BulkTagEditorController extends MenuController
 
-@export var file_controller: FileBrowserController
+@export var browser_controller: FileBrowserController
 @export var image_view: ImageDataView
 
 func _ready() -> void:
 	super._ready()
-
-	file_controller.selection_changed.connect(_on_selection_changed)
+	# browser_controller.selection_changed.connect(_on_selection_changed)
 
 
 func _on_project_loaded() -> void:
@@ -16,9 +15,8 @@ func _on_project_loaded() -> void:
 	image_view.enable()
 
 
-
 func _on_selection_changed() -> void:
-	var selection := file_controller.get_selection()
+	var selection := browser_controller.get_selection()
 	if selection.size() == 1:
 		print("one image selected")
 		print(selection[0])

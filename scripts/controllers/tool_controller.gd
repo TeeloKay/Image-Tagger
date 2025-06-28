@@ -82,7 +82,7 @@ func _convert_selection() -> void:
 	
 	conversion_ended.emit()
 	conversion_popup.hide()
-	file_controller.update()
+	file_controller.rebuild_view_from_file_list()
 	
 	ProjectManager.save_current_project()
 

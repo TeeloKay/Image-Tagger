@@ -1,15 +1,15 @@
 [gd_scene load_steps=3 format=3 uid="uid://c74n6v23cjt7m"]
 
 [ext_resource type="Script" uid="uid://bl5gos0i20xiu" path="res://scenes/responsive_item_list.gd" id="1_a723t"]
-[ext_resource type="Script" uid="uid://dsxbjwyln1xd4" path="res://scenes/views/file_list_view.gd" id="1_aen7i"]
+[ext_resource type="Script" uid="uid://4mkm3t4erk4p" path="res://scenes/views/file_browser_view.gd" id="1_f5kxf"]
 
-[node name="FileListView" type="VBoxContainer"]
+[node name="FileBrowserView" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_aen7i")
+script = ExtResource("1_f5kxf")
 
 [node name="Toolbar" type="HBoxContainer" parent="."]
 layout_mode = 2

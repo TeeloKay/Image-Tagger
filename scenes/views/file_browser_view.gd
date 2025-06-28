@@ -37,8 +37,6 @@ func _ready() -> void:
 	_update_button.pressed.connect(_on_update_pressed)
 	_sort_menu.get_popup().id_pressed.connect(_on_sort_menu_item_pressed)
 
-	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
-
 func update() -> void:
 	pass
 
@@ -50,8 +48,6 @@ func add_item_to_list(full_path: String, file_data: FileData) -> int:
 	var date := Time.get_datetime_string_from_unix_time(file_data.modified)
 	var tooltip := "size: %s \nmodified: %s" % [file_size, date]
 	_list_view.set_item_tooltip(index, tooltip)
-
-	ThumbnailManager.queue_thumbnail(full_path)
 	
 	return index
 
@@ -94,7 +90,6 @@ func _build_type_filter_button() -> void:
 func clear() -> void:
 	_file_paths_in_dir.clear()
 	_list_view.clear()
-	ThumbnailManager.clear_queue()
 
 #region context logic
 func _show_context_menu(click_position: Vector2) -> void:

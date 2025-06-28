@@ -14,9 +14,7 @@ var _active_dialog: ConfirmationDialog
 var _current_dir: String = ""
 ## list of currently selected files.
 var _selected_files: PackedStringArray = []
-
 var _viewed_files: Dictionary[String, bool] = {}
-
 
 var _file_loader: FileLoader
 var _data_handler: FileDataHandler
@@ -25,7 +23,7 @@ var _is_loading := false
 var _selection_update_pending := false
 
 signal image_selected(image_path: String)
-signal selection_changed()
+signal selection_changed
 
 func _ready() -> void:
 	super._ready()
@@ -51,7 +49,7 @@ func _ready() -> void:
 	FileService.file_created.connect(_on_file_created)
 
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
-	# ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
+	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 
 func _process(delta: float) -> void:
 	_file_loader.process(delta)
@@ -96,15 +94,16 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 
 	return files
 
-func _register_file_data(path: String, file_data: FileData) -> void:
-	_data_handler.register_file(path, file_data)
+func _register_file_data(file: String, file_data: FileData) -> void:
+	_data_handler.register_file(file, file_data)
 
-	if !_viewed_files.has(path) && path.get_extension() in extension_filter:
-		_viewed_files[path] = true
-		_add_item_to_view(path, file_data)
+	if !_viewed_files.has(file) && file.get_extension() in extension_filter:
+		_viewed_files[file] = true
+		_add_item_to_view(file, file_data)
 
-func _add_item_to_view(abs_path: String, file_data: FileData) -> int:
-	var index: int = image_view.add_item_to_list(abs_path, file_data)
+func _add_item_to_view(file: String, file_data: FileData) -> int:
+	var index: int = image_view.add_item_to_list(file, file_data)
+	ThumbnailManager.queue_thumbnail(file)
 	return index
 
 #region File events
@@ -203,6 +202,7 @@ func clear() -> void:
 func clear_view() -> void:
 	_viewed_files.clear()
 	image_view.clear()
+	ThumbnailManager.clear_queue()
 
 #region Getters & Setters
 func set_sort_mode(mode: FileDataHandler.SortMode) -> void:
