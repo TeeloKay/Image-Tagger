@@ -30,6 +30,7 @@ func _ready() -> void:
 	image_indexer = ImageIndexer.new()
 
 	add_child(image_hasher, true, INTERNAL_MODE_FRONT)
+	project_loaded.connect(ThumbnailManager.clear_queue)
 
 func load_project_registry():
 	if FileAccess.file_exists(REGISTRY_PATH):

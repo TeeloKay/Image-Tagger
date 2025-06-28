@@ -6,7 +6,9 @@ enum SortMode {
 	SORT_BY_SIZE_ASC,
 	SORT_BY_SIZE_DESC,
 	SORT_BY_DATE_ASC,
-	SORT_BY_DATE_DESC
+	SORT_BY_DATE_DESC,
+	SORT_BY_TYPE_ASC,
+	SORT_BY_TYPE_DESC
 }
 
 @onready var _confirm_prefab := preload("res://scenes/common/popups/confirm_dialog.tscn")
@@ -16,8 +18,11 @@ enum SortMode {
 
 var _active_dialog: ConfirmationDialog
 
-@export var sort_mode: SortMode = SortMode.SORT_BY_NAME_DESC:
+@export var sort_mode: SortMode = SortMode.SORT_BY_NAME_ASC:
 	set = set_sort_mode
+
+@export var extension_filter: PackedStringArray = ImageUtil.ACCEPTED_TYPES:
+	set = set_extension_filter
 
 ## Currently open directory.
 var _current_dir: String = ""
@@ -27,6 +32,8 @@ var _files: Array[String] = []
 var _file_data: Dictionary[String, FileData] = {}
 ## list of currently selected files.
 var _selected_files: PackedStringArray = []
+
+var _viewed_files: Dictionary[String, bool] = {}
 
 var _is_loading := false
 
@@ -56,28 +63,27 @@ func _ready() -> void:
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
 		_current_dir = dir_path
+
 	show_files_in_directory(_current_dir)
 	image_view.set_scroll_position(Vector2i.ZERO)
 
 func show_files_in_directory(dir_path: String) -> void:
-	clear_selection()
-	image_view.clear()
-	_file_loader.clear_queue()
+	clear()
 
-	_files.clear()
 	_files.assign(get_files_in_directory(dir_path))
 	_file_loader.populate_queue(_files)
 	_is_loading = true
 		
 func show_search_results(results: Array[SearchResult]) -> void:
-	clear_selection()
-	_files.clear()
-	image_view.clear()
+	clear()
+
 	if results.is_empty():
 		return
 	for result in results:
 		if result.image_path == "":
-			continue
+			_files.append(result)
+	_file_loader.populate_queue(_files)
+	_is_loading = true
 
 func get_files_in_directory(dir_path: String) -> PackedStringArray:
 	var dir = DirAccess.open(dir_path)
@@ -96,10 +102,13 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 
 func _register_file_data(path: String, file_data: FileData) -> void:
 	_file_data[path] = file_data
-	_add_item_to_view(path, file_data)
+	# _add_item_to_view(path, file_data)
+
+	if !_viewed_files.has(path) && path.get_extension() in extension_filter:
+		_viewed_files[path] = true
+		_add_item_to_view(path, file_data)
 
 func _add_item_to_view(abs_path: String, file_data: FileData) -> int:
-	print(abs_path)
 	var index: int = image_view.add_item_to_list(abs_path, file_data)
 	return index
 
@@ -119,12 +128,11 @@ func _sort_files() -> void:
 			_files.sort_custom(func(a, b): return _file_data[a].modified < _file_data[b].modified)
 		SortMode.SORT_BY_DATE_DESC:
 			_files.sort_custom(func(a, b): return _file_data[a].modified > _file_data[b].modified)
-	if image_view && image_view.is_node_ready():
-		image_view.clear()
-		ThumbnailManager.clear_queue()
-		for file in _files:
-			var data := _file_data[file]
-			_add_item_to_view(file, data)
+		
+		SortMode.SORT_BY_TYPE_ASC:
+			_files.sort_custom(func(a, b): return _file_data[a].get_extension() < _file_data[b].get_extension())
+		SortMode.SORT_BY_TYPE_DESC:
+			_files.sort_custom(func(a, b): return _file_data[a].get_extension() > _file_data[b].get_extension())
 
 #region File events
 func _on_file_move_request(from: String, to: String) -> void:
@@ -202,18 +210,42 @@ func _on_file_loader_queue_completed() -> void:
 	_is_loading = false
 	rebuild_view_from_file_list()
 
+func clear() -> void:
+	clear_selection()
+	clear_view()
+	_file_loader.clear_queue()
+	_files.clear()
+	_file_data.clear()
+	_viewed_files.clear()
+
 func clear_view() -> void:
+	_viewed_files.clear()
 	image_view.clear()
 
 func set_sort_mode(mode: SortMode) -> void:
 	sort_mode = mode
 	## cannot sort while loading files
-	if _is_loading:
+	if _file_loader.is_working():
 		return
 	_sort_files()
+	rebuild_view_from_file_list()
+
+func set_extension_filter(filter: PackedStringArray) -> void:
+	extension_filter = filter
 
 func rebuild_view_from_file_list() -> void:
-	image_view.clear()
+	clear_view()
+
+	_sort_files()
 	for file in _files:
-		if file in _file_data:
+		if file in _file_data && file.get_extension() in extension_filter:
 			_add_item_to_view(file, _file_data[file])
+
+func _on_project_reset() -> void:
+	clear_selection()
+	clear_view()
+	_file_loader.clear_queue()
+	_file_loader.clear_cache()
+	_files.clear()
+	_file_data.clear()
+	_viewed_files.clear()

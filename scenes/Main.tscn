@@ -209,7 +209,6 @@ metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 [node name="FileMenuController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view")]
 script = ExtResource("4_lhr70")
 image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileListView")
-sort_mode = 2
 
 [node name="FileLoader" type="Node" parent="Controllers/FileMenuController"]
 unique_name_in_owner = true
@@ -234,5 +233,5 @@ file_controller = NodePath("../FileMenuController")
 image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 
-[connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory"]
+[connection signal="path_selected" from="Controllers/DirectoryController" to="Controllers/FileMenuController" method="set_directory" flags=3]
 [connection signal="selection_changed" from="Controllers/FileMenuController" to="Controllers/ImageMenuController" method="_on_file_menu_controller_selection_changed"]

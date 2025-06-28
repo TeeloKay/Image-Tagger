@@ -51,6 +51,31 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Sort"
 
+[node name="VSeparator3" type="VSeparator" parent="Toolbar"]
+layout_mode = 2
+
+[node name="TypeFilterButton" type="MenuButton" parent="Toolbar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Filter type"
+item_count = 4
+popup/item_0/text = "png"
+popup/item_0/checkable = 1
+popup/item_0/id = 0
+popup/item_1/text = "jpg"
+popup/item_1/checkable = 1
+popup/item_1/id = 1
+popup/item_2/text = "tga"
+popup/item_2/checkable = 1
+popup/item_2/id = 2
+popup/item_3/text = "gif"
+popup/item_3/checkable = 1
+popup/item_3/id = 3
+
+[node name="Control" type="Control" parent="Toolbar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
 [node name="UpdateButton" type="Button" parent="Toolbar"]
 unique_name_in_owner = true
 layout_mode = 2

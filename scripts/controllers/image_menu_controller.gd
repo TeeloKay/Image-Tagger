@@ -148,4 +148,3 @@ func _on_file_menu_controller_selection_changed() -> void:
 		clear()
 		return
 	set_image(selection[selection.size() - 1])
-

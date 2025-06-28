@@ -14,6 +14,7 @@ enum {FAVORITE, RENAME, DELETE}
 @onready var _list_view: ResponsiveItemList = %ImageList
 @onready var _context_menu: PopupMenu = %ContextMenu
 @onready var _sort_menu: MenuButton = %SortButton
+@onready var _type_filter_button: MenuButton = %TypeFilterButton
 
 var _current_dir: String = ""
 var _file_paths_in_dir: PackedStringArray = []
@@ -31,9 +32,11 @@ signal sort_mode_changed(mode: int)
 func _ready() -> void:
 	_build_context_menu()
 	_build_sort_menu()
+	_build_type_filter_button()
 
 	_update_button.pressed.connect(_on_update_pressed)
 	_sort_menu.get_popup().id_pressed.connect(_on_sort_menu_item_pressed)
+	_type_filter_button.get_popup().id_pressed.connect(_on_type_filter_button_item_pressed)
 
 	ThumbnailManager.thumbnail_ready.connect(_on_thumbnail_ready)
 
@@ -54,12 +57,12 @@ func add_item_to_list(full_path: String, file_data: FileData) -> int:
 	
 	return index
 
-
+#region build toolbar 
 func _build_context_menu() -> void:
 	if !_context_menu:
 		return
 	
-	_context_menu.add_check_item("favorite", FAVORITE)
+	_context_menu.add_check_item("Favorite", FAVORITE)
 	_context_menu.add_separator()
 	_context_menu.add_item("Rename", RENAME)
 	_context_menu.add_item("Delete", DELETE)
@@ -75,8 +78,19 @@ func _build_sort_menu() -> void:
 		popup.add_radio_check_item(str(key).capitalize())
 
 	var sort_mode := _controller.sort_mode
-	popup.toggle_item_checked(sort_mode)
+	popup.set_item_checked(sort_mode, true)
 
+func _build_type_filter_button() -> void:
+	if !_type_filter_button:
+		return
+	var popup := _type_filter_button.get_popup()
+	popup.clear()
+	var counter := 0
+	for type in ImageUtil.ACCEPTED_TYPES:
+		popup.add_check_item(type)
+		popup.set_item_checked(counter, true)
+		counter += 1
+#endregion
 
 func clear() -> void:
 	_file_paths_in_dir.clear()
@@ -93,7 +107,7 @@ func _show_context_menu(click_position: Vector2) -> void:
 	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
 	_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
 	_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
-	
+
 #TODO: move logic from this class to the file menu controller
 func _on_context_menu_item_pressed(id: int) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
@@ -148,6 +162,9 @@ func _on_sort_menu_item_pressed(id: int) -> void:
 		popup.set_item_checked(val, val == id)
 	sort_mode_changed.emit(id)
 
+func _on_type_filter_button_item_pressed(id: int) -> void:
+	var popup := _type_filter_button.get_popup()
+	
 
 func _on_item_selected(index: int) -> void:
 	item_selected.emit(index)
@@ -165,7 +182,6 @@ func _on_thumbnail_ready(path: String, thumbnail: Texture2D) -> void:
 	var index := _file_paths_in_dir.find(path)
 	if index >= 0:
 		set_item_thumbnail(index, thumbnail)
-
 
 func _on_file_moved(from_path: String, to_path: String) -> void:
 	file_moved.emit(from_path, to_path)
@@ -206,9 +222,9 @@ func set_item_thumbnail(index, thumbnail) -> void:
 func get_file_paths_in_dir() -> PackedStringArray:
 	return _file_paths_in_dir.duplicate()
 
-func set_scroll_position(position: Vector2i) -> void:
-	_list_view.get_h_scroll_bar().value = position.x
-	_list_view.get_v_scroll_bar().value = position.y
+func set_scroll_position(scroll_position: Vector2i) -> void:
+	_list_view.get_h_scroll_bar().value = scroll_position.x
+	_list_view.get_v_scroll_bar().value = scroll_position.y
 
 func get_selected_item_paths() -> PackedStringArray:
 	var items: PackedStringArray = []

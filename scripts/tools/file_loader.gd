@@ -2,7 +2,7 @@ class_name FileLoader extends Node
 
 var _queue: Array[String] = []
 var _cache: Dictionary[String, FileData] = {}
-var _is_processing := false
+var _is_working := false
 
 @export_range(1, 1024, 1) var max_cache_size: int = 512
 @export_range(1, 100, 1, "or_greater") var batch_size: int = 12
@@ -63,3 +63,6 @@ func clear_queue() -> void:
 func clear_cache() -> void:
 	_cache.clear()
 	cache_cleared.emit()
+
+func is_working() -> bool:
+	return _is_working
