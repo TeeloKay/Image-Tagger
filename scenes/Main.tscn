@@ -1,6 +1,5 @@
-[gd_scene load_steps=23 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=21 format=3 uid="uid://fie0ld0my05u"]
 
-[ext_resource type="Theme" uid="uid://4thq6q8ucry" path="res://assets/themes/light_theme.tres" id="1_1iba3"]
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
@@ -21,7 +20,6 @@
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://clgsameunjklh" path="res://scripts/controllers/file_browser_controller.gd" id="17_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
-[ext_resource type="Script" uid="uid://pcbilc4jr0ps" path="res://scripts/controllers/theme_controller.gd" id="21_1iba3"]
 
 [node name="Main" type="CanvasLayer"]
 
@@ -183,7 +181,6 @@ visible = false
 [node name="Popups" type="Node" parent="."]
 
 [node name="ConfirmationPopup" parent="Popups" instance=ExtResource("14_mwfav")]
-size = Vector2i(592, 100)
 visible = false
 ok_button_text = "Delete"
 
@@ -245,12 +242,6 @@ metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 script = ExtResource("7_nfivy")
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
-
-[node name="ThemeController" type="Node" parent="AppController" node_paths=PackedStringArray("root")]
-script = ExtResource("21_1iba3")
-light_theme = ExtResource("1_1iba3")
-root = NodePath("../../Root")
-metadata/_custom_type_script = "uid://pcbilc4jr0ps"
 
 [connection signal="path_selected" from="AppController/DirectoryController" to="AppController/FileBrowserController" method="set_directory" flags=3]
 [connection signal="selection_changed" from="AppController/FileBrowserController" to="AppController/ImageMenuController" method="_on_file_menu_controller_selection_changed"]

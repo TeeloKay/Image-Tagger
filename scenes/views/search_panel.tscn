@@ -45,6 +45,7 @@ size_flags_vertical = 3
 
 [node name="InclusiveTags" type="VBoxContainer" parent="Filters"]
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="InclusiveTagMenu" type="MenuButton" parent="Filters/InclusiveTags"]
 unique_name_in_owner = true
@@ -54,9 +55,16 @@ icon = ExtResource("3_8gh1c")
 flat = false
 alignment = 0
 
-[node name="InclusiveTagContainer" type="FlowContainer" parent="Filters/InclusiveTags"]
+[node name="PanelContainer" type="Panel" parent="Filters/InclusiveTags"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="InclusiveTagContainer" type="FlowContainer" parent="Filters/InclusiveTags/PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+offset_right = 256.0
+offset_bottom = 764.0
+size_flags_vertical = 3
 
 [node name="HSeparator" type="HSeparator" parent="Filters/InclusiveTags"]
 layout_mode = 2
