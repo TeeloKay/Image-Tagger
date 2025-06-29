@@ -1,5 +1,6 @@
-[gd_scene load_steps=21 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=22 format=3 uid="uid://fie0ld0my05u"]
 
+[ext_resource type="Theme" uid="uid://4thq6q8ucry" path="res://assets/themes/light_theme.tres" id="1_1iba3"]
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
@@ -29,7 +30,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.0980392, 0.12549, 0.152941, 1)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 anchors_preset = 15
@@ -37,6 +37,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme = ExtResource("1_1iba3")
 theme_override_constants/separation = 0
 
 [node name="Header" type="PanelContainer" parent="VBoxContainer"]
@@ -171,6 +172,7 @@ visible = false
 [node name="Popups" type="Node" parent="."]
 
 [node name="ConfirmationPopup" parent="Popups" instance=ExtResource("14_mwfav")]
+size = Vector2i(592, 100)
 visible = false
 ok_button_text = "Delete"
 
@@ -179,7 +181,6 @@ title = "File already exists"
 initial_position = 2
 size = Vector2i(255, 100)
 popup_window = true
-force_native = true
 dialog_text = "A file with this name already exists."
 
 [node name="ConversionPopup" parent="Popups" instance=ExtResource("16_cvmbd")]

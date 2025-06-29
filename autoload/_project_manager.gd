@@ -3,11 +3,13 @@ extends Node
 const REGISTRY_PATH := "user://registry.tres"
 const META_DIR_NAME := ".artmeta"
 const PROJECT_FILE := "project.json"
+const INDEX_FILE := "index.json"
 
 var registry: ProjectRegistry
 var current_project: ProjectData
 var _current_meta_path: String = ""
 var _current_project_file_path: String = ""
+var _current_index_file_path: String = ""
 
 var _project_io: ProjectIO
 var search_engine: SearchEngine
@@ -20,10 +22,7 @@ signal project_loaded
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	load_project_registry()
-	
 	thumbnail_cache = ThumbnailCache.new()
-	
 	_project_io = ProjectIO.new()
 	search_engine = SearchEngine.new()
 	image_hasher = ImageHasher.new()
@@ -31,6 +30,8 @@ func _ready() -> void:
 
 	add_child(image_hasher, true, INTERNAL_MODE_FRONT)
 	project_loaded.connect(ThumbnailManager.clear_queue)
+
+	load_project_registry()
 
 func load_project_registry():
 	if FileAccess.file_exists(REGISTRY_PATH):
@@ -49,6 +50,7 @@ func save_current_project():
 func open_project(project_path: String) -> void:
 	_current_meta_path = project_path.path_join(META_DIR_NAME)
 	_current_project_file_path = _current_meta_path.path_join(PROJECT_FILE)
+	_current_index_file_path = _current_meta_path.path_join(INDEX_FILE)
 	
 	if !DirAccess.dir_exists_absolute(_current_meta_path):
 		DirAccess.make_dir_recursive_absolute(_current_meta_path)

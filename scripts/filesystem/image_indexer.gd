@@ -1,6 +1,5 @@
 class_name ImageIndexer extends Node
 
-
 func _ready() -> void:
 	pass
 
