@@ -76,6 +76,11 @@ func show_search_results(results: Array[SearchResult]) -> void:
 	for result in results:
 		if result.image_path == "":
 			_data_handler.add_file(result.image_path)
+			
+			# This method is put here to allow for live updating of the view.
+			# when all files are loaded, the view will be reset and files
+			# will be added in the right order with the right tooltips
+			_add_item_to_view(result.image_path)
 	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
 	_is_loading = true
 
@@ -90,12 +95,17 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 		if !dir.current_is_dir() && ImageUtil.is_valid_image(file_name):
 			var path := dir_path.path_join(file_name)
 			files.append(path)
+
+			# This method is put here to allow for live updating of the view.
+			# when all files are loaded, the view will be reset and files
+			# will be added in the right order with the right tooltips.
 			_add_item_to_view(path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
 	return files
 
+## Rebuild view from list of cached files. 
 func rebuild_view_from_file_list() -> void:
 	if _is_loading:
 		return
@@ -105,6 +115,7 @@ func rebuild_view_from_file_list() -> void:
 	for file in _data_handler.get_files_filtered(extension_filter):
 		_add_item_to_view(file, _data_handler.get_file_data(file))
 
+## Update internal list of files and rebuild view.
 func update_view() -> void:
 	if _current_dir:
 		show_files_in_directory(_current_dir)
