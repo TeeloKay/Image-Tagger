@@ -29,12 +29,14 @@ func _ready() -> void:
 	super._ready()
 
 	_file_loader = FileLoader.new()
+	add_child(_file_loader, INTERNAL_MODE_BACK)
 	_data_handler = FileDataHandler.new()
+	add_child(_data_handler, INTERNAL_MODE_BACK)
 
 	image_view.item_selected.connect(_on_item_selected)
 	image_view.selection_updated.connect(_on_selection_updated)
 
-	image_view.update_request.connect(rebuild_view_from_file_list)
+	image_view.update_request.connect(update_view)
 	image_view.sort_mode_changed.connect(set_sort_mode)
 	image_view.filter_item_pressed.connect(_on_filter_item_pressed)
 
@@ -51,8 +53,6 @@ func _ready() -> void:
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 
-func _process(delta: float) -> void:
-	_file_loader.process(delta)
 
 func set_directory(dir_path: String) -> void:
 	if _current_dir != dir_path:
@@ -88,11 +88,26 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 	var file_name := dir.get_next()
 	while file_name != "":
 		if !dir.current_is_dir() && ImageUtil.is_valid_image(file_name):
-			files.append(dir_path.path_join(file_name))
+			var path := dir_path.path_join(file_name)
+			files.append(path)
+			_add_item_to_view(path)
 		file_name = dir.get_next()
 	dir.list_dir_end()
 
 	return files
+
+func rebuild_view_from_file_list() -> void:
+	if _is_loading:
+		return
+	clear_view()
+
+	_data_handler.sort_files()
+	for file in _data_handler.get_files_filtered(extension_filter):
+		_add_item_to_view(file, _data_handler.get_file_data(file))
+
+func update_view() -> void:
+	if _current_dir:
+		show_files_in_directory(_current_dir)
 
 func _register_file_data(file: String, file_data: FileData) -> void:
 	_data_handler.register_file(file, file_data)
@@ -101,10 +116,18 @@ func _register_file_data(file: String, file_data: FileData) -> void:
 		_viewed_files[file] = true
 		_add_item_to_view(file, file_data)
 
-func _add_item_to_view(file: String, file_data: FileData) -> int:
+func _add_item_to_view(file: String, file_data: FileData = null) -> int:
 	var index: int = image_view.add_item_to_list(file, file_data)
 	ThumbnailManager.queue_thumbnail(file)
 	return index
+
+func _on_project_reset() -> void:
+	clear_selection()
+	clear_view()
+	_file_loader.clear_queue()
+	_file_loader.clear_cache()
+	_data_handler.clear()
+	_viewed_files.clear()
 
 #region File events
 func _on_file_move_request(from: String, to: String) -> void:
@@ -222,23 +245,6 @@ func set_extension_filter(filter: PackedStringArray) -> void:
 	extension_filter = filter
 
 #endregion
-
-func rebuild_view_from_file_list() -> void:
-	if _is_loading:
-		return
-	clear_view()
-
-	_data_handler.sort_files()
-	for file in _data_handler.get_files_filtered(extension_filter):
-		_add_item_to_view(file, _data_handler.get_file_data(file))
-
-func _on_project_reset() -> void:
-	clear_selection()
-	clear_view()
-	_file_loader.clear_queue()
-	_file_loader.clear_cache()
-	_data_handler.clear()
-	_viewed_files.clear()
 
 #region UI callbacks
 func _on_filter_item_pressed(id: int) -> void:

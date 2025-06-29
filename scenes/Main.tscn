@@ -212,7 +212,6 @@ metadata/_custom_type_script = "uid://bjvppx536xcr3"
 [node name="DirectoryController" type="Node" parent="AppController" node_paths=PackedStringArray("directory_view")]
 script = ExtResource("16_1nqs0")
 directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
-metadata/_custom_type_script = "uid://cwb25aw26wf6u"
 
 [node name="FileBrowserController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view")]
 script = ExtResource("17_1nqs0")

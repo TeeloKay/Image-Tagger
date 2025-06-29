@@ -41,13 +41,14 @@ func update() -> void:
 	pass
 
 func add_item_to_list(full_path: String, file_data: FileData) -> int:
-	var index: int = _list_view.add_item(file_data.name)
+	var index: int = _list_view.add_item(full_path.get_file())
 	_file_paths_in_dir.append(full_path)
 
-	var file_size := FileUtil.human_readable_size(file_data.size)
-	var date := Time.get_datetime_string_from_unix_time(file_data.modified)
-	var tooltip := "size: %s \nmodified: %s" % [file_size, date]
-	_list_view.set_item_tooltip(index, tooltip)
+	if file_data != null:
+		var file_size := FileUtil.human_readable_size(file_data.size)
+		var date := Time.get_datetime_string_from_unix_time(file_data.modified)
+		var tooltip := "size: %s \nmodified: %s" % [file_size, date]
+		_list_view.set_item_tooltip(index, tooltip)
 	
 	return index
 

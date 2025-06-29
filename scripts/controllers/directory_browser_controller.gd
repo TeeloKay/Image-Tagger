@@ -20,7 +20,6 @@ func _ready() -> void:
 
 	get_window().files_dropped.connect(_on_files_dropped)
 
-
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	_current_directory = _project_data.project_path

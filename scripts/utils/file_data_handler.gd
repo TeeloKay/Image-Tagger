@@ -1,4 +1,4 @@
-class_name FileDataHandler extends Object
+class_name FileDataHandler extends Node
 
 enum SortMode {
 	SORT_BY_NAME_ASC,
@@ -81,10 +81,10 @@ func sort_files() -> void:
 
 #region Sort methods
 func _sort_by_name_asc(a: String, b: String) -> bool:
-	return _file_data[a].name < _file_data[b].name
+	return _file_data[a].get_file() < _file_data[b].get_file()
 
 func _sort_by_name_desc(a: String, b: String) -> bool:
-	return _file_data[a].name > _file_data[b].name
+	return _file_data[a].get_file() > _file_data[b].get_file()
 
 func _sort_by_size_asc(a: String, b: String) -> bool:
 	var size_a := _file_data[a].size
