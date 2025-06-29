@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=23 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Theme" uid="uid://4thq6q8ucry" path="res://assets/themes/light_theme.tres" id="1_1iba3"]
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
@@ -21,42 +21,53 @@
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://clgsameunjklh" path="res://scripts/controllers/file_browser_controller.gd" id="17_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
+[ext_resource type="Script" uid="uid://pcbilc4jr0ps" path="res://scripts/controllers/theme_controller.gd" id="21_1iba3"]
 
 [node name="Main" type="CanvasLayer"]
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Root" type="Control" parent="."]
+layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Background" type="Panel" parent="Root"]
+layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = ExtResource("1_1iba3")
+theme_type_variation = &"DarkPanel"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Root"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_constants/separation = 0
 
-[node name="Header" type="PanelContainer" parent="VBoxContainer"]
+[node name="Header" type="PanelContainer" parent="Root/VBoxContainer"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Header"]
+[node name="MarginContainer" type="MarginContainer" parent="Root/VBoxContainer/Header"]
 layout_mode = 2
 
-[node name="Toolbar" type="HBoxContainer" parent="VBoxContainer/Header/MarginContainer"]
+[node name="Toolbar" type="HBoxContainer" parent="Root/VBoxContainer/Header/MarginContainer"]
 layout_mode = 2
 theme_override_constants/separation = 6
 script = ExtResource("5_wp0k4")
 
-[node name="FileMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="FileMenuButton" type="MenuButton" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 text = "File"
 switch_on_hover = true
 
-[node name="FileDialog" type="FileDialog" parent="VBoxContainer/Header/MarginContainer/Toolbar/FileMenuButton"]
+[node name="FileDialog" type="FileDialog" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar/FileMenuButton"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 title = "Open a Directory"
@@ -66,15 +77,15 @@ file_mode = 2
 access = 2
 use_native_dialog = true
 
-[node name="VSeparator" type="VSeparator" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="VSeparator" type="VSeparator" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 
-[node name="ProjectMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="ProjectMenuButton" type="MenuButton" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 disabled = true
 text = "Project"
 
-[node name="SettingsMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="SettingsMenuButton" type="MenuButton" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 disabled = true
 text = "Settings"
@@ -83,89 +94,89 @@ popup/item_0/text = "Save thumbnails"
 popup/item_0/checkable = 1
 popup/item_0/id = 0
 
-[node name="ToolsMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="ToolsMenuButton" type="MenuButton" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 text = "Tools"
 item_count = 1
 popup/item_0/text = "Convert selection to PNG"
 popup/item_0/id = 0
 
-[node name="VSeparator2" type="VSeparator" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="VSeparator2" type="VSeparator" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 
-[node name="HelpMenuButton" type="MenuButton" parent="VBoxContainer/Header/MarginContainer/Toolbar"]
+[node name="HelpMenuButton" type="MenuButton" parent="Root/VBoxContainer/Header/MarginContainer/Toolbar"]
 layout_mode = 2
 disabled = true
 text = "Help
 "
 script = ExtResource("6_bjd11")
 
-[node name="Body" type="MarginContainer" parent="VBoxContainer"]
+[node name="Body" type="MarginContainer" parent="Root/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="HSplitContainer" type="HSplitContainer" parent="VBoxContainer/Body"]
+[node name="HSplitContainer" type="HSplitContainer" parent="Root/VBoxContainer/Body"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="LeftMenu" type="TabContainer" parent="VBoxContainer/Body/HSplitContainer"]
+[node name="LeftMenu" type="TabContainer" parent="Root/VBoxContainer/Body/HSplitContainer"]
 layout_mode = 2
 current_tab = 0
 
-[node name="Folders" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/LeftMenu"]
+[node name="Folders" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/LeftMenu"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders"]
 layout_mode = 2
 
-[node name="DirectoryView" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("3_q8u5g")]
+[node name="DirectoryView" parent="Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("3_q8u5g")]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="SearchPanel" parent="VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("4_jlsqs")]
+[node name="SearchPanel" parent="Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer" instance=ExtResource("4_jlsqs")]
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 
-[node name="CenterMenu" type="TabContainer" parent="VBoxContainer/Body/HSplitContainer"]
+[node name="CenterMenu" type="TabContainer" parent="Root/VBoxContainer/Body/HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 current_tab = 0
 
-[node name="Images" type="HSplitContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu"]
+[node name="Images" type="HSplitContainer" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu"]
 layout_mode = 2
 split_offset = 800
 metadata/_tab_index = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
+[node name="MarginContainer" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 layout_mode = 2
 
-[node name="FileBrowser" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
+[node name="FileBrowser" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
 layout_mode = 2
-_controller = NodePath("../../../../../../../AppController/FileBrowserController")
+_controller = NodePath("../../../../../../../../AppController/FileBrowserController")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images"]
 custom_minimum_size = Vector2(256, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ImageView" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("8_q8u5g")]
+[node name="ImageView" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("8_q8u5g")]
 layout_mode = 2
 
-[node name="BulkTagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("13_bb450")]
+[node name="BulkTagEditor" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("13_bb450")]
 visible = false
 layout_mode = 2
 
-[node name="Tags" type="MarginContainer" parent="VBoxContainer/Body/HSplitContainer/CenterMenu"]
+[node name="Tags" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu"]
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="TagEditor" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
+[node name="TagEditor" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags" instance=ExtResource("7_q8u5g")]
 layout_mode = 2
 
-[node name="ColorPickerPopup" parent="VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor" instance=ExtResource("14_3p2gp")]
+[node name="ColorPickerPopup" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor" instance=ExtResource("14_3p2gp")]
 unique_name_in_owner = true
 visible = false
 
@@ -200,40 +211,46 @@ image_view_controller = NodePath("ImageMenuController")
 [node name="ToolController" type="Node" parent="AppController" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
 script = ExtResource("1_3p2gp")
 conversion_popup = NodePath("../../Popups/ConversionPopup")
-menu_button = NodePath("../../VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
+menu_button = NodePath("../../Root/VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
 directory_controller = NodePath("../DirectoryController")
 file_controller = NodePath("../FileBrowserController")
 metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
 
 [node name="SearchController" type="Node" parent="AppController" node_paths=PackedStringArray("search_panel")]
 script = ExtResource("8_jlsqs")
-search_panel = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel")
+search_panel = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/SearchPanel")
 metadata/_custom_type_script = "uid://bjvppx536xcr3"
 
 [node name="DirectoryController" type="Node" parent="AppController" node_paths=PackedStringArray("directory_view")]
 script = ExtResource("16_1nqs0")
-directory_view = NodePath("../../VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
+directory_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 
 [node name="FileBrowserController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view")]
 script = ExtResource("17_1nqs0")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileBrowser")
+image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileBrowser")
 
 [node name="ImageMenuController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
+image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 _error_dialog = NodePath("../../Popups/ErrorDialog")
 file_menu_controller = NodePath("../FileBrowserController")
 
 [node name="TagOverviewController" type="Node" parent="AppController" node_paths=PackedStringArray("view", "color_picker")]
 script = ExtResource("5_bjd11")
-view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor")
-color_picker = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor/ColorPickerPopup")
+view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor")
+color_picker = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor/ColorPickerPopup")
 metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 
 [node name="BulkTagEditorController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view")]
 script = ExtResource("7_nfivy")
-image_view = NodePath("../../VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
+image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
+
+[node name="ThemeController" type="Node" parent="AppController" node_paths=PackedStringArray("root")]
+script = ExtResource("21_1iba3")
+light_theme = ExtResource("1_1iba3")
+root = NodePath("../../Root")
+metadata/_custom_type_script = "uid://pcbilc4jr0ps"
 
 [connection signal="path_selected" from="AppController/DirectoryController" to="AppController/FileBrowserController" method="set_directory" flags=3]
 [connection signal="selection_changed" from="AppController/FileBrowserController" to="AppController/ImageMenuController" method="_on_file_menu_controller_selection_changed"]

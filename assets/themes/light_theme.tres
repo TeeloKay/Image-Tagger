@@ -40,7 +40,7 @@ content_margin_bottom = 2.0
 bg_color = Color(0.941176, 0.941176, 0.941176, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3sna"]
-bg_color = Color(0.941176, 0.941176, 0.941176, 1)
+bg_color = Color(0.882353, 0.882353, 0.882353, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7wm1n"]
 bg_color = Color(0.205, 0.56375, 0.82, 0.501961)
