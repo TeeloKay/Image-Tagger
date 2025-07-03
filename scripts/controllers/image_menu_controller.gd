@@ -9,13 +9,15 @@ class_name ImageMenuController extends MenuController
 @export var _original_tags: Array[StringName] = []
 
 @export var _error_dialog: AcceptDialog
-
 @export var file_menu_controller : FileBrowserController
+
+var _file_hasher: ImageHasher
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
 	InputHandler.apply_changes.connect(apply_changes)
+	_file_hasher = ImageHasher.new()
 
 	image_view.tag_add_requested.connect(_on_add_tag_request)
 	image_view.tag_remove_requested.connect(_on_remove_tag_request)
@@ -38,7 +40,7 @@ func set_image(path: String) -> void:
 			return
 		current_image = path
 		var _current_image = path
-		_current_hash = _project_data.get_hash_for_path(path)
+		_current_hash = _file_hasher.hash_image(path)
 
 		var texture = ImageUtil.load_image(path)
 		image_view.set_texture(texture)

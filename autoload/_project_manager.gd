@@ -28,7 +28,6 @@ func _ready() -> void:
 	image_hasher = ImageHasher.new()
 	image_indexer = ImageIndexer.new()
 
-	add_child(image_hasher, true, INTERNAL_MODE_FRONT)
 	project_loaded.connect(ThumbnailManager.clear_queue)
 
 	load_project_registry()
@@ -61,7 +60,7 @@ func open_project(project_path: String) -> void:
 		current_project = ProjectData.new()
 		current_project.project_path = project_path
 	
-	image_hasher.initialize(current_project)
+	image_hasher.initialize()
 	registry.register_project(project_path)
 	save_registry()
 	

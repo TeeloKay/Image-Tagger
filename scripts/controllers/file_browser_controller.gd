@@ -50,6 +50,8 @@ func _ready() -> void:
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
+	selection_changed.connect(image_view.update_selection_count)
+
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 

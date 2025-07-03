@@ -299,7 +299,9 @@ content_margin_right = 4.0
 bg_color = Color(0.247059, 0.247059, 0.247059, 1)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_yiexd"]
-color = Color(0.270588, 0.282353, 0.298039, 1)
+color = Color(1, 1, 1, 0.117647)
+grow_begin = -2.0
+grow_end = -2.0
 vertical = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yiexd"]

@@ -1,28 +1,60 @@
-class_name ImageHasher extends Node
+class_name ImageHasher extends RefCounted
 
-var project_data: ProjectData
+const CHUNK_SIZE := 1024
+var _queue: Array[String]
 
-func initialize(data: ProjectData) -> void:
-	project_data = data
+var _thread: Thread
+var _mutex: Mutex
+var _semaphore: Semaphore
 
-func hash_image(rel_path: String) -> String:
-	var abs_path := project_data.to_abolute_path(rel_path)
-	
+var _exit_thread: bool = false
+
+signal file_hashed(path: String)
+
+func initialize() -> void:
+	_thread = Thread.new()
+	_mutex = Mutex.new()
+	_semaphore = Semaphore.new()
+
+	_thread.start(_thread_process)
+
+func hash_image(abs_path: String) -> String:
 	return _hash_file(abs_path)
 
-func _hash_file(path: String) -> String:
+func _hash_file_threaded(path: String) -> void:
 	if !FileAccess.file_exists(path):
-		return ""
+		return
 	
-	var file := FileAccess.open(path,FileAccess.READ)
+func _thread_process() -> void:
+	while !_exit_thread:
+		_semaphore.wait()
+		if _exit_thread:
+			break
+	
+		_mutex.lock()
+		var path = _queue.pop_front()
+		if !FileAccess.file_exists(path):
+			continue
+
+		var file_hash := _hash_file(path)
+		if !file_hash.is_empty:
+			file_hashed.emit(path, file_hash)
+
+		_mutex.unlock()
+
+func _hash_file(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
 	if !file:
 		return ""
 	
-	var bytes := file.get_buffer(file.get_length())
-	file.close()
-	
-	var ctx := HashingContext.new()
+	var ctx = HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
-	ctx.update(bytes)
-	
-	return ctx.finish().hex_encode()
+
+	while file.get_position() < file.get_length():
+		var remaining = file.get_length() - file.get_position()
+		ctx.update(file.get_buffer(min(remaining, CHUNK_SIZE)))
+
+	file.close()
+	var res := ctx.finish()
+	print(res.hex_encode(),Array(res))
+	return res.hex_encode()

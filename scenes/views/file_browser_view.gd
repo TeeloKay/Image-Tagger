@@ -15,6 +15,8 @@ enum {FAVORITE, RENAME, DELETE}
 @onready var _context_menu: PopupMenu = %ContextMenu
 @onready var _sort_menu: MenuButton = %SortButton
 @onready var _type_filter_button: MenuButton = %TypeFilterButton
+@onready var _file_count_label: Label = %FileCountLabel
+@onready var _selection_count_label: Label = %SelectionCountLabel
 
 var _file_paths_in_dir: PackedStringArray = []
 var _right_click_index: int = -1
@@ -228,3 +230,9 @@ func get_selected_item_paths() -> PackedStringArray:
 		items.append(_file_paths_in_dir[index])
 	return items
 #endregion
+
+func update_selection_count() -> void:
+	_selection_count_label.text = str(_list_view.get_selected_items().size())
+
+func update_file_count(count: int) -> void:
+	_file_count_label.text = str(count)
