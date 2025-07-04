@@ -14,14 +14,17 @@ signal file_hashed(path: String)
 func initialize() -> void:
 	_thread = Thread.new()
 	_mutex = Mutex.new()
-	_semaphore = Semaphore.new()
+	_semaphore = Semaphore.new()z
 
 	_thread.start(_thread_process)
 
 func hash_image(abs_path: String) -> String:
+	var file_hash := _hash_file(abs_path)
+
+	file_hashed.emit(abs_path,file_hash)
 	return _hash_file(abs_path)
 
-func _hash_file_threaded(path: String) -> void:
+func add_file_to_queue(path: String) -> void:
 	if !FileAccess.file_exists(path):
 		return
 	
