@@ -90,7 +90,7 @@ func get_hash_for_path(image_path: String, force_new: bool = false) -> String:
 	if _index.has(image_path) && !force_new:
 		image_hash = _index[image_path]
 	
-	image_hash = ProjectManager.image_hasher.hash_image(ProjectManager.to_abolute_path(image_path))
+	image_hash = ProjectManager.image_hasher.hash_file(ProjectManager.to_abolute_path(image_path))
 	update_image_path(image_hash, image_path)
 	_index[image_path] = image_hash
 	return image_hash

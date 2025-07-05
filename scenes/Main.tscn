@@ -238,8 +238,9 @@ view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/T
 color_picker = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Tags/TagEditor/ColorPickerPopup")
 metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 
-[node name="BulkTagEditorController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view")]
+[node name="BulkTagEditorController" type="Node" parent="AppController" node_paths=PackedStringArray("browser_controller", "image_view")]
 script = ExtResource("7_nfivy")
+browser_controller = NodePath("../FileBrowserController")
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 

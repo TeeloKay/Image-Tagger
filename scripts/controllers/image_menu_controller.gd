@@ -9,7 +9,7 @@ class_name ImageMenuController extends MenuController
 @export var _original_tags: Array[StringName] = []
 
 @export var _error_dialog: AcceptDialog
-@export var file_menu_controller : FileBrowserController
+@export var file_menu_controller: FileBrowserController
 
 var _file_hasher: ImageHasher
 
@@ -17,7 +17,7 @@ var _file_hasher: ImageHasher
 func _ready() -> void:
 	super._ready()
 	InputHandler.apply_changes.connect(apply_changes)
-	_file_hasher = ImageHasher.new()
+	_file_hasher = ProjectManager.image_hasher
 
 	image_view.tag_add_requested.connect(_on_add_tag_request)
 	image_view.tag_remove_requested.connect(_on_remove_tag_request)
@@ -27,6 +27,8 @@ func _ready() -> void:
 	image_view.open_in_explorer_pressed.connect(_on_explorer_button_pressed)
 	image_view.open_image_request.connect(_on_open_image_request)
 
+	_file_hasher.file_hashed.connect(_on_file_hashed)
+
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	var tags := _project_data.get_tags()
@@ -35,26 +37,30 @@ func _on_project_loaded() -> void:
 func set_image(path: String) -> void:
 	if path.is_empty():
 		clear()
-	if path.is_absolute_path():
-		if current_image == path:
-			return
-		current_image = path
-		var _current_image = path
-		_current_hash = _file_hasher.hash_image(path)
 
-		var texture = ImageUtil.load_image(path)
-		image_view.set_texture(texture)
-		image_view.set_file_name(_current_image.get_file())
-		image_view.current_hash = _current_hash
-		image_view.current_image = current_image
-		image_view.clear_tags()
-		image_view.enable()
+	if !path.is_absolute_path():
+		path = _project_data.to_abolute_path(path)
 
-		_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
-		_working_tags = _original_tags.duplicate()
-		_working_tags.sort_custom(func(a,b): return String(a) < String(b))
-		_populate_tag_list()
-		image_view.mark_clean()
+	if current_image == path:
+		return
+
+	current_image = path
+	# _current_hash = _file_hasher.hash_image(path)
+	_file_hasher.add_file_to_queue(path)
+	var texture = ImageUtil.load_image(path)
+
+	image_view.set_texture(texture)
+	image_view.set_file_name(current_image.get_file())
+	image_view.current_hash = _current_hash
+	image_view.current_image = current_image
+	image_view.clear_tags()
+	image_view.enable()
+
+	# _original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
+	# _working_tags = _original_tags.duplicate()
+	# _working_tags.sort_custom(func(a, b): return String(a) < String(b))
+	# _populate_tag_list()
+	image_view.mark_clean()
 
 func _on_explorer_button_pressed() -> void:
 	if current_image.is_empty():
@@ -82,17 +88,17 @@ func discard_changes() -> void:
 	image_view.mark_clean()
 
 func clear() -> void:
-	_working_tags 	= []
-	_original_tags 	= []
-	current_image 	= ""
-	_current_hash	= ""
+	_working_tags = []
+	_original_tags = []
+	current_image = ""
+	_current_hash = ""
 	image_view.clear()
 
 func _populate_tag_list() -> void:
 	image_view.clear_tags()
 	for tag in _working_tags:
 		var data = _project_data.get_tag_data(tag)
-		image_view.add_tag(tag,data.color)
+		image_view.add_tag(tag, data.color)
 
 func _on_add_tag_request(tag: String) -> void:
 	if !tag in _working_tags && tag != "":
@@ -115,7 +121,7 @@ func _on_rename_image_request(new_file: String) -> void:
 		new_file = new_file + "." + old_file.get_extension()
 		print(new_file)
 	
-	var new_path := current_image.replace(old_file,new_file)
+	var new_path := current_image.replace(old_file, new_file)
 	
 	if FileAccess.file_exists(new_path):
 		_error_dialog.title = "File already exists."
@@ -149,3 +155,12 @@ func _on_file_menu_controller_selection_changed() -> void:
 		clear()
 		return
 	set_image(selection[selection.size() - 1])
+
+func _on_file_hashed(path: String, file_hash: String) -> void:
+	if path == current_image:
+		_current_hash = file_hash
+
+		_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
+		_working_tags = _original_tags.duplicate()
+		_working_tags.sort_custom(func(a, b): return String(a) < String(b))
+		_populate_tag_list()

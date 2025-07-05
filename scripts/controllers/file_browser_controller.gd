@@ -2,6 +2,10 @@ class_name FileBrowserController extends MenuController
 
 @onready var _confirm_prefab := preload("res://scenes/common/popups/confirm_dialog.tscn")
 
+## Currently open directory.
+@export_global_dir var directory: String = "":
+	set = set_directory
+
 @export var image_view: FileBrowserView
 @export var sort_mode: FileDataHandler.SortMode:
 	set = set_sort_mode, get = get_sort_mode
@@ -9,9 +13,8 @@ class_name FileBrowserController extends MenuController
 @export var extension_filter: PackedStringArray = []:
 	set = set_extension_filter
 
+
 var _active_dialog: ConfirmationDialog
-## Currently open directory.
-var _current_dir: String = ""
 ## list of currently selected files.
 var _selected_files: PackedStringArray = []
 var _viewed_files: Dictionary[String, bool] = {}
@@ -24,6 +27,7 @@ var _selection_update_pending := false
 
 signal image_selected(image_path: String)
 signal selection_changed
+signal directory_set(path: String)
 
 func _ready() -> void:
 	super._ready()
@@ -55,13 +59,7 @@ func _ready() -> void:
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 
-
-func set_directory(dir_path: String) -> void:
-	if _current_dir != dir_path:
-		_current_dir = dir_path
-
-	show_files_in_directory(_current_dir)
-	image_view.set_scroll_position(Vector2i.ZERO)
+#region core view functions
 
 func show_files_in_directory(dir_path: String) -> void:
 	clear()
@@ -69,7 +67,7 @@ func show_files_in_directory(dir_path: String) -> void:
 	_data_handler.assign_files(get_files_in_directory(dir_path))
 	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
 	_is_loading = true
-		
+
 func show_search_results(results: Array[SearchResult]) -> void:
 	clear()
 
@@ -119,8 +117,8 @@ func rebuild_view_from_file_list() -> void:
 
 ## Update internal list of files and rebuild view.
 func update_view() -> void:
-	if _current_dir:
-		show_files_in_directory(_current_dir)
+	if directory:
+		show_files_in_directory(directory)
 
 func _register_file_data(file: String, file_data: FileData) -> void:
 	_data_handler.register_file(file, file_data)
@@ -142,6 +140,19 @@ func _on_project_reset() -> void:
 	_data_handler.clear()
 	_viewed_files.clear()
 
+func clear() -> void:
+	clear_selection()
+	clear_view()
+	_file_loader.clear_queue()
+	_data_handler.clear()
+	_viewed_files.clear()
+
+func clear_view() -> void:
+	_viewed_files.clear()
+	image_view.clear()
+	ThumbnailManager.clear_queue()
+#endregion
+
 #region File events
 func _on_file_move_request(from: String, to: String) -> void:
 	FileService.move_file(from, to)
@@ -152,7 +163,7 @@ func _on_file_removed(_path: String) -> void:
 	rebuild_view_from_file_list()
 
 func _on_file_created(_path: String) -> void:
-	if _path.get_base_dir() != _current_dir:
+	if _path.get_base_dir() != directory:
 		return
 	_file_loader.add_file_to_queue(_path)
 	rebuild_view_from_file_list()
@@ -183,6 +194,9 @@ func _apply_selection_update() -> void:
 	var items := _data_handler.get_files_filtered(extension_filter)
 	for idx in selected_items:
 		_selected_files.append(items[idx])
+		# TODO: we added this for a temporary test of the file hasher's multithreading functionality
+		# TODO: remove when no longer needed.
+		ProjectManager.image_hasher.add_file_to_queue(items[idx])
 	image_selected.emit(_selected_files[0])
 	selection_changed.emit()
 
@@ -222,25 +236,22 @@ func _on_request_cancelled() -> void:
 	if _active_dialog:
 		_active_dialog.queue_free()
 
-#endregion
-
 func _on_file_loader_queue_completed() -> void:
 	_is_loading = false
 	rebuild_view_from_file_list()
-
-func clear() -> void:
-	clear_selection()
-	clear_view()
-	_file_loader.clear_queue()
-	_data_handler.clear()
-	_viewed_files.clear()
-
-func clear_view() -> void:
-	_viewed_files.clear()
-	image_view.clear()
-	ThumbnailManager.clear_queue()
+#endregion
 
 #region Getters & Setters
+
+func set_directory(dir_path: String) -> void:
+	if directory == dir_path:
+		return
+	directory = dir_path
+
+	show_files_in_directory(directory)
+	image_view.set_scroll_position(Vector2i.ZERO)
+	directory_set.emit(directory)
+
 func set_sort_mode(mode: FileDataHandler.SortMode) -> void:
 	_data_handler.sort_mode = mode
 	## cannot sort while loading files

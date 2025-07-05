@@ -11,7 +11,7 @@ enum {FAVORITE, RENAME, DELETE}
 @export var large := Vector2i(128, 128)
 
 @onready var _update_button: Button = %UpdateButton
-@onready var _list_view: ResponsiveItemList = %ImageList
+@onready var _item_list: ResponsiveItemList = %ImageList
 @onready var _context_menu: PopupMenu = %ContextMenu
 @onready var _sort_menu: MenuButton = %SortButton
 @onready var _type_filter_button: MenuButton = %TypeFilterButton
@@ -43,15 +43,16 @@ func update() -> void:
 	pass
 
 func add_item_to_list(full_path: String, file_data: FileData) -> int:
-	var index: int = _list_view.add_item(full_path.get_file())
+	var index: int = _item_list.add_item(full_path.get_file())
 	_file_paths_in_dir.append(full_path)
 
 	if file_data != null:
 		var file_size := FileUtil.human_readable_size(file_data.size)
 		var date := Time.get_datetime_string_from_unix_time(file_data.modified)
 		var tooltip := "size: %s \nmodified: %s" % [file_size, date]
-		_list_view.set_item_tooltip(index, tooltip)
-	
+		_item_list.set_item_tooltip(index, tooltip)
+	update_file_count(_item_list.item_count)
+
 	return index
 
 #region build toolbar 
@@ -65,7 +66,7 @@ func _build_context_menu() -> void:
 	_context_menu.add_item("Delete", DELETE)
 	
 	_context_menu.id_pressed.connect(_on_context_menu_item_pressed)
-	_list_view.gui_input.connect(_on_list_view_gui_input)
+	_item_list.gui_input.connect(_on_list_view_gui_input)
 
 func _build_sort_menu() -> void:
 	if !_sort_menu:
@@ -92,11 +93,11 @@ func _build_type_filter_button() -> void:
 
 func clear() -> void:
 	_file_paths_in_dir.clear()
-	_list_view.clear()
+	_item_list.clear()
 
 #region context logic
 func _show_context_menu(click_position: Vector2) -> void:
-	_right_click_index = _list_view.get_item_at_position(click_position)
+	_right_click_index = _item_list.get_item_at_position(click_position)
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 		return
 		
@@ -145,13 +146,13 @@ func _get_rel_path(full_path: String) -> String:
 func _on_icon_size_button_item_selected(index: int) -> void:
 	match index:
 		IconSizes.SMALL:
-			_list_view.set_icon_size(small)
+			_item_list.set_icon_size(small)
 		IconSizes.MEDIUM:
-			_list_view.set_icon_size(medium)
+			_item_list.set_icon_size(medium)
 		IconSizes.LARGE:
-			_list_view.set_icon_size(large)
+			_item_list.set_icon_size(large)
 		_:
-			_list_view.set_icon_size(medium)
+			_item_list.set_icon_size(medium)
 
 func _on_sort_menu_item_pressed(id: int) -> void:
 	var popup := _sort_menu.get_popup()
@@ -203,26 +204,26 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 		file_rename_request.emit()
 	if event.is_action_pressed("select_all"):
 		for i in _file_paths_in_dir.size():
-			_list_view.select(i, false)
+			_item_list.select(i, false)
 			selection_updated.emit()
 	if event.is_action_pressed("ui_cancel"):
-		_list_view.deselect_all()
+		_item_list.deselect_all()
 
 #endregion
 
 #region getters & setters
 func get_selected_items() -> PackedInt32Array:
-	return _list_view.get_selected_items()
+	return _item_list.get_selected_items()
 
 func set_item_thumbnail(index, thumbnail) -> void:
-	_list_view.set_item_icon(index, thumbnail)
+	_item_list.set_item_icon(index, thumbnail)
 
 func get_file_paths_in_dir() -> PackedStringArray:
 	return _file_paths_in_dir.duplicate()
 
 func set_scroll_position(scroll_position: Vector2i) -> void:
-	_list_view.get_h_scroll_bar().value = scroll_position.x
-	_list_view.get_v_scroll_bar().value = scroll_position.y
+	_item_list.get_h_scroll_bar().value = scroll_position.x
+	_item_list.get_v_scroll_bar().value = scroll_position.y
 
 func get_selected_item_paths() -> PackedStringArray:
 	var items: PackedStringArray = []
@@ -232,7 +233,7 @@ func get_selected_item_paths() -> PackedStringArray:
 #endregion
 
 func update_selection_count() -> void:
-	_selection_count_label.text = str(_list_view.get_selected_items().size())
+	_selection_count_label.text = str(_item_list.get_selected_items().size())
 
 func update_file_count(count: int) -> void:
 	_file_count_label.text = str(count)
