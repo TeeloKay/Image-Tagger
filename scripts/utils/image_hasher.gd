@@ -14,7 +14,7 @@ signal file_hashed(path: String)
 func initialize() -> void:
 	_thread = Thread.new()
 	_mutex = Mutex.new()
-	_semaphore = Semaphore.new()z
+	_semaphore = Semaphore.new()
 
 	_thread.start(_thread_process)
 
