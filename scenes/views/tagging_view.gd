@@ -1,4 +1,6 @@
-class_name ImageDataView extends VSplitContainer
+class_name TaggingView extends VSplitContainer
+
+enum Mode {NONE, SINGLE, BULK}
 
 @onready var _name_edit: LineEdit = %FileName
 @onready var _image_preview: TextureRect = %ImagePreview
@@ -11,8 +13,12 @@ class_name ImageDataView extends VSplitContainer
 @onready var _discard_button: Button = %DiscardButton
 @onready var _tag_picker: MenuButton = %MenuButton
 
+@onready var _previous_button: Button = %Previous
+@onready var _next_button: Button = %Next
+
 @export var current_image: String = ""
 @export var current_hash: String = ""
+@export var state: Mode = Mode.NONE
 
 
 var _is_dirty: bool = false
@@ -25,10 +31,13 @@ signal name_change_request(name: String)
 signal tag_remove_requested(tag: StringName)
 signal tag_add_requested(tag: StringName)
 signal dirty_changed(is_dirty: bool)
+
+signal open_image_request
 signal save_pressed
 signal discard_pressed
 signal open_in_explorer_pressed
-signal open_image_request
+signal previous_pressed
+signal next_pressed
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -38,6 +47,10 @@ func _ready() -> void:
 	_tag_input.tag_entered.connect(_on_add_tag_request)
 	_save_button.pressed.connect(func(): save_pressed.emit())
 	_discard_button.pressed.connect(func(): discard_pressed.emit())
+
+	_previous_button.pressed.connect(func(): previous_pressed.emit())
+	_next_button.pressed.connect(func(): next_pressed.emit())
+	
 	_tag_picker.get_popup().id_pressed.connect(_on_tag_menu_id_pressed)
 	_image_preview.gui_input.connect(_on_image_preview_gui_input)
 

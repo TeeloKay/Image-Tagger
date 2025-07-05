@@ -1,9 +1,9 @@
-[gd_scene load_steps=21 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=24 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://bhs8lug25xk6b" path="res://scenes/views/search_panel.tscn" id="4_jlsqs"]
-[ext_resource type="Script" uid="uid://beviaeeurwjjn" path="res://scripts/controllers/image_menu_controller.gd" id="4_wp0k4"]
+[ext_resource type="Script" uid="uid://beviaeeurwjjn" path="res://scripts/controllers/tagging_view_controller.gd" id="4_wp0k4"]
 [ext_resource type="Script" uid="uid://b37wppbdqh0qm" path="res://scripts/controllers/tag_editor_controller.gd" id="5_bjd11"]
 [ext_resource type="PackedScene" uid="uid://c74n6v23cjt7m" path="res://scenes/views/file_browser_view.tscn" id="5_jlsqs"]
 [ext_resource type="Script" uid="uid://w51jykngua7n" path="res://scenes/project_toolbar.gd" id="5_wp0k4"]
@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://8bv6r2etb1ah" path="res://scripts/controllers/bulk_tag_editor_controller.gd" id="7_nfivy"]
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
-[ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/image_view.tscn" id="8_q8u5g"]
+[ext_resource type="PackedScene" uid="uid://dl8q7fsbr8sr2" path="res://scenes/views/tagging_view.tscn" id="8_q8u5g"]
 [ext_resource type="Script" uid="uid://btsew8tf20wa5" path="res://scripts/controllers/app_controller.gd" id="13_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://cykwccqg380hc" path="res://scenes/views/bulk_tag_editor.tscn" id="13_bb450"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
@@ -20,6 +20,9 @@
 [ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://clgsameunjklh" path="res://scripts/controllers/file_browser_controller.gd" id="17_1nqs0"]
 [ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
+[ext_resource type="Script" uid="uid://dfd2e0mba6y4c" path="res://scripts/controllers/states/bulk_state.gd" id="19_ebg2g"]
+[ext_resource type="Script" uid="uid://cd8i4g80uiblr" path="res://scripts/controllers/states/single_state.gd" id="20_2ofn6"]
+[ext_resource type="Script" uid="uid://ckfi5t82t8rri" path="res://scripts/controllers/states/none_state.gd" id="21_xa025"]
 
 [node name="Main" type="CanvasLayer"]
 
@@ -161,6 +164,7 @@ size_flags_horizontal = 3
 
 [node name="ImageView" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("8_q8u5g")]
 layout_mode = 2
+state = 2
 
 [node name="BulkTagEditor" parent="Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer" instance=ExtResource("13_bb450")]
 visible = false
@@ -203,7 +207,7 @@ search_controller = NodePath("SearchController")
 file_browser = NodePath("FileBrowserController")
 directory_controller = NodePath("DirectoryController")
 tag_overview_controller = NodePath("TagOverviewController")
-image_view_controller = NodePath("ImageMenuController")
+image_view_controller = NodePath("TaggingViewController")
 
 [node name="ToolController" type="Node" parent="AppController" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
 script = ExtResource("1_3p2gp")
@@ -226,11 +230,23 @@ directory_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMen
 script = ExtResource("17_1nqs0")
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/MarginContainer/FileBrowser")
 
-[node name="ImageMenuController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
+[node name="TaggingViewController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller", "none_state", "single_state", "bulk_state")]
 script = ExtResource("4_wp0k4")
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/Images/VBoxContainer/ImageView")
 _error_dialog = NodePath("../../Popups/ErrorDialog")
 file_menu_controller = NodePath("../FileBrowserController")
+none_state = NodePath("NoneState")
+single_state = NodePath("SingleState")
+bulk_state = NodePath("BulkState")
+
+[node name="BulkState" type="Node" parent="AppController/TaggingViewController"]
+script = ExtResource("19_ebg2g")
+
+[node name="SingleState" type="Node" parent="AppController/TaggingViewController"]
+script = ExtResource("20_2ofn6")
+
+[node name="NoneState" type="Node" parent="AppController/TaggingViewController"]
+script = ExtResource("21_xa025")
 
 [node name="TagOverviewController" type="Node" parent="AppController" node_paths=PackedStringArray("view", "color_picker")]
 script = ExtResource("5_bjd11")
@@ -245,4 +261,4 @@ image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/CenterMenu/
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 
 [connection signal="path_selected" from="AppController/DirectoryController" to="AppController/FileBrowserController" method="set_directory" flags=3]
-[connection signal="selection_changed" from="AppController/FileBrowserController" to="AppController/ImageMenuController" method="_on_file_menu_controller_selection_changed"]
+[connection signal="selection_changed" from="AppController/FileBrowserController" to="AppController/TaggingViewController" method="_on_file_menu_controller_selection_changed"]

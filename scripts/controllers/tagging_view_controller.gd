@@ -1,6 +1,8 @@
-class_name ImageMenuController extends MenuController
+class_name TaggingViewController extends MenuController
 
-@export var image_view: ImageDataView
+@export var current_mode: TaggingView.Mode = TaggingView.Mode.NONE
+
+@export var image_view: TaggingView
 
 @export_global_file var current_image: String = ""
 @export var _current_hash: String
@@ -11,13 +13,28 @@ class_name ImageMenuController extends MenuController
 @export var _error_dialog: AcceptDialog
 @export var file_menu_controller: FileBrowserController
 
+@export var none_state: NoneState
+@export var single_state: SingleState
+@export var bulk_state: BulkState
+
 var _file_hasher: ImageHasher
+var _current_state: TaggingViewState
+var _selection_index: int = 0
+
+signal tagging_mode_changed(mode: TaggingView.Mode)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
 	InputHandler.apply_changes.connect(apply_changes)
 	_file_hasher = ProjectManager.image_hasher
+
+	if none_state:
+		none_state.initialize(image_view, self)
+	if single_state:
+		single_state.initialize(image_view, self)
+	if bulk_state:
+		bulk_state.initialize(image_view, self)
 
 	image_view.tag_add_requested.connect(_on_add_tag_request)
 	image_view.tag_remove_requested.connect(_on_remove_tag_request)
@@ -26,6 +43,9 @@ func _ready() -> void:
 	image_view.name_change_request.connect(_on_rename_image_request)
 	image_view.open_in_explorer_pressed.connect(_on_explorer_button_pressed)
 	image_view.open_image_request.connect(_on_open_image_request)
+
+	image_view.next_pressed.connect(_on_next_pressed)
+	image_view.previous_pressed.connect(_on_previous_pressed)
 
 	_file_hasher.file_hashed.connect(_on_file_hashed)
 
@@ -148,14 +168,22 @@ func _on_rename_image_request(new_file: String) -> void:
 	_project_data.image_db.update_image_path(_current_hash, _project_data.to_relative_path(new_path))
 	set_image(new_path)
 
-
 func _on_file_menu_controller_selection_changed() -> void:
 	var selection := file_menu_controller.get_selection()
 	if selection.is_empty():
+		_selection_index = 0
 		clear()
 		return
-	set_image(selection[selection.size() - 1])
-
+	_selection_index = min(_selection_index, selection.size() - 1)
+	set_image(selection[_selection_index])
+	match selection.size():
+		0:
+			current_mode = TaggingView.Mode.NONE
+		1:
+			current_mode = TaggingView.Mode.SINGLE
+		_:
+			current_mode = TaggingView.Mode.BULK
+			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
 		_current_hash = file_hash
@@ -164,3 +192,19 @@ func _on_file_hashed(path: String, file_hash: String) -> void:
 		_working_tags = _original_tags.duplicate()
 		_working_tags.sort_custom(func(a, b): return String(a) < String(b))
 		_populate_tag_list()
+
+func set_tagging_mode(mode: TaggingView.Mode) -> void:
+	current_mode = mode
+
+	print(current_mode)
+	tagging_mode_changed.emit(current_mode)
+
+func _on_previous_pressed() -> void:
+	var selection = file_menu_controller.get_selection()
+	_selection_index = wrap(_selection_index - 1, 0, selection.size())
+	set_image(selection[_selection_index])
+
+func _on_next_pressed() -> void:
+	var selection = file_menu_controller.get_selection()
+	_selection_index = wrap(_selection_index + 1, 0, selection.size())
+	set_image(selection[_selection_index])

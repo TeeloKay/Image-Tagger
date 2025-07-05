@@ -1,9 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://dl8q7fsbr8sr2"]
+[gd_scene load_steps=5 format=3 uid="uid://dl8q7fsbr8sr2"]
 
-[ext_resource type="Script" uid="uid://cbvywtnq7naax" path="res://scenes/views/image_view.gd" id="1_kvsck"]
+[ext_resource type="Script" uid="uid://cbvywtnq7naax" path="res://scenes/views/tagging_view.gd" id="1_kvsck"]
+[ext_resource type="Texture2D" uid="uid://ujalhdyin0ad" path="res://assets/icons/ArrowLeft.svg" id="2_1apf7"]
 [ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="3_d7d5o"]
+[ext_resource type="Texture2D" uid="uid://biecrr7bcl38f" path="res://assets/icons/ArrowRight.svg" id="3_rpxqb"]
 
-[node name="ImageView" type="VSplitContainer"]
+[node name="TaggingView" type="VSplitContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -21,14 +23,6 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-
-[node name="FileName" type="LineEdit" parent="MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "filename.jpg"
-alignment = 1
-editable = false
-flat = true
 
 [node name="ExplorerButton" type="Button" parent="MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
@@ -57,6 +51,30 @@ grow_vertical = 2
 size_flags_vertical = 3
 expand_mode = 1
 stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Previous" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("2_1apf7")
+
+[node name="FileName" type="LineEdit" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "filename.jpg"
+alignment = 1
+editable = false
+flat = true
+
+[node name="Next" type="Button" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_rpxqb")
 
 [node name="Tags" type="MarginContainer" parent="."]
 layout_mode = 2
