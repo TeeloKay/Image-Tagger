@@ -40,6 +40,7 @@ func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	var tags := _project_data.get_tags()
 	image_view.set_tag_suggestions(tags)
+	_project_data.tag_db.tag_added.connect(_update_tag_suggestions)
 
 func set_image(path: String) -> void:
 	if path.is_empty():
@@ -189,3 +190,7 @@ func _on_next_pressed() -> void:
 	var selection = file_menu_controller.get_selection()
 	_selection_index = wrap(_selection_index + 1, 0, selection.size())
 	set_image(selection[_selection_index])
+
+func _update_tag_suggestions(_tag: StringName) -> void:
+	var project_tags := _project_data.get_tags()
+	image_view.set_tag_suggestions(project_tags)

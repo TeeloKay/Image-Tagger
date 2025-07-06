@@ -21,7 +21,7 @@ enum Mode {NONE, SINGLE, BULK}
 
 var _is_dirty: bool = false
 var _tag_badge_scene = preload("res://scenes/ui/tag_badge.tscn")
-var _tag_suggestions: Array[StringName]
+var tags: Array[StringName]
 
 var _enabled: bool
 
@@ -90,18 +90,17 @@ func add_tag(tag: StringName, color: Color) -> void:
 		tag_badge.modulate = color
 
 func set_tag_suggestions(tags: Array[StringName]) -> void:
-	_tag_suggestions = tags
 	var popup := _tag_picker.get_popup()
 	popup.clear()
-	if _tag_suggestions.is_empty():
+	if tags.is_empty():
 		_tag_picker.disabled = true
 		return
-	for tag in _tag_suggestions:
+	for tag in tags:
 		popup.add_item(tag)
 	_tag_picker.disabled = false
 
 func _on_tag_menu_id_pressed(id: int) -> void:
-	var tag := _tag_suggestions[id]
+	var tag := tags[id]
 	tag_add_requested.emit(tag)
 
 func _on_remove_tag_request(tag: StringName) -> void:

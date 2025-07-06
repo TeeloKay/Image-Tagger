@@ -163,17 +163,18 @@ _controller = NodePath("../../../../../../../../../AppController/FileBrowserCont
 layout_mode = 2
 current_tab = 0
 
+[node name="Selection" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VBoxContainer2" node_paths=PackedStringArray("controller") instance=ExtResource("13_bb450")]
+layout_mode = 2
+size_flags_vertical = 3
+controller = NodePath("../../../../../../../../../../AppController/BulkTaggingController")
+metadata/_tab_index = 0
+
 [node name="Single" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VBoxContainer2" instance=ExtResource("8_q8u5g")]
+visible = false
 layout_mode = 2
 current_image = null
 current_hash = null
 state = 2
-metadata/_tab_index = 0
-
-[node name="Selection" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VBoxContainer2" node_paths=PackedStringArray("controller") instance=ExtResource("13_bb450")]
-visible = false
-layout_mode = 2
-controller = NodePath("../../../../../../../../../../AppController/BulkTaggingController")
 metadata/_tab_index = 1
 
 [node name="Tags" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu"]

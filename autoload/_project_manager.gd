@@ -1,15 +1,9 @@
 extends Node
 
 const REGISTRY_PATH := "user://registry.tres"
-const META_DIR_NAME := ".artmeta"
-const PROJECT_FILE := "project.json"
-const INDEX_FILE := "index.json"
 
 var registry: ProjectRegistry
 var current_project: ProjectData
-var _current_meta_path: String = ""
-var _current_project_file_path: String = ""
-var _current_index_file_path: String = ""
 
 var _project_io: ProjectIO
 var search_engine: SearchEngine
@@ -49,24 +43,11 @@ func save_current_project():
 	_project_io.save_project(current_project)
 	
 func open_project(project_path: String) -> void:
-	_current_meta_path = project_path.path_join(META_DIR_NAME)
-	_current_project_file_path = _current_meta_path.path_join(PROJECT_FILE)
-	_current_index_file_path = _current_meta_path.path_join(INDEX_FILE)
-	
-	if !DirAccess.dir_exists_absolute(_current_meta_path):
-		DirAccess.make_dir_recursive_absolute(_current_meta_path)
-	
-	if FileAccess.file_exists(_current_project_file_path):
-		current_project = _project_io.load_project(project_path)
-	else:
-		current_project = ProjectData.new()
-		current_project.project_path = project_path
-	
 	registry.register_project(project_path)
 	save_registry()
 	
-	image_indexer.index_project(current_project)
-	save_current_project()
+	current_project = _project_io.load_project(project_path)
+	# save_current_project()
 	project_loaded.emit()
 
 func get_valid_projects() -> Array[String]:

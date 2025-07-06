@@ -13,10 +13,10 @@ const TAGS := "tag_data"
 func save_project(project: ProjectData) -> void:
 	var version := str(ProjectSettings.get_setting("application/config/version"))
 	var project_data := {
-		VERSION = version,
-		FAVORITES = project.favorites,
-		IMAGES = project.image_db.serialize(),
-		TAGS = project.tag_db.serialize()
+		VERSION: version,
+		FAVORITES: project.favorites,
+		IMAGES: project.image_db.serialize(),
+		TAGS: project.tag_db.serialize()
 		}
 	var index_data: Dictionary = project.index.serialize()
 
@@ -27,10 +27,15 @@ func save_project(project: ProjectData) -> void:
 func load_project(path: String) -> ProjectData:
 	var project := ProjectData.new()
 	project.project_path = path
+	var meta_path := path.path_join(PROJECT_DIR)
 
-	var project_data := _load_data_from_json(path.path_join(PROJECT_DIR).path_join(PROJECT_FILE))
-	var index_data := _load_data_from_json(path.path_join(PROJECT_DIR).path_join(INDEX_FILE))
+	if !DirAccess.dir_exists_absolute(meta_path):
+		DirAccess.make_dir_recursive_absolute(meta_path)
 
+	var project_data := _load_data_from_json(meta_path.path_join(PROJECT_FILE))
+	var index_data := _load_data_from_json(meta_path.path_join(INDEX_FILE))
+
+	print(project_data)
 	project.image_db.deserialize(project_data.get(IMAGES, {}))
 	project.tag_db.deserialize(project_data.get(TAGS, {}))
 	project.favorites = project_data.get(FAVORITES, [])
@@ -47,18 +52,18 @@ func _save_data_as_json(data: Variant, project_path: String, file_name: String) 
 	# Ensure the .artmeta directory exists
 	var dir := DirAccess.open(project_path)
 	if dir == null:
-		printerr("Failed to access directory: ", project_path)
+		push_error("Failed to access directory: ", project_path)
 		return
 	if !dir.dir_exists(PROJECT_DIR):
 		var err = dir.make_dir(PROJECT_DIR)
 		if err != OK:
-			printerr("Failed to create project metadata folder: ", dir_path)
+			push_error("Failed to create project metadata folder: ", dir_path)
 			return
 
 	# Write the file
 	var file := FileAccess.open(file_path, FileAccess.WRITE)
 	if file == null:
-		printerr("Failed to save data to ", file_path)
+		push_error("Failed to save data to ", file_path)
 		return
 
 	file.store_string(json)
@@ -68,13 +73,13 @@ func _save_data_as_json(data: Variant, project_path: String, file_name: String) 
 func _load_data_from_json(file_path: String) -> Dictionary:
 	var file := FileAccess.open(file_path, FileAccess.READ)
 	if file == null:
-		printerr("Failed to open file: ", file_path)
+		push_error("Failed to open file: ", file_path)
 		return {}
 
 	var content := file.get_as_text()
-	var result = JSON.parse_string(content)
-	if result == null:
-		printerr("JSON parsing failed for: ", file_path)
+	var json: Dictionary = JSON.parse_string(content)
+	if json == null:
+		push_error("JSON parsing failed for: ", file_path)
 		return {}
 
-	return result
+	return json
