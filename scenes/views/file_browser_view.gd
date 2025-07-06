@@ -194,9 +194,17 @@ func _on_file_removed(path: String) -> void:
 
 #region Input Handlers
 func _on_list_view_gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton && event.button_index == MOUSE_BUTTON_MASK_RIGHT && event.is_pressed():
-		var click_pos: Vector2 = event.position
-		_show_context_menu(click_pos)
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_MASK_RIGHT && event.is_pressed():
+			var click_pos: Vector2 = event.position
+			_show_context_menu(click_pos)
+			return
+		if event.button_index == MOUSE_BUTTON_MASK_LEFT && event.double_click:
+			# TODO: put this logic in a more appropriate place.
+			var index: int = _item_list.get_item_at_position(event.position)
+			if index >= 0 && index < _item_list.item_count:
+				var item := _file_paths_in_dir[index]
+				OS.shell_open(item.get_base_dir())
 
 	if event.is_action_pressed("delete"):
 		file_remove_request.emit()

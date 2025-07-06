@@ -38,6 +38,7 @@ func get_index() -> Dictionary:
 func serialize() -> Dictionary:
     return _index.duplicate()
 
-func deserialize(data: Dictionary[String, String]) -> void:
-    _index = data
+func deserialize(data: Dictionary) -> void:
+    for path in data:
+        _index[path] = str(data[path])
 #endregion

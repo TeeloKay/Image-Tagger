@@ -1,9 +1,5 @@
 class_name ProjectData extends Resource
 
-const FAVORITES := "favorites"
-const IMAGES := "image_data"
-const TAGS := "tag_data"
-
 ## Absolute project path
 @export var project_path: String = ""
 @export var favorites: Array = []
@@ -44,7 +40,7 @@ func set_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 	
 	for tag in tags:
 		if !tag in original_tags:
-			tag_file(file_hash,tag)
+			tag_file(file_hash, tag)
 	
 	for tag in original_tags:
 		if !tag in tags:
@@ -61,7 +57,7 @@ func add_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 
 	for tag in tags:
 		if !tag in original_tags:
-			tag_file(file_hash,tag)
+			tag_file(file_hash, tag)
 	
 	ProjectManager.save_current_project()
 
@@ -163,25 +159,5 @@ func get_images() -> PackedStringArray:
 
 func get_index() -> Dictionary:
 	return index.get_index()
-
-#endregion
-#region Serialization
-
-func serialize() -> Dictionary:
-	var data := {
-		IMAGES: image_db.serialize(),
-		TAGS: tag_db.serialize(),
-		FAVORITES: favorites
-	}
-	return data
-
-func deserialize(data: Dictionary) -> void:
-	image_db = ImageDB.new()
-	image_db.deserialize(data.get(IMAGES, {}))
-
-	tag_db = TagDB.new()
-	tag_db.deserialize(data.get(TAGS))
-
-	favorites = data.get(FAVORITES, [])
 
 #endregion

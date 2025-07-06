@@ -4,8 +4,6 @@ enum Mode {NONE, SINGLE, BULK}
 
 @onready var _name_edit: LineEdit = %FileName
 @onready var _image_preview: TextureRect = %ImagePreview
-@onready var _explorer_button: Button = %ExplorerButton
-
 @onready var _tag_container: FlowContainer = %TagContainer
 @onready var _tag_input: TagInputContainer = %TagInputContainer
 
@@ -35,7 +33,6 @@ signal dirty_changed(is_dirty: bool)
 signal open_image_request
 signal save_pressed
 signal discard_pressed
-signal open_in_explorer_pressed
 signal previous_pressed
 signal next_pressed
 
@@ -43,7 +40,6 @@ signal next_pressed
 func _ready() -> void:
 	_name_edit.text = ""
 
-	_explorer_button.pressed.connect(_on_explorer_button_pressed)
 	_tag_input.tag_entered.connect(_on_add_tag_request)
 	_save_button.pressed.connect(func(): save_pressed.emit())
 	_discard_button.pressed.connect(func(): discard_pressed.emit())
@@ -61,11 +57,9 @@ func _ready() -> void:
 
 func enable() -> void:
 	_enabled = true
-	_explorer_button.disabled = !_enabled
 
 func disable() -> void:
 	_enabled = false
-	_explorer_button.disabled = !_enabled
 	_save_button.disabled = !_enabled
 	_discard_button.disabled = !_enabled
 
@@ -109,9 +103,6 @@ func set_tag_suggestions(tags: Array[StringName]) -> void:
 func _on_tag_menu_id_pressed(id: int) -> void:
 	var tag := _tag_suggestions[id]
 	tag_add_requested.emit(tag)
-
-func _on_explorer_button_pressed() -> void:
-	open_in_explorer_pressed.emit()
 
 func _on_remove_tag_request(tag: StringName) -> void:
 	tag_remove_requested.emit(tag)

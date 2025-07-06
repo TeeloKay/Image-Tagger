@@ -1,7 +1,10 @@
-[gd_scene load_steps=3 format=3 uid="uid://cykwccqg380hc"]
+[gd_scene load_steps=6 format=3 uid="uid://cykwccqg380hc"]
 
 [ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="1_brqga"]
 [ext_resource type="Script" uid="uid://b7nxf4dwpw6l2" path="res://scenes/views/bulk_tagging_view.gd" id="1_jigjk"]
+[ext_resource type="Texture2D" uid="uid://dd88joft327pq" path="res://assets/icons/Folder.svg" id="2_e4tc4"]
+[ext_resource type="Texture2D" uid="uid://ujalhdyin0ad" path="res://assets/icons/ArrowLeft.svg" id="3_q671y"]
+[ext_resource type="Texture2D" uid="uid://biecrr7bcl38f" path="res://assets/icons/ArrowRight.svg" id="4_piyfo"]
 
 [node name="BulkTagEditor" type="Control"]
 layout_mode = 3
@@ -15,57 +18,132 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_jigjk")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="VBoxContainer" type="VSplitContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+split_offset = 500
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+[node name="View" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="SelectionSizeDisplay" type="HBoxContainer" parent="VBoxContainer/View"]
 layout_mode = 2
 alignment = 1
 
-[node name="SelectionSizeLabel" type="Label" parent="VBoxContainer/HBoxContainer2"]
+[node name="SelectionSizeLabel" type="Label" parent="VBoxContainer/View/SelectionSizeDisplay"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "64"
 horizontal_alignment = 1
 
-[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2"]
+[node name="Label" type="Label" parent="VBoxContainer/View/SelectionSizeDisplay"]
 layout_mode = 2
 text = "items selected"
 
-[node name="TagSelector" type="MenuButton" parent="VBoxContainer"]
+[node name="ImagePreview" type="SubViewportContainer" parent="VBoxContainer/View"]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="VBoxContainer/View/ImagePreview"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(408, 444)
+size_2d_override_stretch = true
+render_target_update_mode = 4
+
+[node name="PreviewTexture" type="TextureRect" parent="VBoxContainer/View/ImagePreview/SubViewport"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("2_e4tc4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Navigator" type="HBoxContainer" parent="VBoxContainer/View"]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Previous" type="Button" parent="VBoxContainer/View/Navigator"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_q671y")
+
+[node name="FileName" type="LineEdit" parent="VBoxContainer/View/Navigator"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "filename.jpg"
+alignment = 1
+editable = false
+flat = true
+
+[node name="Next" type="Button" parent="VBoxContainer/View/Navigator"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("4_piyfo")
+
+[node name="TabContainer" type="TabContainer" parent="VBoxContainer"]
+layout_mode = 2
+current_tab = 0
+
+[node name="Selection" type="MarginContainer" parent="VBoxContainer/TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Selection"]
+layout_mode = 2
+
+[node name="TagSelector" type="MenuButton" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Select tag"
+flat = false
 
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+[node name="TagInput" parent="VBoxContainer/TabContainer/Selection/VBoxContainer" instance=ExtResource("1_brqga")]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TagContainer" type="HFlowContainer" parent="VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="Panel" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"DarkPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/PanelContainer"]
+layout_mode = 2
+offset_right = 392.0
+offset_bottom = 256.0
+
+[node name="TagContainer" type="HFlowContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/PanelContainer/MarginContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 120)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TagInput" parent="VBoxContainer" instance=ExtResource("1_brqga")]
-unique_name_in_owner = true
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-
-[node name="Apply" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="Apply" type="Button" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Apply to all
 "
 
-[node name="Discard" type="Button" parent="VBoxContainer/HBoxContainer"]
+[node name="Discard" type="Button" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

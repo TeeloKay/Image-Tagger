@@ -13,12 +13,7 @@ class_name TaggingViewController extends MenuController
 @export var _error_dialog: AcceptDialog
 @export var file_menu_controller: FileBrowserController
 
-@export var none_state: NoneState
-@export var single_state: SingleState
-@export var bulk_state: BulkState
-
 var _file_hasher: ImageHasher
-var _current_state: TaggingViewState
 var _selection_index: int = 0
 
 signal tagging_mode_changed(mode: TaggingView.Mode)
@@ -29,19 +24,11 @@ func _ready() -> void:
 	InputHandler.apply_changes.connect(apply_changes)
 	_file_hasher = ProjectManager.image_hasher
 
-	if none_state:
-		none_state.initialize(image_view, self)
-	if single_state:
-		single_state.initialize(image_view, self)
-	if bulk_state:
-		bulk_state.initialize(image_view, self)
-
 	image_view.tag_add_requested.connect(_on_add_tag_request)
 	image_view.tag_remove_requested.connect(_on_remove_tag_request)
 	image_view.save_pressed.connect(apply_changes)
 	image_view.discard_pressed.connect(discard_changes)
 	image_view.name_change_request.connect(_on_rename_image_request)
-	image_view.open_in_explorer_pressed.connect(_on_explorer_button_pressed)
 	image_view.open_image_request.connect(_on_open_image_request)
 
 	image_view.next_pressed.connect(_on_next_pressed)
@@ -81,12 +68,6 @@ func set_image(path: String) -> void:
 	# _working_tags.sort_custom(func(a, b): return String(a) < String(b))
 	# _populate_tag_list()
 	image_view.mark_clean()
-
-func _on_explorer_button_pressed() -> void:
-	if current_image.is_empty():
-		return
-	var folder_path := current_image.get_base_dir()
-	OS.shell_open(folder_path)
 
 func _on_open_image_request() -> void:
 	if current_image.is_empty():
@@ -208,4 +189,3 @@ func _on_next_pressed() -> void:
 	var selection = file_menu_controller.get_selection()
 	_selection_index = wrap(_selection_index + 1, 0, selection.size())
 	set_image(selection[_selection_index])
-

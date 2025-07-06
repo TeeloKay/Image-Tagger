@@ -228,9 +228,8 @@ metadata/_custom_type_script = "uid://bjvppx536xcr3"
 script = ExtResource("16_1nqs0")
 directory_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryView")
 
-[node name="FileBrowserController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view")]
+[node name="FileBrowserController" type="Node" parent="AppController"]
 script = ExtResource("17_1nqs0")
-image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/FileBrowser")
 
 [node name="TaggingViewController" type="Node" parent="AppController" node_paths=PackedStringArray("image_view", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")

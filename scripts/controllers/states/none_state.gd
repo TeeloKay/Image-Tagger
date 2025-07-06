@@ -1,1 +1,0 @@
-class_name NoneState extends TaggingViewState

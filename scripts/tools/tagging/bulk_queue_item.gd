@@ -1,4 +1,4 @@
-class_name QueueItem extends RefCounted
+class_name QueueItem extends Object
 
 var file: String
 var tags: Array[StringName]
