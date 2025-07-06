@@ -1,16 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://cykwccqg380hc"]
+[gd_scene load_steps=3 format=3 uid="uid://cykwccqg380hc"]
 
 [ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="1_brqga"]
+[ext_resource type="Script" uid="uid://b7nxf4dwpw6l2" path="res://scenes/views/bulk_tagging_view.gd" id="1_jigjk"]
 
 [node name="BulkTagEditor" type="Control"]
 layout_mode = 3
-anchors_preset = 8
+anchors_preset = 13
 anchor_left = 0.5
-anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.5
+anchor_bottom = 1.0
+offset_left = -204.0
+offset_right = 204.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_jigjk")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1
@@ -20,28 +23,50 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SelectionSizeLabel" type="Label" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "64"
+horizontal_alignment = 1
+
+[node name="Label" type="Label" parent="VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "items selected"
+
 [node name="TagSelector" type="MenuButton" parent="VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Select tag"
 
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
 [node name="TagContainer" type="HFlowContainer" parent="VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(240, 120)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="TagInputContainer" parent="VBoxContainer" instance=ExtResource("1_brqga")]
+[node name="TagInput" parent="VBoxContainer" instance=ExtResource("1_brqga")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
 layout_mode = 2
 
 [node name="Apply" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Apply to all
 "
 
 [node name="Discard" type="Button" parent="VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Discard changes"

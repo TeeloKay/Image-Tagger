@@ -22,7 +22,7 @@ func _on_resize() -> void:
 		var spacing: int = get_theme_constant("h_separation", &"ItemList")
 		var column_count := int(size.x / (min_column_width + spacing))
 		max_columns = column_count
-		fixed_column_width = (size.x - (column_count + 2) * spacing) / column_count
+		fixed_column_width = (size.x - (column_count) * spacing) / column_count
 
 func set_view_mode(mode: ViewMode) -> void:
 	view_mode = mode

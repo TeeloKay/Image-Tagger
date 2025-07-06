@@ -208,6 +208,7 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 			selection_updated.emit()
 	if event.is_action_pressed("ui_cancel"):
 		_item_list.deselect_all()
+		selection_updated.emit()
 
 #endregion
 

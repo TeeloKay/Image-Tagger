@@ -208,3 +208,4 @@ func _on_next_pressed() -> void:
 	var selection = file_menu_controller.get_selection()
 	_selection_index = wrap(_selection_index + 1, 0, selection.size())
 	set_image(selection[_selection_index])
+

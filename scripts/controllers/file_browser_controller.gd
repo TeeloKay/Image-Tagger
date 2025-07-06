@@ -197,7 +197,8 @@ func _apply_selection_update() -> void:
 		# TODO: we added this for a temporary test of the file hasher's multithreading functionality
 		# TODO: remove when no longer needed.
 		ProjectManager.image_hasher.add_file_to_queue(items[idx])
-	image_selected.emit(_selected_files[0])
+	if !_selected_files.is_empty():
+		image_selected.emit(_selected_files[0])
 	selection_changed.emit()
 
 func clear_selection() -> void:
