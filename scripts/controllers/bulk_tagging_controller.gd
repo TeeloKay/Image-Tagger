@@ -54,7 +54,6 @@ func populate_tag_list(tags: Array[StringName]) -> void:
 func apply_tags_to_selection() -> void:
 	for path in _selection:
 		tagging_queue.enqueue(path, active_tags)
-	tagging_queue.process_queue()
 	active_tags.clear()
 
 func set_active_tags(tags: Array[StringName]) -> void:

@@ -23,62 +23,84 @@ func add_image(image_hash: String, path: String) -> void:
 	image_db.register_image(path, image_hash)
 	index.add(path, image_hash)
 
-func remove_image(image_hash: String) -> void:
-	if image_db.has(image_hash):
-		for tag in image_db.get_image_data(image_hash).tags:
-			tag_db.remove_hash_from_tag(image_hash, tag)
-		image_db.remove_image(image_hash)
-		index.erase(image_hash)
+func remove_image(file_hash: String) -> void:
+	if image_db.has(file_hash):
+		for tag in image_db.get_image_data(file_hash).tags:
+			tag_db.remove_hash_from_tag(file_hash, tag)
+		image_db.remove_image(file_hash)
+		index.erase(file_hash)
 
 func clear_index() -> void:
 	index.clear()
 
 #region Tags
 
-func set_tags_for_hash(image_hash: String, tags: Array[StringName]) -> void:
-	if !image_db.has(image_hash):
+## Sets the exact tags for an image by hash.
+## Adds missing tags and removes any not in the provided list.
+func set_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
+	if !image_db.has(file_hash):
 		return
-	var original_tags = image_db.get_image_data(image_hash).tags
+	var original_tags = image_db.get_image_data(file_hash).tags
 	
 	for tag in tags:
 		if !tag in original_tags:
-			image_db.add_tag_to_image(image_hash, tag)
-			tag_db.add_hash_to_tag(image_hash, tag)
+			tag_file(file_hash,tag)
 	
 	for tag in original_tags:
 		if !tag in tags:
-			image_db.remove_tag_from_image(image_hash, tag)
-			tag_db.remove_hash_from_tag(image_hash, tag)
+			untag_file(file_hash, tag)
 	
 	ProjectManager.save_current_project()
 
-func tag_image_by_hash(image_hash: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_db.has(image_hash):
+## Adds tags to an image by hash, preserving existing tags.
+## Only new tags are applied and recorded in the tag database.
+func add_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
+	if !image_db.has(file_hash):
+		return
+	var original_tags = image_db.get_image_data(file_hash).tags
+
+	for tag in tags:
+		if !tag in original_tags:
+			tag_file(file_hash,tag)
+	
+	ProjectManager.save_current_project()
+
+## Adds a single tag to a file by hash.
+## Automatically creates the tag in the database if it doesn't exist.
+func tag_file(file_hash: String, tag: StringName) -> void:
+	if tag.is_empty() || !image_db.has(file_hash):
 		return
 	tag_db.add_tag(tag)
-	tag_db.add_hash_to_tag(image_hash, tag)
-	image_db.add_tag_to_image(image_hash, tag)
+	tag_db.add_hash_to_tag(file_hash, tag)
+	image_db.add_tag_to_image(file_hash, tag)
 
-func untag_image_by_hash(image_hash: String, tag: StringName) -> void:
-	if tag.is_empty() || !image_db.has(image_hash):
+## Removes a tag from a file by hash.
+## Also updates the tag database to remove the hash from the tag's list.
+func untag_file(file_hash: String, tag: StringName) -> void:
+	if tag.is_empty() || !image_db.has(file_hash):
 		return
-	tag_db.remove_hash_from_tag(image_hash, tag)
-	image_db.remove_tag_from_image(image_hash, tag)
+	tag_db.remove_hash_from_tag(file_hash, tag)
+	image_db.remove_tag_from_image(file_hash, tag)
 
-func get_tags_for_hash(image_hash: String) -> Array[StringName]:
-	return image_db.get_image_data(image_hash).tags
+## Returns all tags associated with a file by hash.
+func get_tags_for_hash(file_hash: String) -> Array[StringName]:
+	return image_db.get_image_data(file_hash).tags
 
-func get_images_with_tag(tag: StringName) -> PackedStringArray:
+## Returns all file hashes associated with the given tag.
+func get_files_with_tag(tag: StringName) -> PackedStringArray:
 	if !tag_db.has(tag):
 		return []
 	return tag_db.get_tag_data(tag).hashes
 
+## Returns the list of all tags known to the tag database.
 func get_tags() -> Array[StringName]:
 	return tag_db.get_tags()
 
+## Returns tag metadata for a given tag.
 func get_tag_data(tag: StringName) -> TagData:
 	return tag_db.get_tag_data(tag)
 
+## Registers a new tag in the tag database if it doesn't already exist.
 func add_tag(tag: StringName) -> void:
 	tag_db.add_tag(tag)
 		
