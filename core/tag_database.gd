@@ -2,7 +2,7 @@ class_name TagDB extends Object
 
 const TAGS: String = "tags"
 
-var _db : Dictionary[StringName, TagData] = {}
+var _db: Dictionary[StringName, TagData] = {}
 
 signal tags_changed
 signal tag_added(tag: StringName)

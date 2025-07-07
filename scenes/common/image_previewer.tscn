@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://dkdjdh18n5ctp"]
+
+[ext_resource type="Script" uid="uid://b2xvd0qnh71ij" path="res://scenes/common/image_previewer.gd" id="1_in8w2"]
+[ext_resource type="Texture2D" uid="uid://ujalhdyin0ad" path="res://assets/icons/ArrowLeft.svg" id="1_xwlo4"]
+[ext_resource type="Texture2D" uid="uid://biecrr7bcl38f" path="res://assets/icons/ArrowRight.svg" id="2_in8w2"]
+
+[node name="ImagePreviewer" type="VBoxContainer"]
+custom_minimum_size = Vector2(250, 300)
+offset_right = 127.0
+offset_bottom = 32.0
+script = ExtResource("1_in8w2")
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(250, 268)
+render_target_update_mode = 4
+
+[node name="ImagePreview" type="TextureRect" parent="SubViewportContainer/SubViewport"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Previous" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("1_xwlo4")
+
+[node name="FileName" type="LineEdit" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "filename.jpg"
+alignment = 1
+editable = false
+flat = true
+
+[node name="Next" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("2_in8w2")

@@ -239,10 +239,13 @@ directory_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMen
 script = ExtResource("17_1nqs0")
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/FileBrowser")
 
-[node name="TaggingViewController" type="Node" parent="AppController" node_paths=PackedStringArray("image_preview", "tagging_editor", "_error_dialog", "file_menu_controller")]
+[node name="TaggingViewController" type="Node" parent="AppController" node_paths=PackedStringArray("_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")
-image_preview = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/ImagePreviewer")
-tagging_editor = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/TaggingEditor")
+current_mode = null
+current_image = null
+_current_hash = null
+_working_tags = null
+_original_tags = null
 _error_dialog = NodePath("../../Popups/ErrorDialog")
 file_menu_controller = NodePath("../FileBrowserController")
 

@@ -1,12 +1,12 @@
 [gd_scene load_steps=6 format=3 uid="uid://cykwccqg380hc"]
 
-[ext_resource type="PackedScene" uid="uid://cgitl26sxq0e6" path="res://scenes/common/tag_input_container.tscn" id="1_brqga"]
 [ext_resource type="Script" uid="uid://b7nxf4dwpw6l2" path="res://scenes/views/bulk_tagging_view.gd" id="1_q671y"]
 [ext_resource type="Texture2D" uid="uid://dd88joft327pq" path="res://assets/icons/Folder.svg" id="2_e4tc4"]
 [ext_resource type="Texture2D" uid="uid://ujalhdyin0ad" path="res://assets/icons/ArrowLeft.svg" id="3_q671y"]
 [ext_resource type="Texture2D" uid="uid://biecrr7bcl38f" path="res://assets/icons/ArrowRight.svg" id="4_piyfo"]
+[ext_resource type="PackedScene" uid="uid://jf0kmal2x5ej" path="res://scenes/common/tagging_editor.tscn" id="5_q671y"]
 
-[node name="BulkTagEditor" type="Control"]
+[node name="BulkTaggingView" type="Control"]
 layout_mode = 3
 anchors_preset = 13
 anchor_left = 0.5
@@ -101,50 +101,7 @@ current_tab = 0
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/TabContainer/Selection"]
-layout_mode = 2
-
-[node name="TagSelector" type="MenuButton" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
+[node name="TaggingEditor" parent="VBoxContainer/TabContainer/Selection" instance=ExtResource("5_q671y")]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Select tag"
-flat = false
-
-[node name="TagInput" parent="VBoxContainer/TabContainer/Selection/VBoxContainer" instance=ExtResource("1_brqga")]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="HSeparator" type="HSeparator" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
-layout_mode = 2
-
-[node name="PanelContainer" type="Panel" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_type_variation = &"DarkPanel"
-
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/PanelContainer"]
-layout_mode = 2
-offset_right = 392.0
-offset_bottom = 256.0
-
-[node name="TagContainer" type="HFlowContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/PanelContainer/MarginContainer"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(240, 120)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/TabContainer/Selection/VBoxContainer"]
-layout_mode = 2
-
-[node name="Apply" type="Button" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Apply to all
-"
-
-[node name="Discard" type="Button" parent="VBoxContainer/TabContainer/Selection/VBoxContainer/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Discard changes"
+tag_suggestions = Array[StringName]([&"foo", &"bar", &"baz", &"qux"])

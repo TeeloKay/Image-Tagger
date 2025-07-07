@@ -1,8 +1,7 @@
 class_name TaggingViewController extends MenuController
 
-@export var current_mode: TaggingView.Mode = TaggingView.Mode.NONE
-
-@export var image_view: TaggingView
+@export var image_preview: ImagePreviewer
+@export var tagging_editor: TaggingEditor
 
 @export_global_file var current_image: String = ""
 @export var _current_hash: String
@@ -16,59 +15,48 @@ class_name TaggingViewController extends MenuController
 var _file_hasher: ImageHasher
 var _selection_index: int = 0
 
-signal tagging_mode_changed(mode: TaggingView.Mode)
-
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
 	InputHandler.apply_changes.connect(apply_changes)
 	_file_hasher = ProjectManager.image_hasher
 
-	image_view.tag_add_requested.connect(_on_add_tag_request)
-	image_view.tag_remove_requested.connect(_on_remove_tag_request)
-	image_view.save_pressed.connect(apply_changes)
-	image_view.discard_pressed.connect(discard_changes)
-	image_view.name_change_request.connect(_on_rename_image_request)
-	image_view.open_image_request.connect(_on_open_image_request)
+	image_preview.name_submitted.connect(_on_rename_image_request)
+	image_preview.image_double_clicked.connect(_on_open_image_request)
+	image_preview.next_pressed.connect(_on_next_pressed)
+	image_preview.previous_pressed.connect(_on_previous_pressed)
 
-	image_view.next_pressed.connect(_on_next_pressed)
-	image_view.previous_pressed.connect(_on_previous_pressed)
+	tagging_editor.apply_pressed.connect(apply_changes)
+	tagging_editor.discard_pressed.connect(discard_changes)
+	tagging_editor.tag_add_requested.connect(_on_add_tag_request)
+	tagging_editor.raw_tag_requested.connect(_on_raw_tag_request)
+	tagging_editor.tag_remove_request.connect(_on_remove_tag_request)
 
 	_file_hasher.file_hashed.connect(_on_file_hashed)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	var tags := _project_data.get_tags()
-	image_view.set_tag_suggestions(tags)
+	tagging_editor.set_tag_suggestions(tags)
 	_project_data.tag_db.tag_added.connect(_update_tag_suggestions)
 
 func set_image(path: String) -> void:
 	if path.is_empty():
 		clear()
 
-	if !path.is_absolute_path():
-		path = _project_data.to_abolute_path(path)
-
+	path = _project_data.to_abolute_path(path)
 	if current_image == path:
 		return
 
 	current_image = path
-	# _current_hash = _file_hasher.hash_image(path)
 	_file_hasher.add_file_to_queue(path)
 	var texture = ImageUtil.load_image(path)
 
-	image_view.set_texture(texture)
-	image_view.set_file_name(current_image.get_file())
-	image_view.current_hash = _current_hash
-	image_view.current_image = current_image
-	image_view.clear_tags()
-	image_view.enable()
+	image_preview.set_image_texture(texture)
+	image_preview.set_file_name(current_image.get_file())
+	tagging_editor.clear()
 
-	# _original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
-	# _working_tags = _original_tags.duplicate()
-	# _working_tags.sort_custom(func(a, b): return String(a) < String(b))
-	# _populate_tag_list()
-	image_view.mark_clean()
+	tagging_editor.mark_clean()
 
 func _on_open_image_request() -> void:
 	if current_image.is_empty():
@@ -80,41 +68,46 @@ func apply_changes() -> void:
 	_project_data.set_tags_for_hash(_current_hash, _working_tags)
 	_original_tags = _working_tags
 	_populate_tag_list()
-	image_view.mark_clean()
+	tagging_editor.mark_clean()
 
 	ProjectManager.save_current_project()
 
 func discard_changes() -> void:
 	_working_tags = _original_tags.duplicate()
 	_populate_tag_list()
-	image_view.mark_clean()
+	tagging_editor.mark_clean()
 
 func clear() -> void:
 	_working_tags = []
 	_original_tags = []
 	current_image = ""
 	_current_hash = ""
-	image_view.clear()
+	image_preview.clear()
+	tagging_editor.clear()
 
 func _populate_tag_list() -> void:
-	image_view.clear_tags()
+	tagging_editor.clear()
 	for tag in _working_tags:
 		var data = _project_data.get_tag_data(tag)
-		image_view.add_tag(tag, data.color)
+		tagging_editor.add_active_tag(tag, data.color)
 
-func _on_add_tag_request(tag: String) -> void:
+func _on_add_tag_request(tag: StringName) -> void:
 	if !tag in _working_tags && tag != "":
 		var tag_data := _project_data.get_tag_data(tag)
 		_working_tags.append(tag)
-		image_view.add_tag(tag, tag_data.color)
-		image_view.mark_dirty()
+		tagging_editor.add_active_tag(tag, tag_data.color)
+		tagging_editor.mark_dirty()
+
+func _on_raw_tag_request(raw_tag: String) -> void:
+	var tag := ProjectTools.sanitize_tag(raw_tag)
+	_on_add_tag_request(tag)
 
 func _on_remove_tag_request(tag: StringName) -> void:
 	if !tag in _working_tags:
 		return
 	_working_tags.erase(tag)
 	_populate_tag_list()
-	image_view.mark_dirty()
+	tagging_editor.mark_dirty()
 
 func _on_rename_image_request(new_file: String) -> void:
 	var old_file := current_image.get_file()
@@ -158,13 +151,6 @@ func _on_file_menu_controller_selection_changed() -> void:
 		return
 	_selection_index = min(_selection_index, selection.size() - 1)
 	set_image(selection[_selection_index])
-	match selection.size():
-		0:
-			current_mode = TaggingView.Mode.NONE
-		1:
-			current_mode = TaggingView.Mode.SINGLE
-		_:
-			current_mode = TaggingView.Mode.BULK
 			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
@@ -174,12 +160,6 @@ func _on_file_hashed(path: String, file_hash: String) -> void:
 		_working_tags = _original_tags.duplicate()
 		_working_tags.sort_custom(func(a, b): return String(a) < String(b))
 		_populate_tag_list()
-
-func set_tagging_mode(mode: TaggingView.Mode) -> void:
-	current_mode = mode
-
-	print(current_mode)
-	tagging_mode_changed.emit(current_mode)
 
 func _on_previous_pressed() -> void:
 	var selection = file_menu_controller.get_selection()
@@ -193,4 +173,4 @@ func _on_next_pressed() -> void:
 
 func _update_tag_suggestions(_tag: StringName) -> void:
 	var project_tags := _project_data.get_tags()
-	image_view.set_tag_suggestions(project_tags)
+	tagging_editor.set_tag_suggestions(project_tags)

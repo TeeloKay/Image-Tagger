@@ -15,9 +15,12 @@ func _ready() -> void:
 	super._ready()
 	browser_controller.selection_changed.connect(_on_selection_changed)
 
-	tagging_view.tag_add_requested.connect(_on_tag_add_request)
-	tagging_view.tag_remove_requested.connect(_on_tag_remove_request)
-	tagging_view.apply_tags_requested.connect(apply_tags_to_selection)
+	var tagging_editor := tagging_view.get_tagging_editor()
+	tagging_editor.apply_pressed.connect(apply_tags_to_selection)
+	tagging_editor.tag_add_requested.connect(_on_tag_add_request)
+	tagging_editor.raw_tag_requested.connect(_on_tag_add_request)
+	tagging_editor.tag_remove_request.connect(_on_tag_remove_request)
+	tagging_editor.discard_pressed.connect(_discard_changes)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -43,6 +46,7 @@ func _on_tag_add_request(tag: StringName) -> void:
 	if active_tags.has(tag):
 		return
 	active_tags.append(tag)
+	tagging_view.get_tagging_editor().mark_dirty()
 	populate_tag_list(active_tags)
 
 func populate_tag_list(tags: Array[StringName]) -> void:
@@ -55,6 +59,10 @@ func apply_tags_to_selection() -> void:
 	for path in _selection:
 		tagging_queue.enqueue(path, active_tags)
 	active_tags.clear()
+	tagging_view.get_tagging_editor().mark_clean()
+
+func _discard_changes() -> void:
+	set_active_tags([])
 
 func set_active_tags(tags: Array[StringName]) -> void:
 	active_tags = tags
