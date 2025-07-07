@@ -171,7 +171,6 @@ layout_mode = 2
 
 [node name="TaggingEditor2" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer" instance=ExtResource("8_2ofn6")]
 layout_mode = 2
-size_flags_vertical = 3
 
 [node name="Tags" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu"]
 visible = false
@@ -236,7 +235,7 @@ image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/Cent
 [node name="TaggingViewController" type="Node" parent="AppController" node_paths=PackedStringArray("image_preview", "tagging_editor", "_error_dialog", "file_menu_controller")]
 script = ExtResource("4_wp0k4")
 image_preview = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/ImagePreviewer")
-tagging_editor = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TaggingEditor2")
+tagging_editor = NodePath("")
 _error_dialog = NodePath("../../Popups/ErrorDialog")
 file_menu_controller = NodePath("../FileBrowserController")
 
@@ -249,7 +248,7 @@ metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 [node name="BulkTaggingController" type="Node" parent="AppController" node_paths=PackedStringArray("browser_controller", "tagging_editor")]
 script = ExtResource("7_nfivy")
 browser_controller = NodePath("../FileBrowserController")
-tagging_editor = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TaggingEditor2")
+tagging_editor = NodePath("")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 
 [node name="TaggingQueue" type="Node" parent="AppController/BulkTaggingController"]

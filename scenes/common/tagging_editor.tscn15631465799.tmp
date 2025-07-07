@@ -1,0 +1,77 @@
+[gd_scene load_steps=2 format=3 uid="uid://jf0kmal2x5ej"]
+
+[ext_resource type="Script" uid="uid://dpgulx0y80rjs" path="res://scenes/common/tagging_editor.gd" id="1_gj13m"]
+
+[node name="TaggingEditor" type="VBoxContainer"]
+custom_minimum_size = Vector2(400, 300)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -243.5
+offset_top = -156.0
+offset_right = 156.5
+offset_bottom = 144.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_gj13m")
+apply_button_text = ""
+discard_button_text = ""
+
+[node name="TagSelector" type="MenuButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select tag"
+flat = false
+
+[node name="BoxContainer" type="BoxContainer" parent="."]
+layout_mode = 2
+
+[node name="TagInput" type="LineEdit" parent="BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "new tag"
+
+[node name="SubmitTag" type="Button" parent="BoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Add
+"
+
+[node name="HSeparator" type="HSeparator" parent="."]
+layout_mode = 2
+
+[node name="PanelContainer" type="Panel" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+theme_type_variation = &"DarkPanel"
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+offset_right = 392.0
+offset_bottom = 256.0
+
+[node name="TagContainer" type="HFlowContainer" parent="PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(240, 120)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Apply" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Apply"
+
+[node name="Discard" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+disabled = true
+text = "Discard"

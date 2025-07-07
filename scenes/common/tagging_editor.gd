@@ -22,11 +22,11 @@
 
 # Text shown on the apply button.
 @export var apply_button_text: String = "Apply":
-	set = set_apply_button_text, get = get_apply_button_text
+	set = set_apply_button_text
 
 # Text shown on the discard button.
 @export var discard_button_text: String = "Discard":
-	set = set_discard_button_text, get = get_discard_button_text
+	set = set_discard_button_text
 
 # Enables or disables interaction with the tag editor.
 @export var enabled: bool = true:
@@ -151,18 +151,15 @@ func _on_tag_menu_resized() -> void:
 func set_apply_button_text(text: String) -> void:
 	if !is_node_ready():
 		await ready
+	apply_button_text = text
 	_apply_button.text = text
-
-func get_apply_button_text() -> String:
-	return _apply_button.text
 
 func set_discard_button_text(text: String) -> void:
 	if !is_node_ready():
 		await ready
+	discard_button_text = text
 	_discard_button.text = text
 
-func get_discard_button_text() -> String:
-	return _discard_button.text
 
 func set_tag_suggestions(tags: Array[StringName]) -> void:
 	if !is_node_ready():

@@ -1,7 +1,7 @@
 class_name BulkTaggingController extends MenuController
 
 @export var browser_controller: FileBrowserController
-@export var tagging_view: BulkTaggingView
+@export var tagging_editor: TaggingEditor
 
 @export var _selection: PackedStringArray
 @export var active_tags: Array[StringName]:
@@ -15,25 +15,24 @@ func _ready() -> void:
 	super._ready()
 	browser_controller.selection_changed.connect(_on_selection_changed)
 
-	var tagging_editor := tagging_view.get_tagging_editor()
 	tagging_editor.apply_pressed.connect(apply_tags_to_selection)
+	tagging_editor.discard_pressed.connect(_discard_changes)
 	tagging_editor.tag_add_requested.connect(_on_tag_add_request)
 	tagging_editor.raw_tag_requested.connect(_on_tag_add_request)
 	tagging_editor.tag_remove_request.connect(_on_tag_remove_request)
-	tagging_editor.discard_pressed.connect(_discard_changes)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	var tags := _project_data.get_tags()
-	tagging_view.set_tag_suggestions(tags)
+	tagging_editor.set_tag_suggestions(tags)
 	tagging_queue.project_data = _project_data
 	tagging_queue.image_hasher = ProjectManager.image_hasher
 
 func _on_selection_changed() -> void:
 	_selection = browser_controller.get_selection()
-	tagging_view.set_selection_size(_selection.size())
+	# tagging_editor.set_selection_size(_selection.size())
 	active_tags.clear()
-	tagging_view.clear_tag_list()
+	tagging_editor.clear()
 
 func _on_tag_remove_request(tag: StringName) -> void:
 	if !active_tags.has(tag):
@@ -46,20 +45,20 @@ func _on_tag_add_request(tag: StringName) -> void:
 	if active_tags.has(tag):
 		return
 	active_tags.append(tag)
-	tagging_view.get_tagging_editor().mark_dirty()
+	tagging_editor.get_tagging_editor().mark_dirty()
 	populate_tag_list(active_tags)
 
 func populate_tag_list(tags: Array[StringName]) -> void:
-	tagging_view.clear_tag_list()
+	tagging_editor.clear()
 	for tag in tags:
 		var data := _project_data.get_tag_data(tag)
-		tagging_view.add_tag(tag, data.color)
+		tagging_editor.add_tag(tag, data.color)
 
 func apply_tags_to_selection() -> void:
 	for path in _selection:
 		tagging_queue.enqueue(path, active_tags)
 	active_tags.clear()
-	tagging_view.get_tagging_editor().mark_clean()
+	tagging_editor.get_tagging_editor().mark_clean()
 
 func _discard_changes() -> void:
 	set_active_tags([])
