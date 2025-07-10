@@ -31,6 +31,7 @@ func set_view_mode(mode: ViewMode) -> void:
 func set_icon_size(size: Vector2i) -> void:
 	icon_size = size
 	_update_view_mode()
+	_on_resize()
 
 func _get_icon_size() -> Vector2i:
 	return icon_size

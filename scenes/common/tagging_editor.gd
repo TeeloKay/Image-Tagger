@@ -29,12 +29,12 @@
 	set = set_discard_button_text
 
 # Enables or disables interaction with the tag editor.
-@export var enabled: bool = true:
-	set = set_enabled
+@export var allow_input: bool = true:
+	set = set_allow_input
 
-# Marks whether there are unsaved changes.
-@export var is_dirty: bool = false:
-	set = set_dirty
+# Enables or disables the apply & discard buttons.
+@export var can_submit: bool = false:
+	set = set_can_submit
 #endregion
 
 #region Internal Variables
@@ -81,33 +81,24 @@ func _ready() -> void:
 
 # Adds a tag badge to the UI with the given tag and color.
 func add_active_tag(tag: StringName, color: Color) -> void:
-	var tag_badge := _tag_badge_scene.instantiate() as TagBadge
-	_tag_container.add_child(tag_badge)
-	tag_badge.tag = tag
-	tag_badge.remove_requested.connect(func(val: StringName) -> void: tag_remove_request.emit(val))
-	tag_badge.modulate = color
+	var badge := _tag_badge_scene.instantiate() as TagBadge
+	_tag_container.add_child(badge, INTERNAL_MODE_BACK)
+	badge.tag = tag
+	badge.modulate = color
+	badge.remove_requested.connect(func(t: StringName) -> void: tag_remove_request.emit(t))
 
-# Clears all current tags and suggestions from the UI.
+# Clears all current tags from the UI.
 func clear() -> void:
-	for child in _tag_container.get_children():
+	for child in _tag_container.get_children(true):
 		child.queue_free()
-	# _tag_menu.get_popup().clear()
 
 # Enables the editor for interaction.
 func enable() -> void:
-	enabled = true
+	allow_input = true
 
 # Disables the editor to prevent interaction.
 func disable() -> void:
-	enabled = false
-
-# Helper method to mark the editor's status as dirty.
-func mark_dirty() -> void:
-	is_dirty = true
-
-# Helper method to mark the editor's status as clean.
-func mark_clean() -> void:
-	is_dirty = false
+	allow_input = false
 #endregion
 
 #region Private methods
@@ -167,20 +158,18 @@ func set_tag_suggestions(tags: Array[StringName]) -> void:
 	tag_suggestions = tags
 	_repopulate_suggestion_popup()
 
-func set_enabled(val: bool) -> void:
-	enabled = val
+func set_allow_input(val: bool) -> void:
+	allow_input = val
 	if !is_node_ready():
 		await ready
-	_tag_menu.disabled = !enabled
-	_apply_button.disabled = !enabled || !is_dirty
-	_discard_button.disabled = !enabled || !is_dirty
-	_tag_input.editable = enabled
+	_tag_menu.disabled = !allow_input
+	_tag_submit.disabled = !allow_input
+	_tag_input.editable = allow_input
 
-func set_dirty(val: bool) -> void:
-	is_dirty = val
+func set_can_submit(val: bool) -> void:
+	can_submit = val
 	if !is_node_ready():
 		await ready
-	_apply_button.disabled = !enabled || !is_dirty
-	_discard_button.disabled = !enabled || !is_dirty
-
+	_apply_button.disabled = !can_submit
+	_discard_button.disabled = !can_submit
 #endregion

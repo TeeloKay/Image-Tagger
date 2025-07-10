@@ -18,6 +18,9 @@ enum Mode {NONE, SINGLE, BULK}
 
 #region Internal Variables
 var _selection_index: int = 0
+var _single_state: SingleTaggingState
+var _bulk_state: BulkTaggingState
+var _active_state: TaggingState
 #endregion
 
 #region signals
@@ -28,6 +31,11 @@ signal tagging_mode_changed(mode: Mode)
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
+
+	_single_state = SingleTaggingState.new(self)
+	_bulk_state = BulkTaggingState.new(self)
+	_change_state(_single_state)
+
 	InputHandler.apply_changes.connect(apply_changes)
 
 	if tagging_editor:
@@ -61,22 +69,24 @@ func set_image(path: String) -> void:
 	current_image = path
 	ProjectManager.file_hasher.add_file_to_queue(path)
 
-	tagging_editor.clear()
-	tagging_editor.mark_clean()
+	tagging_editor.allow_input = true
+	tagging_editor.can_submit = false
 
 func apply_changes() -> void:
 	_project_data.add_image(_current_hash, current_image)
 	_project_data.set_tags_for_hash(_current_hash, _working_tags)
 	_original_tags = _working_tags
 	_populate_tag_list()
-	tagging_editor.mark_clean()
+	tagging_editor.allow_input = true
+	tagging_editor.can_submit = false
 
 	ProjectManager.save_current_project()
 
 func discard_changes() -> void:
 	_working_tags = _original_tags.duplicate()
 	_populate_tag_list()
-	tagging_editor.mark_clean()
+	tagging_editor.allow_input = true
+	tagging_editor.can_submit = false
 
 func clear() -> void:
 	_working_tags = []
@@ -92,14 +102,20 @@ func set_tagging_mode(mode: Mode) -> void:
 
 func update_view() -> void:
 	match tagging_mode:
-		Mode.NONE:
-			clear()
 		Mode.SINGLE:
 			return
 		Mode.BULK:
 			return
 #endregion
 
+#region States
+func _change_state(state: TaggingState) -> void:
+	if _active_state != null:
+		_active_state.exit()
+	_active_state = state
+	if _active_state != null:
+		_active_state.enter()
+#endregion
 #region External Callbacks
 func _on_open_image_request() -> void:
 	if current_image.is_empty():
@@ -110,6 +126,8 @@ func _on_selection_changed() -> void:
 	match file_menu_controller.get_selection_size():
 		0:
 			tagging_mode = Mode.NONE
+			tagging_editor.can_submit = false
+			tagging_editor.allow_input = false
 		1:
 			tagging_mode = Mode.SINGLE
 		_:
@@ -122,7 +140,7 @@ func _on_add_tag_request(tag: StringName) -> void:
 		var tag_data := _project_data.get_tag_data(tag)
 		_working_tags.append(tag)
 		tagging_editor.add_active_tag(tag, tag_data.color)
-		tagging_editor.mark_dirty()
+		tagging_editor.can_submit = true
 
 func _on_raw_tag_request(raw_tag: String) -> void:
 	if raw_tag.is_empty():
@@ -135,7 +153,7 @@ func _on_remove_tag_request(tag: StringName) -> void:
 		return
 	_working_tags.erase(tag)
 	_populate_tag_list()
-	tagging_editor.mark_dirty()
+	tagging_editor.can_submit = true
 #endregion
 
 #region UI Callbacks
@@ -158,7 +176,6 @@ func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
 		_current_hash = file_hash
 
-	tagging_editor.clear()
 	_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
 	_working_tags = _original_tags.duplicate()
 	_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))

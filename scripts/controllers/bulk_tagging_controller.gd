@@ -13,11 +13,15 @@ func _ready() -> void:
 	super._ready()
 	browser_controller.selection_changed.connect(_on_selection_changed)
 
-	tagging_editor.apply_pressed.connect(apply_tags_to_selection)
-	tagging_editor.discard_pressed.connect(_discard_changes)
-	tagging_editor.tag_add_requested.connect(_on_tag_add_request)
-	tagging_editor.raw_tag_requested.connect(_on_tag_add_request)
-	tagging_editor.tag_remove_request.connect(_on_tag_remove_request)
+	if tagging_editor:
+		tagging_editor.apply_pressed.connect(apply_tags_to_selection)
+		tagging_editor.discard_pressed.connect(_discard_changes)
+		tagging_editor.tag_add_requested.connect(_on_tag_add_request)
+		tagging_editor.raw_tag_requested.connect(_on_tag_add_request)
+		tagging_editor.tag_remove_request.connect(_on_tag_remove_request)
+
+		tagging_editor.can_submit = false
+		tagging_editor.allow_input = true
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -26,6 +30,7 @@ func _on_project_loaded() -> void:
 
 func _on_selection_changed() -> void:
 	_selection = browser_controller.get_selection()
+	tagging_editor.can_submit = browser_controller.get_selection_size() > 0
 	# tagging_editor.set_selection_size(_selection.size())
 	# active_tags.clear()
 	# tagging_editor.clear()

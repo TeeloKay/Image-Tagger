@@ -178,12 +178,16 @@ current_tab = 0
 [node name="Single" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TabContainer" instance=ExtResource("8_2ofn6")]
 layout_mode = 2
 size_flags_vertical = 3
+input_allowed = null
+can_submit = null
 metadata/_tab_index = 0
 
 [node name="Bulk" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TabContainer" instance=ExtResource("8_2ofn6")]
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+input_allowed = null
+can_submit = null
 metadata/_tab_index = 1
 
 [node name="Tags" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu"]
