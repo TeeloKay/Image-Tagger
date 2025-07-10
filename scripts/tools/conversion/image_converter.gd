@@ -14,7 +14,6 @@ func convert(input_path: String, output_path: String = "") -> String:
 		return ""
 	if output_path.is_empty():
 		output_path = input_path.get_basename() + "." + strategy.get_target_extension()
-		print("output: ", output_path)
 	if strategy._convert(input_path,output_path) == OK:
 		return output_path
 	return ""

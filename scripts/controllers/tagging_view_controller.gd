@@ -158,10 +158,11 @@ func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
 		_current_hash = file_hash
 
-		_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
-		_working_tags = _original_tags.duplicate()
-		_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))
-		_populate_tag_list()
+	tagging_editor.clear()
+	_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
+	_working_tags = _original_tags.duplicate()
+	_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))
+	_populate_tag_list()
 
 func _update_tag_suggestions(_tag: StringName) -> void:
 	var project_tags := _project_data.get_tags()
@@ -177,3 +178,7 @@ func _on_next_pressed() -> void:
 	_selection_index = wrap(_selection_index + 1, 0, selection.size())
 	set_image(selection[_selection_index])
 #endregion
+
+
+func _on_image_viewer_controller_selection_index_changed(index: int) -> void:
+	_selection_index = index

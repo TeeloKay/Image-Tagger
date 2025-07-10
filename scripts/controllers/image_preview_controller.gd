@@ -30,10 +30,12 @@ func _ready() -> void:
 func _on_previous_pressed() -> void:
 	_offset_selection_index(-1)
 	update_view()
+	previous_pressed.emit()
 
 func _on_next_pressed() -> void:
 	_offset_selection_index(1)
 	update_view()
+	next_pressed.emit()
 
 func _on_rename_image_request(new_name: String) -> void:
 	var file := file_menu_controller.get_selection()[selection_index]
@@ -59,12 +61,14 @@ func update_view() -> void:
 	if selection.is_empty():
 		clear()
 		return
+	selection_index = clamp(selection_index, 0, file_menu_controller.get_selection_size() - 1)
 	var image := selection[selection_index]
 	image_previewer.set_image_texture(ImageUtil.load_image(image))
 	image_previewer.set_file_name(image.get_file())
 
 func set_selection_index(val: int) -> void:
 	selection_index = val
+	selection_index_changed.emit(selection_index)
 
 func clear() -> void:
 	image_previewer.clear()

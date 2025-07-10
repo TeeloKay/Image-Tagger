@@ -172,6 +172,7 @@ layout_mode = 2
 
 [node name="TabContainer" type="TabContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
 current_tab = 0
 
 [node name="Single" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TabContainer" instance=ExtResource("8_2ofn6")]
@@ -221,7 +222,7 @@ tool_controller = NodePath("ToolController")
 search_controller = NodePath("SearchController")
 file_browser = NodePath("FileBrowserController")
 directory_controller = NodePath("DirectoryController")
-tag_overview_controller = NodePath("TagOverviewController")
+tag_overview_controller = NodePath("TagEditorController")
 image_view_controller = NodePath("TaggingViewController")
 
 [node name="ToolController" type="Node" parent="AppController" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
@@ -250,12 +251,6 @@ script = ExtResource("4_wp0k4")
 tagging_editor = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TabContainer/Single")
 file_menu_controller = NodePath("../FileBrowserController")
 
-[node name="TagOverviewController" type="Node" parent="AppController" node_paths=PackedStringArray("view", "color_picker")]
-script = ExtResource("5_bjd11")
-view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Tags/TagEditor")
-color_picker = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Tags/TagEditor/ColorPickerPopup")
-metadata/_custom_type_script = "uid://b37wppbdqh0qm"
-
 [node name="ImageViewerController" type="Node" parent="AppController" node_paths=PackedStringArray("image_previewer", "file_menu_controller", "file_renamer")]
 script = ExtResource("22_yxlcp")
 image_previewer = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/ImageViewer")
@@ -273,6 +268,12 @@ size = Vector2i(600, 100)
 min_size = Vector2i(300, 40)
 max_size = Vector2i(600, 32768)
 
+[node name="TagEditorController" type="Node" parent="AppController" node_paths=PackedStringArray("view", "color_picker")]
+script = ExtResource("5_bjd11")
+view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Tags/TagEditor")
+color_picker = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Tags/TagEditor/ColorPickerPopup")
+metadata/_custom_type_script = "uid://b37wppbdqh0qm"
+
 [node name="BulkTaggingController" type="Node" parent="AppController" node_paths=PackedStringArray("browser_controller", "tagging_editor")]
 script = ExtResource("7_nfivy")
 browser_controller = NodePath("../FileBrowserController")
@@ -281,3 +282,4 @@ metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 
 [connection signal="path_selected" from="AppController/DirectoryController" to="AppController/FileBrowserController" method="set_directory" flags=3]
 [connection signal="selection_changed" from="AppController/FileBrowserController" to="AppController/TaggingViewController" method="_on_file_menu_controller_selection_changed"]
+[connection signal="selection_index_changed" from="AppController/ImageViewerController" to="AppController/TaggingViewController" method="_on_image_viewer_controller_selection_index_changed"]

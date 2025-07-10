@@ -35,7 +35,6 @@ func load_project(path: String) -> ProjectData:
 	var project_data := _load_data_from_json(meta_path.path_join(PROJECT_FILE))
 	var index_data := _load_data_from_json(meta_path.path_join(INDEX_FILE))
 
-	print(project_data)
 	project.image_db.deserialize(project_data.get(IMAGES, {}))
 	project.tag_db.deserialize(project_data.get(TAGS, {}))
 	project.favorites = project_data.get(FAVORITES, [])

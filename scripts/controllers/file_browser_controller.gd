@@ -171,7 +171,7 @@ func _on_file_created(_path: String) -> void:
 
 #region selection
 func _on_item_selected(index: int) -> void:
-	print("item selected")
+	print("item selected: ", index)
 	if index >= 0 && index < _data_handler.get_file_count():
 		_selected_files.clear()
 		_selected_files.append(_data_handler.get_files_filtered(extension_filter)[index])

@@ -52,7 +52,6 @@ func _on_item_pressed(idx: int) -> void:
 
 func _convert_selection() -> void:
 	var selection := file_controller.get_selection()
-	print(selection)
 
 	var completed: int = 0
 	var total := selection.size()
@@ -69,7 +68,6 @@ func _convert_selection() -> void:
 			print("new_hash: ", new_hash)
 
 			var image_data := _project_data.get_image_data(old_hash)
-			print(image_data.tags)
 			for tag in image_data.tags:
 				_project_data.image_db.add_tag_to_image(new_hash,tag)
 			_project_data.image_db.update_image_path(new_hash,new_path)
