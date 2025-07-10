@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=60 format=3 uid="uid://xbb2i5lhs53a"]
+[gd_resource type="Theme" load_steps=65 format=3 uid="uid://xbb2i5lhs53a"]
 
 [ext_resource type="FontFile" uid="uid://kd8vsocv3l1g" path="res://assets/fonts/Inter-VariableFont_opsz,wght.ttf" id="1_3ltnh"]
 
@@ -209,6 +209,45 @@ bg_color = Color(0.0980392, 0.113725, 0.133333, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2ay75"]
 bg_color = Color(0.203922, 0.564706, 0.819608, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nx574"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.156863, 0.156863, 0.156863, 1)
+draw_center = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2tfo4"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.270588, 0.282353, 0.298039, 1)
+border_width_top = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_byfd2"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.270588, 0.282353, 0.298039, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_el8ea"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.180392, 0.196078, 0.215686, 1)
+border_width_top = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tuydu"]
+content_margin_left = 4.0
+content_margin_top = 2.0
+content_margin_right = 4.0
+content_margin_bottom = 2.0
+bg_color = Color(0.270588, 0.282353, 0.298039, 1)
+draw_center = false
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sbltk"]
 content_margin_left = 4.0
 content_margin_top = 2.0
@@ -413,6 +452,11 @@ PopupMenu/styles/panel = SubResource("StyleBoxFlat_mtu34")
 PopupPanel/styles/panel = SubResource("StyleBoxFlat_ijhlb")
 ProgressBar/styles/background = SubResource("StyleBoxFlat_mw5xe")
 ProgressBar/styles/fill = SubResource("StyleBoxFlat_2ay75")
+TabBar/styles/tab_disabled = SubResource("StyleBoxFlat_nx574")
+TabBar/styles/tab_focus = SubResource("StyleBoxFlat_2tfo4")
+TabBar/styles/tab_hovered = SubResource("StyleBoxFlat_byfd2")
+TabBar/styles/tab_selected = SubResource("StyleBoxFlat_el8ea")
+TabBar/styles/tab_unselected = SubResource("StyleBoxFlat_tuydu")
 TabContainer/colors/font_disabled_color = Color(1, 1, 1, 0.501961)
 TabContainer/colors/font_hovered_color = Color(0.203922, 0.564706, 0.819608, 1)
 TabContainer/colors/font_selected_color = Color(1, 1, 1, 1)

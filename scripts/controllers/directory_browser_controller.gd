@@ -12,11 +12,12 @@ signal path_selected(path: String)
 func _ready() -> void:
 	super._ready()
 
-	directory_view.folder_selected.connect(_on_folder_selected)
-	directory_view.data_dropped.connect(_on_data_dropped)
-	directory_view.update_request.connect(_update_view)
-	directory_view.rename_request.connect(_on_rename_request)
-	directory_view.delete_request.connect(_on_delete_request)
+	if directory_view:
+		directory_view.folder_selected.connect(_on_folder_selected)
+		directory_view.data_dropped.connect(_on_data_dropped)
+		directory_view.update_request.connect(_update_view)
+		directory_view.rename_request.connect(_on_rename_request)
+		directory_view.delete_request.connect(_on_delete_request)
 
 	get_window().files_dropped.connect(_on_files_dropped)
 
@@ -69,7 +70,6 @@ func _update_view() -> void:
 func _on_files_dropped(files: PackedStringArray) -> void:
 	if _project_data == null || _current_directory == "":
 		return
-	print(files)
 	for file in files:
 		if !ImageUtil.is_valid_image(file):
 			continue
@@ -87,7 +87,6 @@ func _on_files_dropped(files: PackedStringArray) -> void:
 			if file_exists:
 				counter += 1
 				new_name = "%s_%d" % [file_name, counter]
-				print(new_name)
 		FileService.copy_file(file, file_path)
 
 #region Folder Operations	

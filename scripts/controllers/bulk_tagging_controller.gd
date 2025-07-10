@@ -7,8 +7,6 @@ class_name BulkTaggingController extends MenuController
 @export var active_tags: Array[StringName]:
 	set = set_active_tags
 
-@onready var tagging_queue: TaggingQueue = $TaggingQueue
-
 signal active_tags_changed(tags: Array[StringName])
 
 func _ready() -> void:
@@ -25,8 +23,6 @@ func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	var tags := _project_data.get_tags()
 	tagging_editor.set_tag_suggestions(tags)
-	tagging_queue.project_data = _project_data
-	tagging_queue.image_hasher = ProjectManager.image_hasher
 
 func _on_selection_changed() -> void:
 	_selection = browser_controller.get_selection()
@@ -41,6 +37,8 @@ func _on_tag_remove_request(tag: StringName) -> void:
 	populate_tag_list(active_tags)
 
 func _on_tag_add_request(tag: StringName) -> void:
+	if tag.is_empty():
+		return
 	tag = ProjectTools.sanitize_tag(tag)
 	if active_tags.has(tag):
 		return
@@ -56,7 +54,7 @@ func populate_tag_list(tags: Array[StringName]) -> void:
 
 func apply_tags_to_selection() -> void:
 	for path in _selection:
-		tagging_queue.enqueue(path, active_tags)
+		ProjectManager.tagging_queue.enqueue(path, active_tags)
 	active_tags.clear()
 	tagging_editor.mark_clean()
 

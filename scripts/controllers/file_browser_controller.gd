@@ -85,7 +85,7 @@ func show_search_results(results: Array[SearchResult]) -> void:
 	_is_loading = true
 
 func get_files_in_directory(dir_path: String) -> PackedStringArray:
-	var dir = DirAccess.open(dir_path)
+	var dir := DirAccess.open(dir_path)
 	var files: PackedStringArray = []
 	if !dir:
 		return files
@@ -196,7 +196,7 @@ func _apply_selection_update() -> void:
 		_selected_files.append(items[idx])
 		# TODO: we added this for a temporary test of the file hasher's multithreading functionality
 		# TODO: remove when no longer needed.
-		ProjectManager.image_hasher.add_file_to_queue(items[idx])
+		ProjectManager.file_hasher.add_file_to_queue(items[idx])
 	if !_selected_files.is_empty():
 		image_selected.emit(_selected_files[0])
 	selection_changed.emit()
@@ -220,7 +220,7 @@ func _on_file_remove_request() -> void:
 
 func _on_file_remove_confirmation() -> void:
 	for file in _selected_files:
-		var img_hash = _project_data.get_hash_for_path(file)
+		var img_hash := _project_data.get_hash_for_path(file)
 		_project_data.image_db.remove_image(img_hash)
 		FileService.remove_file(file)
 	rebuild_view_from_file_list()
@@ -232,6 +232,9 @@ func _on_file_rename_request() -> void:
 
 func get_selection() -> PackedStringArray:
 	return _selected_files
+
+func get_selection_size() -> int:
+	return _selected_files.size()
 
 func _on_request_cancelled() -> void:
 	if _active_dialog:

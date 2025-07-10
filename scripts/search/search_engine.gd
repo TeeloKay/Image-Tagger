@@ -1,25 +1,29 @@
-class_name SearchEngine extends Object
+class_name SearchEngine extends Node
 
-var accepted_types := ["png", "jpg", "jpeg", "webp", "gif"]
 var _search_chain: SearchHandler
+var project: ProjectData:
+	set = set_project
 
 signal search_completed(results: Array[SearchResult])
 
-func _init() -> void:
+func _ready() -> void:
 	_search_chain = SearchByTag.new()
 
+func set_project(_project: ProjectData) -> void:
+	project = _project
+
 func search_images(query: SearchQuery) -> Array[SearchResult]:
-	var hashes: Array[String] = []
 	var results: Array[SearchResult] = []
-	var root := ProjectManager.current_project.project_path
-	var project := ProjectManager.current_project
+	if project == null:
+		return results
+	var hashes: Array[String] = []
 	var q := ProjectTools.sanitize_tag(query.text)
 	
 	print(q)
-	_recursive_search(root, q, results)
+	_recursive_search(project.project_path, q, results)
 	for result in hashes:
 		var path := project.get_path_for_hash(result)
-		results.append(SearchResult.new(path, result))	
+		results.append(SearchResult.new(path, result))
 	search_completed.emit(results)
 	return results
 
@@ -36,7 +40,7 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Searc
 			continue
 		
 		var full_path := dir_path.path_join(file_name)
-		var rel_path := ProjectManager.current_project.to_relative_path(full_path)
+		var rel_path := project.to_relative_path(full_path)
 		
 		if dir.current_is_dir():
 			_recursive_search(full_path, query, out_results)
@@ -45,12 +49,12 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Searc
 		
 		var name_match := file_name.to_lower().contains(query)
 		var tag_match := false
-		var hash_val := ProjectManager.current_project.get_hash_for_path(rel_path)
+		var hash_val := project.get_hash_for_path(rel_path)
 		if !hash_val:
 			file_name = dir.get_next()
 			continue
 			
-		var tags := ProjectManager.current_project.get_tags_for_hash(hash_val)
+		var tags := project.get_tags_for_hash(hash_val)
 		for tag in tags:
 			if tag.contains(query):
 				tag_match = true
@@ -64,7 +68,7 @@ func _recursive_search(dir_path: String, query: String, out_results: Array[Searc
 
 func _inclusive_tag_search(tags: Array[StringName], out_results: Array[String]) -> void:
 	for tag in tags:
-		var hashes := Array(ProjectManager.current_project.get_tag_data(tag).hashes)
+		var hashes := Array(project.get_tag_data(tag).hashes)
 		if out_results.is_empty():
 			out_results.assign(hashes)
 			continue

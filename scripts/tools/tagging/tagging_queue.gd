@@ -1,7 +1,7 @@
 class_name TaggingQueue extends Node
 
-var project_data: ProjectData
-var image_hasher: ImageHasher
+@export var project: ProjectData
+@export var image_hasher: ImageHasher
 
 var _queue: Array[QueueItem] = []
 
@@ -18,11 +18,11 @@ func _process(_delta: float) -> void:
 	if _queue.is_empty():
 		return
 	var item: QueueItem = _queue.pop_front()
-	var file_hash := project_data.get_hash_for_path(item.file)
+	var file_hash := project.get_hash_for_path(item.file)
 	if file_hash.is_empty():
 		file_hash = image_hasher.hash_file(item.file)
 
-	project_data.add_image(file_hash, item.file)
-	project_data.add_tags_for_hash(file_hash, item.tags)
+	project.add_image(file_hash, item.file)
+	project.add_tags_for_hash(file_hash, item.tags)
 
 	item.free()

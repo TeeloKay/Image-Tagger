@@ -39,7 +39,7 @@
 
 #region Internal Variables
 # Preloaded scene used to create tag badges.
-var _tag_badge_scene = preload("res://scenes/ui/tag_badge.tscn")
+var _tag_badge_scene := preload("res://scenes/ui/tag_badge.tscn")
 #endregion
 
 #region Signals
@@ -67,8 +67,8 @@ signal tag_remove_request(tag: String)
 #region Built-in Callbacks
 # Called when the node enters the scene tree.
 func _ready() -> void:
-	_apply_button.pressed.connect(func(): apply_pressed.emit())
-	_discard_button.pressed.connect(func(): discard_pressed.emit())
+	_apply_button.pressed.connect(func() -> void: apply_pressed.emit())
+	_discard_button.pressed.connect(func() -> void: discard_pressed.emit())
 
 	_tag_menu.get_popup().id_pressed.connect(_on_suggestion_pressed)
 	_tag_input.text_changed.connect(_on_input_text_changed)
@@ -84,7 +84,7 @@ func add_active_tag(tag: StringName, color: Color) -> void:
 	var tag_badge := _tag_badge_scene.instantiate() as TagBadge
 	_tag_container.add_child(tag_badge)
 	tag_badge.tag = tag
-	tag_badge.remove_requested.connect(func(val): tag_remove_request.emit(val))
+	tag_badge.remove_requested.connect(func(val: StringName) -> void: tag_remove_request.emit(val))
 	tag_badge.modulate = color
 
 # Clears all current tags and suggestions from the UI.

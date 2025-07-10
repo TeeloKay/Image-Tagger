@@ -1,9 +1,11 @@
 class_name ImageHasher extends Node
 
 const CHUNK_SIZE := 1024
+
+@export_range(1, 100, 1) var batch_size: int = 1
+
 var _queue: Array[String]
 var _output_queue: Dictionary[String, String] = {}
-var batch_size: int = 1
 
 var _thread: Thread
 var _mutex: Mutex

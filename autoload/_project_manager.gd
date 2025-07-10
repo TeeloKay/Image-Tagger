@@ -2,15 +2,17 @@ extends Node
 
 const REGISTRY_PATH := "user://registry.tres"
 
-var registry: ProjectRegistry
-var current_project: ProjectData
+@export var registry: ProjectRegistry
+@export var current_project: ProjectData
 
 var _project_io: ProjectIO
-var search_engine: SearchEngine
+@export var search_engine: SearchEngine
+@export var image_indexer: ImageIndexer
 
 var thumbnail_cache: ThumbnailCache
-var image_hasher: ImageHasher
-var image_indexer: ImageIndexer
+@export var file_hasher: ImageHasher
+
+@export var tagging_queue: TaggingQueue
 
 signal project_loaded
 
@@ -18,11 +20,9 @@ signal project_loaded
 func _ready() -> void:
 	thumbnail_cache = ThumbnailCache.new()
 	_project_io = ProjectIO.new()
-	search_engine = SearchEngine.new()
-	image_hasher = ImageHasher.new()
 	image_indexer = ImageIndexer.new()
 	
-	add_child(image_hasher, true, INTERNAL_MODE_BACK)
+	add_child(file_hasher, true, INTERNAL_MODE_BACK)
 
 	project_loaded.connect(ThumbnailManager.clear_queue)
 
@@ -47,6 +47,11 @@ func open_project(project_path: String) -> void:
 	save_registry()
 	
 	current_project = _project_io.load_project(project_path)
+
+	tagging_queue.project = current_project
+	search_engine.project = current_project
+	image_indexer.project = current_project
+
 	# save_current_project()
 	project_loaded.emit()
 
