@@ -28,7 +28,7 @@ func _ready() -> void:
 
 	load_project_registry()
 
-func load_project_registry():
+func load_project_registry() -> void:
 	if FileAccess.file_exists(REGISTRY_PATH):
 		registry = ResourceLoader.load(REGISTRY_PATH, "ProjectRegistry")
 		if registry:
@@ -36,10 +36,10 @@ func load_project_registry():
 	registry = ProjectRegistry.new()
 	save_registry()
 
-func save_registry():
+func save_registry() -> void:
 	ResourceSaver.save(registry, REGISTRY_PATH)
 
-func save_current_project():
+func save_current_project() -> void:
 	_project_io.save_project(current_project)
 	
 func open_project(project_path: String) -> void:

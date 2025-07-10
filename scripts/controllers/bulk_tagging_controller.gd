@@ -45,20 +45,20 @@ func _on_tag_add_request(tag: StringName) -> void:
 	if active_tags.has(tag):
 		return
 	active_tags.append(tag)
-	tagging_editor.get_tagging_editor().mark_dirty()
+	tagging_editor.mark_dirty()
 	populate_tag_list(active_tags)
 
 func populate_tag_list(tags: Array[StringName]) -> void:
 	tagging_editor.clear()
 	for tag in tags:
 		var data := _project_data.get_tag_data(tag)
-		tagging_editor.add_tag(tag, data.color)
+		tagging_editor.add_active_tag(tag, data.color)
 
 func apply_tags_to_selection() -> void:
 	for path in _selection:
 		tagging_queue.enqueue(path, active_tags)
 	active_tags.clear()
-	tagging_editor.get_tagging_editor().mark_clean()
+	tagging_editor.mark_clean()
 
 func _discard_changes() -> void:
 	set_active_tags([])

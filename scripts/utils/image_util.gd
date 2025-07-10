@@ -15,8 +15,8 @@ static func _load_gif(path: String) -> AnimatedTexture:
 	return GifManager.animated_texture_from_file(path)
 
 static func _load_image(path: String) -> Texture2D:
-	var img = Image.new()
-	var err = img.load(path)
+	var img := Image.new()
+	var err := img.load(path)
 	if err != OK:
 		push_warning("Failed to load full image for preview: %s" % path)
 		return null
@@ -39,13 +39,13 @@ static func generate_thumbnail_from_path(path: String) -> Texture2D:
 static func generate_thumbnail_from_texture(texture: Texture2D) -> Texture2D:
 	if texture is AnimatedTexture:
 		texture = texture.get_frame_texture(0)
-	var img = texture.get_image()
+	var img := texture.get_image()
 	return generate_thumbnail(img)
 
 static func generate_thumbnail(image: Image) -> Texture2D:
 	var size := image.get_size()
-	var scale = min(THUMB_SIZE.x / size.x, THUMB_SIZE.y / size.y)
-	var thumb_size = (size * scale).floor()
+	var scale : float = min(THUMB_SIZE.x / size.x, THUMB_SIZE.y / size.y)
+	var thumb_size := (size * scale).floor()
 	
 	image.resize(thumb_size.x,thumb_size.y, image.INTERPOLATE_BILINEAR)
 	return ImageTexture.create_from_image(image)

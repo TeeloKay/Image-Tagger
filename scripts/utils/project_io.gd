@@ -55,7 +55,7 @@ func _save_data_as_json(data: Variant, project_path: String, file_name: String) 
 		push_error("Failed to access directory: ", project_path)
 		return
 	if !dir.dir_exists(PROJECT_DIR):
-		var err = dir.make_dir(PROJECT_DIR)
+		var err := dir.make_dir(PROJECT_DIR)
 		if err != OK:
 			push_error("Failed to create project metadata folder: ", dir_path)
 			return

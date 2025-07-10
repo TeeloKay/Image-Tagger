@@ -60,7 +60,7 @@ func clear() -> void:
 
 #region serialization
 func serialize() -> Dictionary:
-	var data = {}
+	var data := {}
 	data[TAGS] = {}
 	for tag in _db:
 		data[TAGS][tag] = get_tag_data(tag).serialize()
@@ -68,7 +68,7 @@ func serialize() -> Dictionary:
 
 func deserialize(data: Dictionary) -> void:
 	if data.has(TAGS):
-		for tag in data[TAGS]:
+		for tag: StringName in data[TAGS]:
 			var tag_data := TagData.new()
 			tag_data.deserialize(data[TAGS][tag])
 			_db[StringName(tag)] = tag_data

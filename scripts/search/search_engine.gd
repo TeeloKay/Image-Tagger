@@ -18,13 +18,13 @@ func search_images(query: SearchQuery) -> Array[SearchResult]:
 	print(q)
 	_recursive_search(root, q, results)
 	for result in hashes:
-		var path = project.get_path_for_hash(result)
+		var path := project.get_path_for_hash(result)
 		results.append(SearchResult.new(path, result))	
 	search_completed.emit(results)
 	return results
 
 func _recursive_search(dir_path: String, query: String, out_results: Array[SearchResult]) -> void:
-	var dir = DirAccess.open(dir_path)
+	var dir := DirAccess.open(dir_path)
 	if dir == null:
 		return
 	
@@ -72,11 +72,11 @@ func _inclusive_tag_search(tags: Array[StringName], out_results: Array[String]) 
 		
 func get_array_intersection(a: Array, b: Array) -> Array:
 	var dict := {}
-	for item in a:
+	for item: String in a:
 		dict[item] = true
 	
 	var result := []
-	for item in b:
+	for item: String in b:
 		if dict.has[item]:
 			result.append(item)
 	return result

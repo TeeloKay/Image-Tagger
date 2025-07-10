@@ -24,14 +24,14 @@ func _ready() -> void:
 	_submit_button.pressed.connect(_on_search_pressed)
 	_search_input.text_submitted.connect(_on_search)
 	_reset_button.pressed.connect(_on_reset_pressed)
-	_search_input.text_changed.connect(func(string): search_string_changed.emit(string))
+	_search_input.text_changed.connect(func(string: String) -> void: search_string_changed.emit(string))
 
 	var popup := _inclusive_menu.get_popup()
 	popup.id_pressed.connect(_on_inclusive_id_pressed)
 	popup.max_size = Vector2i(_inclusive_menu.size.x, popup_max_height)
 
 func _on_inclusive_id_pressed(id: int) -> void:
-	var tag = _inclusive_menu.get_popup().get_item_text(id)
+	var tag := _inclusive_menu.get_popup().get_item_text(id)
 	if tag:
 		tag_suggestion_pressed.emit(tag)
 
@@ -45,7 +45,7 @@ func add_tag(tag: StringName, color: Color) -> void:
 	_inclusive_container.add_child(badge)
 	badge.set_tag(tag)
 	badge.modulate = color
-	badge.remove_requested.connect(func(t): tag_remove_pressed.emit(t))
+	badge.remove_requested.connect(func(t: StringName) -> void: tag_remove_pressed.emit(t))
 	_active_tags[tag] = badge
 
 func remove_tag(tag: StringName) -> void:

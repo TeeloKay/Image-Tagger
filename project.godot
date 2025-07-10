@@ -25,6 +25,11 @@ InputHandler="*res://autoload/_global_input_handler.gd"
 ThumbnailManager="*res://autoload/_thumbnail_manager.gd"
 Config="*res://autoload/_config_manager.gd"
 
+[debug]
+
+gdscript/warnings/untyped_declaration=1
+gdscript/warnings/unsafe_method_access=1
+
 [display]
 
 window/size/viewport_width=1600

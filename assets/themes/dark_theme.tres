@@ -1,6 +1,18 @@
-[gd_resource type="Theme" load_steps=59 format=3 uid="uid://xbb2i5lhs53a"]
+[gd_resource type="Theme" load_steps=60 format=3 uid="uid://xbb2i5lhs53a"]
 
 [ext_resource type="FontFile" uid="uid://kd8vsocv3l1g" path="res://assets/fonts/Inter-VariableFont_opsz,wght.ttf" id="1_3ltnh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iypxx"]
+bg_color = Color(0.180392, 0.196078, 0.215686, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.0980392, 0.113725, 0.133333, 1)
+expand_margin_left = 4.0
+expand_margin_top = 36.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l6yve"]
 content_margin_left = 4.0
@@ -21,7 +33,7 @@ content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
-bg_color = Color(1, 1, 1, 1)
+bg_color = Color(0.0980392, 0.113725, 0.133333, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c67g2"]
 content_margin_left = 4.0
@@ -337,7 +349,7 @@ expand_margin_bottom = 4.0
 
 [resource]
 default_font = ExtResource("1_3ltnh")
-AcceptDialog/styles/embedded_border = SubResource("StyleBoxFlat_l6yve")
+AcceptDialog/styles/embedded_border = SubResource("StyleBoxFlat_iypxx")
 AcceptDialog/styles/embedded_unfocused_border = SubResource("StyleBoxFlat_l6yve")
 AcceptDialog/styles/panel = SubResource("StyleBoxFlat_prekx")
 Button/colors/font_color = Color(1, 1, 1, 1)

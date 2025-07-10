@@ -57,7 +57,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 
 	_build_drag_preview(index, files)
 	
-	var drag_data = ImageDragData.new(self, files)
+	var drag_data := ImageDragData.new(self, files)
 	return drag_data
 
 func _build_drag_preview(index: int, files: PackedStringArray) -> void:

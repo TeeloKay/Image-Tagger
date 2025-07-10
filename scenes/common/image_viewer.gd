@@ -1,4 +1,4 @@
-@tool class_name ImagePreviewer extends Control
+@tool class_name ImageViewer extends Control
 
 #region Nodes
 @onready var _image_preview: TextureRect = %ImagePreview
@@ -23,8 +23,8 @@ func _ready() -> void:
 	_name_edit.text_submitted.connect(_on_name_text_submitted)
 	_image_preview.gui_input.connect(_on_image_preview_gui_input)
 
-	_next_button.pressed.connect(func(): next_pressed.emit())
-	_previous_button.pressed.connect(func(): previous_pressed.emit())
+	_next_button.pressed.connect(func() -> void: next_pressed.emit())
+	_previous_button.pressed.connect(func() -> void: previous_pressed.emit())
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("ui_left"):

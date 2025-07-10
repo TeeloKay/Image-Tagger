@@ -6,52 +6,52 @@ signal file_created(path: String)
 func _ready() -> void:
 	pass
 
-## Copy existing file to from A to B. Returns the new path of the new file. If copying failed, returns an empty string.
-func copy_file(path: String, new_path: String, safe: bool = true) -> String:
+## Copy existing file to from A to B.
+func copy_file(path: String, new_path: String, safe: bool = true) -> Error:
 	if !FileAccess.file_exists(path):
-		push_error("File does not exist: ", path)
-		return ""
+		return ERR_FILE_NOT_FOUND
 	
+	if !new_path.get_file().is_valid_filename():
+		return ERR_FILE_BAD_PATH
 	if FileAccess.file_exists(new_path):
 		if !safe:
-			push_error("File already exists: ", new_path)
-			return ""
-		new_path = get_unique_file_path(new_path.get_base_dir(), new_path.get_file())
+			return ERR_FILE_ALREADY_IN_USE
 	var err := DirAccess.copy_absolute(path, new_path)
 	if err != OK:
-		push_error("Failed to copy original file: ", path)
-		return ""
+		return ERR_FILE_CANT_WRITE
 	
 	file_created.emit(new_path)
-	return new_path
+	return OK
 	
 ## Remove existing file. Requires absolute path.
-func remove_file(path: String) -> void:
+func remove_file(path: String) -> Error:
 	if !FileAccess.file_exists(path):
-		return
+		return ERR_FILE_NOT_FOUND
 	
 	var err := DirAccess.remove_absolute(path)
 	if err != OK:
-		push_error("Failed to remove file: ", path)
+		return ERR_FILE_CANT_WRITE
 	
 	file_removed.emit(path)
+	return OK
 
 ## Move existing file from A to B. Requires absolute paths
-func move_file(old_path: String, new_path: String, safe: bool = true) -> void:
+func move_file(old_path: String, new_path: String, safe: bool = true) -> Error:
 	if old_path == new_path:
-		return
+		return ERR_ALREADY_EXISTS
 
-	var path := copy_file(old_path, new_path, safe)
-	if path.is_empty():
-		return
+	var err := copy_file(old_path, new_path, safe)
+	if err != OK:
+		return err
 	remove_file(old_path)
+	return OK
 
 ## generates a unique file path based on a file's original name.
-func get_unique_file_path(base_path: String, filename: String) -> String:
+static func get_unique_file_path(base_path: String, filename: String) -> String:
 	var file_exists := true
 	var counter := 0
 	
-	var dot_ext := "." + filename.get_extension() 
+	var dot_ext := "." + filename.get_extension()
 	var file_path := ""
 	var file_name := filename.get_basename()
 	var new_name := file_name

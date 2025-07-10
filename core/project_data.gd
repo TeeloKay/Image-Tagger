@@ -36,7 +36,7 @@ func clear_index() -> void:
 func set_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 	if !image_db.has(file_hash):
 		return
-	var original_tags = image_db.get_image_data(file_hash).tags
+	var original_tags := image_db.get_image_data(file_hash).tags
 	
 	for tag in tags:
 		if !tag in original_tags:
@@ -53,7 +53,7 @@ func set_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 func add_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 	if !image_db.has(file_hash):
 		return
-	var original_tags = image_db.get_image_data(file_hash).tags
+	var original_tags := image_db.get_image_data(file_hash).tags
 
 	for tag in tags:
 		if !tag in original_tags:

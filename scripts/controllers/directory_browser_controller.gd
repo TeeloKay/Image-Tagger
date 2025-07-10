@@ -53,7 +53,7 @@ func _on_delete_request() -> void:
 	add_child(_active_dialog)
 	_active_dialog.title = "Delete folder"
 	_active_dialog.dialog_text = "Are you certain you want to delete this folder and all of its contents?: " + _current_directory
-	_active_dialog.confirmed.connect(func(): delete_folder(_current_directory))
+	_active_dialog.confirmed.connect(func() -> void: delete_folder(_current_directory))
 	_active_dialog.get_cancel_button().pressed.connect(_on_request_cancelled)
 	_on_folder_selected("")
 

@@ -1,6 +1,5 @@
 class_name TaggingViewController extends MenuController
 
-@export var image_preview: ImagePreviewer
 @export var tagging_editor: TaggingEditor
 
 @export_global_file var current_image: String = ""
@@ -20,11 +19,6 @@ func _ready() -> void:
 	super._ready()
 	InputHandler.apply_changes.connect(apply_changes)
 	_file_hasher = ProjectManager.image_hasher
-
-	image_preview.name_submitted.connect(_on_rename_image_request)
-	image_preview.image_double_clicked.connect(_on_open_image_request)
-	image_preview.next_pressed.connect(_on_next_pressed)
-	image_preview.previous_pressed.connect(_on_previous_pressed)
 
 	tagging_editor.apply_pressed.connect(apply_changes)
 	tagging_editor.discard_pressed.connect(discard_changes)
@@ -52,8 +46,6 @@ func set_image(path: String) -> void:
 	_file_hasher.add_file_to_queue(path)
 	var texture = ImageUtil.load_image(path)
 
-	image_preview.set_image_texture(texture)
-	image_preview.set_file_name(current_image.get_file())
 	tagging_editor.clear()
 
 	tagging_editor.mark_clean()
@@ -82,7 +74,6 @@ func clear() -> void:
 	_original_tags = []
 	current_image = ""
 	_current_hash = ""
-	image_preview.clear()
 	tagging_editor.clear()
 
 func _populate_tag_list() -> void:

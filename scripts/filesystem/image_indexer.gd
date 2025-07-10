@@ -20,8 +20,8 @@ func _scan_directory(path: String, project: ProjectData) -> void:
 			file_name = dir.get_next()
 			continue
 		if ImageUtil.is_valid_image(file_name):
-			var full_path = path.path_join(file_name)
-			var rel_path = ProjectManager.to_relative_path(full_path)
+			var full_path := path.path_join(file_name)
+			var rel_path := ProjectManager.to_relative_path(full_path)
 			project.index_image_path(rel_path, "")
 
 		file_name = dir.get_next()

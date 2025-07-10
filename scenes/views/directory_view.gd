@@ -58,7 +58,7 @@ func build_directory_tree(path: String) -> void:
 		print(DirAccess.get_open_error())
 		return
 
-	var root = _tree.create_item()
+	var root := _tree.create_item()
 	_build_tree_item(root, path)
 	_load_directory_recursively(path, root)
 	folder_selected.emit(path)
@@ -70,11 +70,11 @@ func _load_directory_recursively(path: String, parent: TreeItem) -> void:
 		return
 	
 	dir.list_dir_begin()
-	var dir_name = dir.get_next()
+	var dir_name := dir.get_next()
 	while dir_name != "":
-		var full_path = path.path_join(dir_name)
+		var full_path := path.path_join(dir_name)
 		if dir.current_is_dir() && !dir_name.begins_with("."):
-			var item = _tree.create_item(parent)
+			var item := _tree.create_item(parent)
 			_build_tree_item(item, full_path)
 			_load_directory_recursively(full_path, item)
 		dir_name = dir.get_next()

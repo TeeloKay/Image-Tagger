@@ -84,7 +84,7 @@ func serialize() -> Dictionary:
 	return data
 
 func deserialize(data: Dictionary) -> void:
-	for image_hash in data:
+	for image_hash : String in data:
 		var image_data := ImageData.new()
 		image_data.deserialize(data[image_hash])
 		_db[image_hash] = image_data

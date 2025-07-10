@@ -49,7 +49,7 @@ func _thread_process() -> void:
 			batch.append(_queue.pop_front())
 		_mutex.unlock()
 
-		for path in batch:
+		for path: String in batch:
 			# while technically we've already checked this, we check again
 			# just in case the file no longer exists.
 			if !FileAccess.file_exists(path):
@@ -68,7 +68,7 @@ func _thread_process() -> void:
 func _process(_delta: float) -> void:
 	_mutex.lock()
 	if !_output_queue.is_empty():
-		for file in _output_queue.keys():
+		for file: String in _output_queue.keys():
 			file_hashed.emit(file, _output_queue[file])
 		_output_queue.clear()
 
@@ -79,11 +79,11 @@ func _hash_file(path: String) -> String:
 	if !file:
 		return ""
 	
-	var ctx = HashingContext.new()
+	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 
 	while file.get_position() < file.get_length():
-		var remaining = file.get_length() - file.get_position()
+		var remaining := file.get_length() - file.get_position()
 		ctx.update(file.get_buffer(min(remaining, CHUNK_SIZE)))
 
 	file.close()
@@ -91,7 +91,7 @@ func _hash_file(path: String) -> String:
 
 	return res.hex_encode()
 
-func _exit_tree():
+func _exit_tree() -> void:
 	_mutex.lock()
 	_exit_thread = true
 	_mutex.unlock()

@@ -72,7 +72,7 @@ func _build_sort_menu() -> void:
 	if !_sort_menu:
 		return
 	var popup := _sort_menu.get_popup()
-	for key in FileDataHandler.SortMode.keys():
+	for key: String in FileDataHandler.SortMode.keys():
 		popup.add_radio_check_item(str(key).capitalize())
 
 	var sort_mode := _controller.sort_mode
@@ -101,7 +101,7 @@ func _show_context_menu(click_position: Vector2) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 		return
 		
-	var path = _file_paths_in_dir[_right_click_index]
+	var path := _file_paths_in_dir[_right_click_index]
 	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
 	_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
 	_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
@@ -111,12 +111,12 @@ func _on_context_menu_item_pressed(id: int) -> void:
 	if _right_click_index < 0 || _right_click_index >= _file_paths_in_dir.size():
 		return
 	
-	var path = _file_paths_in_dir[_right_click_index]
+	var path := _file_paths_in_dir[_right_click_index]
 	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
 	
 	match id:
 		FAVORITE:
-			var is_fav = ProjectManager.current_project.is_favorited(hash_val)
+			var is_fav := ProjectManager.current_project.is_favorited(hash_val)
 			if is_fav:
 				ProjectManager.current_project.remove_from_favorites(hash_val)
 			else:

@@ -51,8 +51,8 @@ func _thread_process() -> void:
 			local_queue.append(_queue.pop_front())
 		_mutex.unlock()
 
-		for path in local_queue:
-			var thumbnail = get_image(path)
+		for path:String in local_queue:
+			var thumbnail := get_image(path)
 			if thumbnail == null:
 				thumbnail = ImageUtil.generate_thumbnail_from_path(path)
 				if thumbnail:

@@ -8,7 +8,7 @@ var last_path: String = ""
 var tags: Array[StringName] = []
 var favorited: bool = false
 
-func _init():
+func _init() -> void:
 	last_path = ""
 	tags = []
 	favorited = false
@@ -34,7 +34,7 @@ func serialize() -> Dictionary:
 func deserialize(dict: Dictionary) -> void:
 	last_path = dict.get(LAST_PATH,"")
 	favorited = bool(dict.get(FAVORITES,false))
-	for tag in dict[TAGS]:
+	for tag: StringName in dict[TAGS]:
 		tags.append(StringName(tag))
 
 func duplicate() -> ImageData:
