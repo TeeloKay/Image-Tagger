@@ -276,9 +276,10 @@ view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu
 color_picker = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Tags/TagEditor/ColorPickerPopup")
 metadata/_custom_type_script = "uid://b37wppbdqh0qm"
 
-[node name="BulkTaggingController" type="Node" parent="Controllers" node_paths=PackedStringArray("browser_controller", "tagging_editor")]
+[node name="BulkTaggingController" type="Node" parent="Controllers" node_paths=PackedStringArray("browser_controller", "selection_manager", "tagging_editor")]
 script = ExtResource("7_nfivy")
 browser_controller = NodePath("../FileBrowserController")
+selection_manager = NodePath("../../Managers/SelectionManager")
 tagging_editor = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/VSplitContainer/VBoxContainer/TabContainer/Bulk")
 metadata/_custom_type_script = "uid://8bv6r2etb1ah"
 

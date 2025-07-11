@@ -128,8 +128,11 @@ func set_sort_mode(mode: SortMode) -> void:
 func set_extension_filter(filter: PackedStringArray) -> void:
 	extension_filter = filter
 
-func clear() -> void:
+func clear_files() -> void:
 	_files.clear()
+
+func clear_filter() -> void:
+	extension_filter.clear()
 
 func reset() -> void:
 	_files.clear()

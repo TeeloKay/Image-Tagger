@@ -10,9 +10,6 @@ class_name FileBrowserController extends MenuController
 @export var sort_mode: FileDataHandler.SortMode:
 	set = set_sort_mode, get = get_sort_mode
 
-@export var extension_filter: PackedStringArray = []:
-	set = set_extension_filter
-
 @export_category("Dependencies")
 var _active_dialog: ConfirmationDialog
 var _viewed_files: Dictionary[String, bool] = {}
@@ -53,7 +50,8 @@ func show_files_in_directory(dir_path: String) -> void:
 	clear()
 
 	_data_handler.assign_files(get_files_in_directory(dir_path))
-	_file_loader.populate_queue(_data_handler.get_filtered_files())
+	# We do this the first time around for safety's sake.
+	_file_loader.populate_queue(_data_handler.get_files())
 	_is_loading = true
 
 func show_search_results(results: Array[SearchResult]) -> void:
@@ -111,7 +109,7 @@ func update_view() -> void:
 func _register_file_data(file: String, file_data: FileData) -> void:
 	_data_handler.register_file(file, file_data)
 
-	if !_viewed_files.has(file) && file.get_extension() in extension_filter:
+	if !_viewed_files.has(file) && file.get_extension() in _data_handler.extension_filter:
 		_viewed_files[file] = true
 		_add_item_to_view(file, file_data)
 
@@ -121,18 +119,14 @@ func _add_item_to_view(file: String, file_data: FileData = null) -> int:
 	return index
 
 func _on_project_reset() -> void:
-	clear_selection()
-	clear_view()
-	_file_loader.clear_queue()
-	_file_loader.clear_cache()
-	_data_handler.clear()
-	_viewed_files.clear()
+	clear()
 
 func clear() -> void:
 	clear_selection()
 	clear_view()
 	_file_loader.clear_queue()
-	_data_handler.clear()
+	_file_loader.clear_cache()
+	_data_handler.clear_files()
 	_viewed_files.clear()
 
 func clear_view() -> void:
@@ -223,21 +217,17 @@ func get_sort_mode() -> FileDataHandler.SortMode:
 	if _data_handler:
 		return _data_handler.sort_mode
 	return FileDataHandler.SortMode.SORT_BY_NAME_ASC
-
-func set_extension_filter(filter: PackedStringArray) -> void:
-	extension_filter = filter
-
 #endregion
 
 #region UI callbacks
 func _on_filter_item_pressed(id: int) -> void:
 	var valid_types := ImageUtil.ACCEPTED_TYPES
-	var selected_type = valid_types[id]
-	var index := extension_filter.find(selected_type)
+	var selected_type := valid_types[id]
+	var index := _data_handler.extension_filter.find(selected_type)
 	if index == -1:
-		extension_filter.append(selected_type)
+		_data_handler.extension_filter.append(selected_type)
 	else:
-		extension_filter.remove_at(index)
+		_data_handler.extension_filter.remove_at(index)
 	rebuild_view_from_file_list()
 
 #endregion

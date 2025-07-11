@@ -1,7 +1,14 @@
 class_name ImageUtil extends Object
 
-const ACCEPTED_TYPES: PackedStringArray = ["jpg","jpeg","png","webp","gif","tga"]
-const THUMB_SIZE: Vector2 = Vector2(128,128)
+const ACCEPTED_TYPES: PackedStringArray = [
+	"jpg",
+	"jpeg",
+	"png",
+	"webp",
+	"gif",
+	"tga"
+	]
+const THUMB_SIZE: Vector2 = Vector2(128, 128)
 
 static func load_image(abs_path: String) -> Texture2D:
 	var type := abs_path.get_extension()
@@ -44,10 +51,10 @@ static func generate_thumbnail_from_texture(texture: Texture2D) -> Texture2D:
 
 static func generate_thumbnail(image: Image) -> Texture2D:
 	var size := image.get_size()
-	var scale : float = min(THUMB_SIZE.x / size.x, THUMB_SIZE.y / size.y)
+	var scale: float = min(THUMB_SIZE.x / size.x, THUMB_SIZE.y / size.y)
 	var thumb_size := (size * scale).floor()
 	
-	image.resize(thumb_size.x,thumb_size.y, image.INTERPOLATE_BILINEAR)
+	image.resize(thumb_size.x, thumb_size.y, image.INTERPOLATE_BILINEAR)
 	return ImageTexture.create_from_image(image)
 
 static func is_valid_image(file_name: String) -> bool:

@@ -29,7 +29,7 @@ func _process(_delta: float) -> void:
 				break
 			temp_queue.append(_queue.pop_front())
 		
-		for path in temp_queue:
+		for path: String in temp_queue:
 			_load_file(path)
 
 		if _queue.size() == 0:

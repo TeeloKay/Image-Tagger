@@ -33,9 +33,6 @@ func _on_project_loaded() -> void:
 func _on_selection_changed() -> void:
 	_selection = selection_manager.get_selection()
 	tagging_editor.can_submit = selection_manager.get_selection_size() > 0
-	# tagging_editor.set_selection_size(_selection.size())
-	# active_tags.clear()
-	# tagging_editor.clear()
 
 func _on_tag_remove_request(tag: StringName) -> void:
 	if !active_tags.has(tag):
@@ -61,7 +58,7 @@ func populate_tag_list(tags: Array[StringName]) -> void:
 func apply_tags_to_selection() -> void:
 	for path in _selection:
 		ProjectManager.tagging_queue.enqueue(path, active_tags)
-	active_tags.clear()
+	# active_tags.clear()
 	tagging_editor.clear()
 
 func _discard_changes() -> void:

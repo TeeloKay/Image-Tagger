@@ -51,6 +51,7 @@ func add_item_to_list(full_path: String, file_data: FileData) -> int:
 		var date := Time.get_datetime_string_from_unix_time(file_data.modified)
 		var tooltip := "size: %s \nmodified: %s" % [file_size, date]
 		_item_list.set_item_tooltip(index, tooltip)
+
 	update_file_count(_item_list.item_count)
 
 	return index
@@ -156,7 +157,7 @@ func _on_icon_size_button_item_selected(index: int) -> void:
 
 func _on_sort_menu_item_pressed(id: int) -> void:
 	var popup := _sort_menu.get_popup()
-	for val in FileDataHandler.SortMode.values():
+	for val: int in FileDataHandler.SortMode.values():
 		popup.set_item_checked(val, val == id)
 	sort_mode_changed.emit(id)
 
