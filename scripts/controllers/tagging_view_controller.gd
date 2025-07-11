@@ -8,6 +8,7 @@ enum Mode {NONE, SINGLE, BULK}
 @export var tagging_editor: TaggingEditor
 
 @export var file_menu_controller: FileBrowserController
+@export var selection_manager: SelectionManager
 
 @export_global_file var current_image: String = ""
 @export var _current_hash: String
@@ -45,8 +46,8 @@ func _ready() -> void:
 		tagging_editor.raw_tag_requested.connect(_on_raw_tag_request)
 		tagging_editor.tag_remove_request.connect(_on_remove_tag_request)
 
-	if file_menu_controller:
-		file_menu_controller.selection_changed.connect(_on_selection_changed)
+	if selection_manager:
+		selection_manager.selection_changed.connect(_on_selection_changed)
 
 	ProjectManager.file_hasher.file_hashed.connect(_on_file_hashed)
 
@@ -123,15 +124,21 @@ func _on_open_image_request() -> void:
 	OS.shell_open(current_image)
 
 func _on_selection_changed() -> void:
-	match file_menu_controller.get_selection_size():
+	match selection_manager.get_selection_size():
 		0:
 			tagging_mode = Mode.NONE
 			tagging_editor.can_submit = false
 			tagging_editor.allow_input = false
 		1:
 			tagging_mode = Mode.SINGLE
+			var selection := file_menu_controller.get_selection()
+			_selection_index = min(_selection_index, selection.size() - 1)
+			set_image(selection[_selection_index])
 		_:
 			tagging_mode = Mode.BULK
+			var selection := file_menu_controller.get_selection()
+			_selection_index = min(_selection_index, selection.size() - 1)
+			set_image(selection[_selection_index])
 
 func _on_add_tag_request(tag: StringName) -> void:
 	if tag.is_empty():
@@ -162,15 +169,6 @@ func _populate_tag_list() -> void:
 	for tag in _working_tags:
 		var data := _project_data.get_tag_data(tag)
 		tagging_editor.add_active_tag(tag, data.color)
-
-func _on_file_menu_controller_selection_changed() -> void:
-	var selection := file_menu_controller.get_selection()
-	if selection.is_empty():
-		_selection_index = 0
-		clear()
-		return
-	_selection_index = min(_selection_index, selection.size() - 1)
-	set_image(selection[_selection_index])
 			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:

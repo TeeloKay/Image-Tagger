@@ -22,8 +22,6 @@ func _ready() -> void:
 	_project_io = ProjectIO.new()
 	image_indexer = ImageIndexer.new()
 	
-	add_child(file_hasher, true, INTERNAL_MODE_BACK)
-
 	project_loaded.connect(ThumbnailManager.clear_queue)
 
 	load_project_registry()

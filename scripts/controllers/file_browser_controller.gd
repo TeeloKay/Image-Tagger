@@ -13,20 +13,15 @@ class_name FileBrowserController extends MenuController
 @export var extension_filter: PackedStringArray = []:
 	set = set_extension_filter
 
-
+@export_category("Dependencies")
 var _active_dialog: ConfirmationDialog
-## list of currently selected files.
-var _selected_files: PackedStringArray = []
 var _viewed_files: Dictionary[String, bool] = {}
 
 var _file_loader: FileLoader
-var _data_handler: FileDataHandler
-
+@export var selection_manager: SelectionManager
+@export var _data_handler: FileDataHandler
 var _is_loading := false
-var _selection_update_pending := false
 
-signal image_selected(image_path: String)
-signal selection_changed
 signal directory_set(path: String)
 
 func _ready() -> void:
@@ -34,11 +29,6 @@ func _ready() -> void:
 
 	_file_loader = FileLoader.new()
 	add_child(_file_loader, INTERNAL_MODE_BACK)
-	_data_handler = FileDataHandler.new()
-	add_child(_data_handler, INTERNAL_MODE_BACK)
-
-	image_view.item_selected.connect(_on_item_selected)
-	image_view.selection_updated.connect(_on_selection_updated)
 
 	image_view.update_request.connect(update_view)
 	image_view.sort_mode_changed.connect(set_sort_mode)
@@ -54,8 +44,6 @@ func _ready() -> void:
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
-	selection_changed.connect(image_view.update_selection_count)
-
 	ProjectManager.search_engine.search_completed.connect(show_search_results)
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 
@@ -65,7 +53,7 @@ func show_files_in_directory(dir_path: String) -> void:
 	clear()
 
 	_data_handler.assign_files(get_files_in_directory(dir_path))
-	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
+	_file_loader.populate_queue(_data_handler.get_filtered_files())
 	_is_loading = true
 
 func show_search_results(results: Array[SearchResult]) -> void:
@@ -81,7 +69,7 @@ func show_search_results(results: Array[SearchResult]) -> void:
 			# when all files are loaded, the view will be reset and files
 			# will be added in the right order with the right tooltips
 			_add_item_to_view(result.image_path)
-	_file_loader.populate_queue(_data_handler.get_files_filtered(extension_filter))
+	_file_loader.populate_queue(_data_handler.get_filtered_files())
 	_is_loading = true
 
 func get_files_in_directory(dir_path: String) -> PackedStringArray:
@@ -112,7 +100,7 @@ func rebuild_view_from_file_list() -> void:
 	clear_view()
 
 	_data_handler.sort_files()
-	for file in _data_handler.get_files_filtered(extension_filter):
+	for file in _data_handler.get_filtered_files():
 		_add_item_to_view(file, _data_handler.get_file_data(file))
 
 ## Update internal list of files and rebuild view.
@@ -169,72 +157,39 @@ func _on_file_created(_path: String) -> void:
 	rebuild_view_from_file_list()
 #endregion
 
-#region selection
-func _on_item_selected(index: int) -> void:
-	print("item selected: ", index)
-	if index >= 0 && index < _data_handler.get_file_count():
-		_selected_files.clear()
-		_selected_files.append(_data_handler.get_files_filtered(extension_filter)[index])
-		if !_selected_files.is_empty():
-			image_selected.emit(_selected_files[0])
-		else:
-			image_selected.emit("")
-		selection_changed.emit()
-
-func _on_selection_updated() -> void:
-	if _selection_update_pending:
-		return
-	_selection_update_pending = true
-	call_deferred("_apply_selection_update")
-	
-func _apply_selection_update() -> void:
-	_selection_update_pending = false
-	_selected_files.clear()
-	var selected_items := image_view.get_selected_items()
-	var items := _data_handler.get_files_filtered(extension_filter)
-	for idx in selected_items:
-		_selected_files.append(items[idx])
-		# TODO: we added this for a temporary test of the file hasher's multithreading functionality
-		# TODO: remove when no longer needed.
-		ProjectManager.file_hasher.add_file_to_queue(items[idx])
-	if !_selected_files.is_empty():
-		image_selected.emit(_selected_files[0])
-	selection_changed.emit()
 
 func clear_selection() -> void:
-	_selected_files.clear()
-	image_selected.emit("")
-	selection_changed.emit()
-#endregion
+	selection_manager.clear_selection()
 
 #region file operations
 func _on_file_remove_request() -> void:
-	if _selected_files.size() > 0:
+	var selection := selection_manager.get_selection()
+	if selection.size() > 0:
 		_active_dialog = _confirm_prefab.instantiate() as ConfirmationDialog
 		add_child(_active_dialog)
 		_active_dialog.title = "Delete file(s)"
-		_active_dialog.dialog_text = "Are you certain you want to delete all %d files? This cannot be undone." % _selected_files.size()
+		_active_dialog.dialog_text = "Are you certain you want to delete all %d files? This cannot be undone." % selection.size()
 		_active_dialog.confirmed.connect(_on_file_remove_confirmation)
 		_active_dialog.get_cancel_button().pressed.connect(_on_request_cancelled)
 		_active_dialog.popup_centered()
 
 func _on_file_remove_confirmation() -> void:
-	for file in _selected_files:
+	for file in selection_manager.get_selection():
 		var img_hash := _project_data.get_hash_for_path(file)
 		_project_data.image_db.remove_image(img_hash)
 		FileService.remove_file(file)
 	rebuild_view_from_file_list()
-	image_selected.emit("")
+	clear_selection()
 
 func _on_file_rename_request() -> void:
-	if _selected_files.size() > 0:
+	if selection_manager.get_selection_size() > 0:
 		print("requesting file renaming")
 
 func get_selection() -> PackedStringArray:
-	return _selected_files
+	return selection_manager.get_selection()
 
 func get_selection_size() -> int:
-	return _selected_files.size()
+	return selection_manager.get_selection_size()
 
 func _on_request_cancelled() -> void:
 	if _active_dialog:

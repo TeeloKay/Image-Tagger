@@ -1,6 +1,7 @@
 class_name BulkTaggingController extends MenuController
 
 @export var browser_controller: FileBrowserController
+@export var selection_manager: SelectionManager
 @export var tagging_editor: TaggingEditor
 
 @export var _selection: PackedStringArray
@@ -11,7 +12,8 @@ signal active_tags_changed(tags: Array[StringName])
 
 func _ready() -> void:
 	super._ready()
-	browser_controller.selection_changed.connect(_on_selection_changed)
+	if selection_manager:
+		selection_manager.selection_changed.connect(_on_selection_changed)
 
 	if tagging_editor:
 		tagging_editor.apply_pressed.connect(apply_tags_to_selection)
@@ -29,8 +31,8 @@ func _on_project_loaded() -> void:
 	tagging_editor.set_tag_suggestions(tags)
 
 func _on_selection_changed() -> void:
-	_selection = browser_controller.get_selection()
-	tagging_editor.can_submit = browser_controller.get_selection_size() > 0
+	_selection = selection_manager.get_selection()
+	tagging_editor.can_submit = selection_manager.get_selection_size() > 0
 	# tagging_editor.set_selection_size(_selection.size())
 	# active_tags.clear()
 	# tagging_editor.clear()

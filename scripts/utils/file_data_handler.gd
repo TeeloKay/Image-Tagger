@@ -11,18 +11,23 @@ enum SortMode {
 	SORT_BY_TYPE_DESC
 }
 
-var sort_mode: SortMode = SortMode.SORT_BY_NAME_ASC:
+@export var sort_mode: SortMode = SortMode.SORT_BY_NAME_ASC:
 	set = set_sort_mode
-
+@export var extension_filter: PackedStringArray = []:
+	set = set_extension_filter
 ## Array of file paths in the current directory or search result.
-var _files: Array[String] = []
+@export var _files: Array[String] = []
+
 ## Dictionary of image meta data.
 var _file_data: Dictionary[String, FileData] = {}
 
 func get_files() -> Array[String]:
 	return _files.duplicate()
 
-func get_files_filtered(type_filter: Array) -> PackedStringArray:
+func get_filtered_files() -> PackedStringArray:
+	return get_files_with_filter(extension_filter)
+
+func get_files_with_filter(type_filter: Array) -> PackedStringArray:
 	if type_filter.is_empty():
 		return PackedStringArray(_files)
 	var filtered_files: PackedStringArray = []
@@ -115,11 +120,13 @@ func _sort_by_extension_desc(a: String, b: String) -> bool:
 	var type_a := _file_data[a].get_extension()
 	var type_b := _file_data[b].get_extension()
 	return type_a > type_b if type_a != type_b else _sort_by_name_desc(a, b)
-
 #endregion
 
 func set_sort_mode(mode: SortMode) -> void:
 	sort_mode = mode
+
+func set_extension_filter(filter: PackedStringArray) -> void:
+	extension_filter = filter
 
 func clear() -> void:
 	_files.clear()

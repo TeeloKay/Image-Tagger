@@ -4,6 +4,7 @@ class_name ImagePreviewController extends MenuController
 @export var image_previewer: ImageViewer
 
 @export var file_menu_controller: FileBrowserController
+@export var selection_manager: SelectionManager
 @export var file_renamer: FileRenamer
 
 @export var selection_index: int = 0:
@@ -24,8 +25,8 @@ func _ready() -> void:
 		image_previewer.name_submitted.connect(_on_rename_image_request)
 		image_previewer.image_double_clicked.connect(_on_open_image_request)
 	
-	if file_menu_controller:
-		file_menu_controller.selection_changed.connect(_on_selection_changed)
+	if selection_manager:
+		selection_manager.selection_changed.connect(_on_selection_changed)
 
 func _on_previous_pressed() -> void:
 	_offset_selection_index(-1)
@@ -38,31 +39,31 @@ func _on_next_pressed() -> void:
 	next_pressed.emit()
 
 func _on_rename_image_request(new_name: String) -> void:
-	var file := file_menu_controller.get_selection()[selection_index]
+	var file := selection_manager.get_selection()[selection_index]
 	var new_path := file.get_base_dir().path_join(new_name)
 	await file_renamer.rename_file(file, new_path)
 	file_menu_controller.update_view()
 	update_view()
 
 func _on_open_image_request() -> void:
-	var current_image := file_menu_controller.get_selection()[selection_index]
+	var current_image := selection_manager.get_selection()[selection_index]
 	OS.shell_open(current_image)
 
 func _on_selection_changed() -> void:
 	update_view()
 
 func _offset_selection_index(offset: int) -> void:
-	var selection := file_menu_controller.get_selection()
+	var selection := selection_manager.get_selection()
 	var selection_size := selection.size()
 	selection_index = wrap(selection_index + offset, 0, selection_size)
 
 func update_view() -> void:
-	var selection := file_menu_controller.get_selection()
-	if selection.is_empty():
+	var selection_size := selection_manager.get_selection_size()
+	if selection_size == 0:
 		clear()
 		return
-	selection_index = clamp(selection_index, 0, file_menu_controller.get_selection_size() - 1)
-	var image := selection[selection_index]
+	selection_index = min(selection_index, selection_size - 1)
+	var image := selection_manager.get_selection()[selection_index]
 	image_previewer.set_image_texture(ImageUtil.load_image(image))
 	image_previewer.set_file_name(image.get_file())
 
