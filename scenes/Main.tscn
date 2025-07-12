@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=21 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_view.tscn" id="3_q8u5g"]
@@ -14,11 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://jf0kmal2x5ej" path="res://scenes/common/tagging_editor.tscn" id="8_2ofn6"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
-[ext_resource type="PackedScene" uid="uid://bobv8ipx77jmy" path="res://scenes/common/popups/confirm_dialog.tscn" id="14_mwfav"]
 [ext_resource type="Script" uid="uid://cbqh682fdjv3l" path="res://scripts/controllers/directory_browser_controller.gd" id="16_1nqs0"]
-[ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="16_cvmbd"]
 [ext_resource type="Script" uid="uid://clgsameunjklh" path="res://scripts/controllers/file_browser_controller.gd" id="17_1nqs0"]
-[ext_resource type="PackedScene" uid="uid://cd3q4s152o3wt" path="res://scenes/common/popups/create_folder_dialog.tscn" id="17_ft6cd"]
 [ext_resource type="Script" uid="uid://di8543pugdbvy" path="res://scripts/utils/file_data_handler.gd" id="18_ebg2g"]
 [ext_resource type="Script" uid="uid://cgkat16aopyhp" path="res://scripts/selection/selection_manager.gd" id="19_2ofn6"]
 [ext_resource type="Script" uid="uid://bsv6uemb01cxa" path="res://scripts/controllers/image_preview_controller.gd" id="22_yxlcp"]
@@ -185,6 +182,8 @@ metadata/_tab_index = 0
 visible = false
 layout_mode = 2
 size_flags_vertical = 3
+apply_button_text = "Apply to selection"
+discard_button_text = "Clear"
 metadata/_tab_index = 1
 
 [node name="Tags" type="MarginContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu"]
@@ -199,29 +198,11 @@ layout_mode = 2
 unique_name_in_owner = true
 visible = false
 
-[node name="Popups" type="Node" parent="."]
-
-[node name="ConfirmationPopup" parent="Popups" instance=ExtResource("14_mwfav")]
-visible = false
-ok_button_text = "Delete"
-
-[node name="ErrorDialog" type="AcceptDialog" parent="Popups"]
-title = "File already exists"
-initial_position = 2
-size = Vector2i(255, 100)
-popup_window = true
-dialog_text = "A file with this name already exists."
-
-[node name="ConversionPopup" parent="Popups" instance=ExtResource("16_cvmbd")]
-visible = false
-
-[node name="CreateFolderDialog" parent="Popups" instance=ExtResource("17_ft6cd")]
-
 [node name="Controllers" type="Node" parent="."]
 
 [node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
 script = ExtResource("1_3p2gp")
-conversion_popup = NodePath("../../Popups/ConversionPopup")
+conversion_popup = NodePath("")
 menu_button = NodePath("../../Root/VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
 directory_controller = NodePath("../DirectoryController")
 file_controller = NodePath("../FileBrowserController")

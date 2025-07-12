@@ -2,7 +2,7 @@ class_name SearchPanel extends VBoxContainer
 
 var _active_tags: Dictionary[StringName, TagBadge]
 
-var _tag_badge_scene = preload("res://scenes/ui/tag_badge.tscn")
+var _tag_badge_scene := preload("res://scenes/ui/tag_badge.tscn")
 
 @onready var _search_input: LineEdit = %SearchInput
 @onready var _submit_button: Button = %SearchButton
