@@ -14,7 +14,8 @@ func _ready() -> void:
 
 	if directory_browser:
 		directory_browser.folder_selected.connect(_on_folder_selected)
-		directory_browser.data_dropped.connect(_on_data_dropped)
+		directory_browser.image_data_dropped.connect(_on_image_data_dropped)
+		directory_browser.folder_data_dropped.connect(_on_folder_data_dropped)
 
 		directory_browser.update_request.connect(_update_view)
 		directory_browser.create_subfolder_request.connect(_on_create_subfolder_request)
@@ -42,25 +43,37 @@ func _on_folder_selected(path: String) -> void:
 
 ## Method for handling files dropped into a directory through the internal drag & drop system
 ## Will attempt to move all the files from their original location to the new directory.
-func _on_data_dropped(files: PackedStringArray, target_dir: String) -> void:
+func _on_image_data_dropped(files: PackedStringArray, target_dir: String) -> void:
 	print("moving %d files" % files.size())
 	for file in files:
 		var new_path := target_dir.path_join(file.get_file())
 		print(file, " -> ", new_path)
 		FileService.move_file(file, new_path, true)
 
+func _on_folder_data_dropped(target_dir: String, source_dir: String) -> void:
+	print(source_dir, " -> ", target_dir)
+	var new_dir := target_dir.path_join(source_dir.get_file())
+	if DirAccess.dir_exists_absolute(new_dir):
+		return
+	var err := DirAccess.rename_absolute(source_dir, new_dir)
+	_update_view()
+	
 func _on_create_subfolder_request() -> void:
 	folder_operation_handler.request_create_folder(_current_directory)
 
 func _on_rename_request() -> void:
-	print("requesting rename of current directory")
+	folder_operation_handler.request_rename_folder(_current_directory)
 
 func _on_delete_request() -> void:
-	var dir := DirAccess.open(_current_directory)
-	if !dir:
-		push_error("Error opening directory at path: ", _current_directory)
-		return
-	_on_folder_selected("")
+	folder_operation_handler.request_delete_folder(_current_directory)
+	
+func _on_subfolder_created(_subfolder: String) -> void:
+	_update_view()
+
+func _on_folder_renamed(_old_folder: String, _new_folder: String) -> void:
+	_update_view()
+
+func _on_folder_deleted(_folder: String) -> void:
 	_update_view()
 
 func _update_view() -> void:
@@ -104,33 +117,12 @@ func _on_folder_dialog_input_changed(folder_name: String) -> void:
 func _on_folder_dialog_confirmed() -> void:
 	if !_active_folder_dialog:
 		return
-	var dir_name := _active_folder_dialog.get_dir_name()
+	var dir_name := _active_folder_dialog.get_input_text()
 	var err := folder_operation_handler.create_folder(_current_directory, dir_name)
 	if err != OK:
 		push_error(err)
 	_update_view()
 	pass
-
-func _on_folder_dialog_cancelled() -> void:
-	if !_active_folder_dialog:
-		return
-	pass
-
-func create_new_folder(new_path: String) -> void:
-	new_path = _project_data.to_abolute_path(new_path)
-	var err := DirAccess.make_dir_absolute(new_path)
-	if err != OK:
-		push_error("Could not generate directory: ", err)
-
-
-func delete_folder(path: String) -> void:
-	print(path)
-	if !DirAccess.dir_exists_absolute(path):
-		return
-	var err := DirAccess.remove_absolute(path)
-	if err != OK:
-		push_error("Could not delete directory: ", err)
-
 
 func move_folder(old_path: String, new_path: String) -> void:
 	if !DirAccess.dir_exists_absolute(old_path) || DirAccess.dir_exists_absolute(new_path):
@@ -140,12 +132,3 @@ func move_folder(old_path: String, new_path: String) -> void:
 		push_error("Could not rename directory: ", err)
 
 #endregion
-
-func _on_subfolder_created(_subfolder: String) -> void:
-	_update_view()
-
-func _on_folder_renamed() -> void:
-	_update_view()
-
-func _on_folder_deleted() -> void:
-	_update_view()

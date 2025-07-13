@@ -18,7 +18,7 @@ func _ready() -> void:
 func _on_input_changed(text: String) -> void:
 	input_changed.emit(text.strip_edges().strip_escapes())
 	
-func get_dir_name() -> String:
+func get_input_text() -> String:
 	return _input.text.strip_edges().strip_escapes()
 
 func set_is_valid(valid: bool) -> void:

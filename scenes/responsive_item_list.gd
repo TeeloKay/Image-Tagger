@@ -6,12 +6,12 @@ enum ViewMode {GRID, LIST}
 @export var view_mode: ViewMode = ViewMode.GRID:
 	set = set_view_mode
 
-@export_range(0,1000,1) var min_column_width: int = 128
-@export var icon_size := Vector2i(64,64)
+@export_range(0, 1000, 1) var min_column_width: int = 128
+@export var icon_size := Vector2i(64, 64)
 
 var drag_start_pos := Vector2.ZERO
 
-var drag_preview := preload("res://scenes/common/image_drag_preview.tscn")
+var drag_preview := preload("res://scenes/common/drag_and_drop/image_drag_preview.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -51,7 +51,7 @@ func _update_view_mode() -> void:
 
 #region Drag and Drop
 func _get_drag_data(at_position: Vector2) -> Variant:
-	var index := get_item_at_position(at_position,true)
+	var index := get_item_at_position(at_position, true)
 	if index < 0:
 		return null
 	var files := list_view.get_selected_item_paths()
@@ -62,14 +62,13 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	return drag_data
 
 func _build_drag_preview(index: int, files: PackedStringArray) -> void:
-	var preview := TextureRect.new()
-	preview 				= drag_preview.instantiate() as ImageDragPreview
-	preview.pivot_offset 	= preview.size/2
-	preview.texture 		=  get_item_icon(index)
-	preview.modulate 		= Color(1,1,1,0.75)
-	preview.files 			= files.size()
+	var preview := drag_preview.instantiate() as ImageDragPreview
+	preview.texture = get_item_icon(index)
+	preview.modulate = Color(1, 1, 1, 0.75)
+	preview.files = files.size()
 	
 	preview.set_size(_get_icon_size())
-	set_drag_preview(preview)	
+	preview.pivot_offset = preview.size / 2
+	set_drag_preview(preview)
 
 #endregion

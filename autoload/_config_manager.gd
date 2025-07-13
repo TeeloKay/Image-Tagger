@@ -1,8 +1,8 @@
 extends Node
 
-const CONFIG_PATH 	:= "user://settings.cfg"
-const UI 			:= "UI"
-const PREFERENCES	:= "PREFERENCES"
+const CONFIG_PATH := "user://settings.cfg"
+const UI := "UI"
+const PREFERENCES := "PREFERENCES"
 
 var _cfg: ConfigFile = null
 
