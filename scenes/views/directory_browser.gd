@@ -55,6 +55,7 @@ func _recursive_filter(item: TreeItem, filter: String) -> bool:
 	return item.visible
 
 func build_directory_tree(path: String) -> void:
+	var expanded := _get_expanded_paths()
 	_tree.clear()
 	var dir := DirAccess.open(path)
 	if !dir:
@@ -64,6 +65,9 @@ func build_directory_tree(path: String) -> void:
 	var root := _tree.create_item()
 	_build_tree_item(root, path)
 	_load_directory_recursively(path, root)
+
+	_restore_expanded_paths(expanded)
+	root.collapsed = false
 	folder_selected.emit(path)
 
 func _load_directory_recursively(path: String, parent: TreeItem) -> void:
@@ -130,3 +134,39 @@ func _on_context_menu_pressed(id: int) -> void:
 			delete_request.emit()
 		_:
 			return
+
+#region Expansion Logic
+func _get_expanded_paths() -> PackedStringArray:
+	var expanded_paths: PackedStringArray = []
+	var root := _tree.get_root()
+	if root:
+		_collect_expanded_paths_recursive(root, expanded_paths)
+	return expanded_paths
+
+func _collect_expanded_paths_recursive(item: TreeItem, paths: PackedStringArray) -> void:
+	if !item:
+		return
+	var path: String = item.get_metadata(0)
+	if path is String && !item.is_collapsed():
+		paths.append(path)
+	var child := item.get_first_child()
+	while child:
+		_collect_expanded_paths_recursive(child, paths)
+		child = child.get_next()
+
+func _restore_expanded_paths(expanded_paths: PackedStringArray) -> void:
+	var root := _tree.get_root()
+	if root:
+		_set_expanded_recursive(root, expanded_paths)
+
+func _set_expanded_recursive(item: TreeItem, expanded_paths: PackedStringArray) -> void:
+	if !item:
+		return
+	var path: String = item.get_metadata(0)
+	if path is String:
+		item.set_collapsed(!expanded_paths.has(path))
+	var child := item.get_first_child()
+	while child:
+		_set_expanded_recursive(child, expanded_paths)
+		child = child.get_next()
+#endregion
