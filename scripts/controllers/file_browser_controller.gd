@@ -41,7 +41,9 @@ func _ready() -> void:
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
-	ProjectManager.search_engine.search_completed.connect(show_search_results)
+	ProjectManager.search_engine.search_started.connect(clear)
+	ProjectManager.search_engine.search_result.connect(_add_search_result)
+
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 
 #region core view functions
@@ -54,21 +56,6 @@ func show_files_in_directory(dir_path: String) -> void:
 	_file_loader.populate_queue(_data_handler.get_files())
 	_is_loading = true
 
-func show_search_results(results: Array[SearchResult]) -> void:
-	clear()
-
-	if results.is_empty():
-		return
-	for result in results:
-		if result.image_path == "":
-			_data_handler.add_file(result.image_path)
-			
-			# This method is put here to allow for live updating of the view.
-			# when all files are loaded, the view will be reset and files
-			# will be added in the right order with the right tooltips
-			_add_item_to_view(result.image_path)
-	_file_loader.populate_queue(_data_handler.get_filtered_files())
-	_is_loading = true
 
 func get_files_in_directory(dir_path: String) -> PackedStringArray:
 	var dir := DirAccess.open(dir_path)
@@ -90,6 +77,16 @@ func get_files_in_directory(dir_path: String) -> PackedStringArray:
 	dir.list_dir_end()
 
 	return files
+
+func _add_search_result(result: SearchResult) -> void:
+	_data_handler.add_file(result.path)
+			
+	# This method is put here to allow for live updating of the view.
+	# when all files are loaded, the view will be reset and files
+	# will be added in the right order with the right tooltips
+	_add_item_to_view(result.path)
+	_file_loader.populate_queue(_data_handler.get_filtered_files())
+	_is_loading = true
 
 ## Rebuild view from list of cached files. 
 func rebuild_view_from_file_list() -> void:

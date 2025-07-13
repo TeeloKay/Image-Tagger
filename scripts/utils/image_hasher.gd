@@ -1,6 +1,7 @@
 class_name ImageHasher extends Node
 
 const CHUNK_SIZE := 1024
+const FINGERPRINT_CHUNK_SIZE := 8192
 
 @export_range(1, 100, 1) var batch_size: int = 1
 
@@ -92,6 +93,20 @@ func _hash_file(path: String) -> String:
 	var res := ctx.finish()
 
 	return res.hex_encode()
+
+func fingerprint_file(path: String) -> String:
+	var file := FileAccess.open(path, FileAccess.READ)
+	if !file:
+		return ""
+	
+	var file_size := file.get_length()
+	var ctx := HashingContext.new()
+	ctx.start(HashingContext.HASH_MD5)
+
+	file.seek(0)
+	ctx.update(file.get_buffer(min(FINGERPRINT_CHUNK_SIZE, file_size)))
+
+	return ctx.finish().hex_encode()
 
 func _exit_tree() -> void:
 	_mutex.lock()

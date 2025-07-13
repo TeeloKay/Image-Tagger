@@ -1,86 +1,77 @@
 class_name SearchEngine extends Node
 
-var _search_chain: SearchHandler
 var project: ProjectData:
 	set = set_project
+
+var _thread: Thread
+var _mutex: Mutex
+var _semaphore: Semaphore
+var _cancelled := false
+
+var use_threading: bool = true
+
+signal search_started
+signal search_result(result: SearchResult)
+signal search_finished
+## Returns start_search progress as a value from 0 - 1
+signal search_progress(progress: float)
+signal search_cancelled
+
 
 signal search_completed(results: Array[SearchResult])
 
 func _ready() -> void:
-	_search_chain = SearchByTag.new()
+	_thread = Thread.new()
 
 func set_project(_project: ProjectData) -> void:
 	project = _project
 
-func search_images(query: SearchQuery) -> Array[SearchResult]:
-	var results: Array[SearchResult] = []
+func start_search(query: SearchQuery) -> void:
 	if project == null:
-		return results
-	var hashes: Array[String] = []
-	var q := ProjectTools.sanitize_tag(query.text)
-	
-	print(q)
-	_recursive_search(project.project_path, q, results)
-	for result in hashes:
-		var path := project.get_path_for_hash(result)
-		results.append(SearchResult.new(path, result))
-	search_completed.emit(results)
-	return results
-
-func _recursive_search(dir_path: String, query: String, out_results: Array[SearchResult]) -> void:
-	var dir := DirAccess.open(dir_path)
-	if dir == null:
 		return
-	
-	dir.list_dir_begin()
-	var file_name := dir.get_next()
-	while file_name != "":
-		if file_name.begins_with("."):
-			file_name = dir.get_next()
-			continue
-		
-		var full_path := dir_path.path_join(file_name)
-		var rel_path := project.to_relative_path(full_path)
-		
-		if dir.current_is_dir():
-			_recursive_search(full_path, query, out_results)
-			file_name = dir.get_next()
-			continue
-		
-		var name_match := file_name.to_lower().contains(query)
-		var tag_match := false
-		var hash_val := project.get_hash_for_path(rel_path)
-		if !hash_val:
-			file_name = dir.get_next()
-			continue
-			
-		var tags := project.get_tags_for_hash(hash_val)
-		for tag in tags:
-			if tag.contains(query):
-				tag_match = true
-				break
+	search_started.emit()
+	var hashes: Array[String] = []
 
-		if name_match || tag_match:
-			var result := SearchResult.new(rel_path, hash_val)
-			out_results.append(result)
-		file_name = dir.get_next()
-	dir.list_dir_end()
-
-func _inclusive_tag_search(tags: Array[StringName], out_results: Array[String]) -> void:
-	for tag in tags:
-		var hashes := Array(project.get_tag_data(tag).hashes)
-		if out_results.is_empty():
-			out_results.assign(hashes)
-			continue
-		out_results = get_array_intersection(hashes, out_results.duplicate())
-		
-func get_array_intersection(a: Array, b: Array) -> Array:
-	var dict := {}
-	for item: String in a:
-		dict[item] = true
+	# Phase 1: retrieve all matching hashes based on inclusive and exclusive tags
+	var matches := find_hashes_by_tags(query.inclusive_tags, [])
 	
-	var result := []
-	for item: String in b:
-		if dict.has[item]:
-			result.append(item)
-	return result
+	# Phase 2: validate last paths for matches
+
+	var search_list: Array[String] = []
+	var found_list: Dictionary[String, String] = {}
+
+	for file_hash in matches:
+		var path := project.get_path_for_hash(file_hash)
+		path = project.to_abolute_path(path)
+		print(path)
+		if !FileAccess.file_exists(path):
+			search_list.append(file_hash)
+			continue
+		found_list[file_hash] = path
+		
+	for file_hash in found_list:
+		var result := SearchResult.new(found_list[file_hash], file_hash)
+		print(result.image_hash, result.path)
+		search_result.emit(result)
+
+func find_hashes_by_tags(inclusive_tags: Array[StringName], exclusive_tags: Array[StringName]) -> PackedStringArray:
+	var matches: PackedStringArray = []
+	for file_hash in project.image_db.get_images():
+		var tags := project.get_image_data(file_hash).tags
+
+		if inclusive_tags.all(func(t: StringName) -> bool: return tags.has(t)) \
+		&& exclusive_tags.all(func(t: StringName) -> bool: return !tags.has(t)) \
+		:
+			matches.append(file_hash)
+	return matches
+
+func validate_paths(hashes: PackedStringArray) -> Dictionary:
+	var results := {}
+	var to_search := []
+	for file_hash: String in hashes:
+		var path := project.get_image_data(file_hash).last_path
+		if FileAccess.file_exists(path):
+			results[hash] = path
+		else:
+			to_search.append(hash)
+	return {"found": results, "missing": to_search}

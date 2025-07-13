@@ -58,8 +58,8 @@ func get_valid_projects() -> Array[String]:
 		return []
 	return registry.get_valid_projects()
 
-func search_images(query: SearchQuery) -> Array:
-	return search_engine.search_images(query)
+func search_files(query: SearchQuery) -> void:
+	search_engine.start_search(query)
 
 func to_relative_path(abs_path: String) -> String:
 	if current_project:

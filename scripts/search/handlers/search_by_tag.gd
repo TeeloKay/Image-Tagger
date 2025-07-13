@@ -1,8 +1,8 @@
 class_name SearchByTag extends SearchHandler
 
 func search(query: SearchQuery, out_results: Array) -> void:
-	if !query.tags.is_empty():
-		for tag in query.tags:
+	if !query.inclusive_tags.is_empty():
+		for tag in query.inclusive_tags:
 			var hashes := Array(project_data.get_tag_data(tag).hashes)
 			if out_results.is_empty():
 				out_results.assign(hashes)

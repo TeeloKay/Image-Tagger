@@ -29,4 +29,3 @@ texture = ExtResource("1_48im2")
 [node name="Label" type="Label" parent="HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "my folder"

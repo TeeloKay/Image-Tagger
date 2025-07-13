@@ -7,12 +7,12 @@ var _tags: Array[StringName] = []
 
 func _ready() -> void:
 	super._ready()
-	
-	search_panel.tag_remove_pressed.connect(remove_tag)
-	search_panel.tag_suggestion_pressed.connect(add_tag)
-	search_panel.search_pressed.connect(search)
-	search_panel.reset_pressed.connect(reset_query)
-	search_panel.search_string_changed.connect(_on_search_string_changed)
+	if search_panel:
+		search_panel.tag_remove_pressed.connect(remove_tag)
+		search_panel.tag_suggestion_pressed.connect(add_tag)
+		search_panel.search_pressed.connect(search)
+		search_panel.reset_pressed.connect(reset_query)
+		search_panel.search_string_changed.connect(_on_search_string_changed)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -22,8 +22,9 @@ func _on_project_loaded() -> void:
 func search() -> void:
 	var query := SearchQuery.new()
 	query.text = _search_string.to_lower().strip_edges()
-	query.tags = _tags
-	ProjectManager.search_images(query)
+	query.inclusive_tags = _tags
+	print(query)
+	ProjectManager.search_files(query)
 
 func reset_query() -> void:
 	_search_string = ""
