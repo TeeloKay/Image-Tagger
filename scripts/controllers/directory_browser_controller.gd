@@ -1,23 +1,30 @@
 class_name DirectoryController extends MenuController
 
-@export var directory_view: DirectoryView
+@export var directory_browser: DirectoryBrowser
 @export_global_dir var _current_directory: String
 @export var scan_interval: float = 12
+@export var folder_operation_handler: FolderOperationhandler
 
-var _confirm_dialog := preload("res://scenes/common/popups/confirm_dialog.tscn")
-var _active_dialog: ConfirmationDialog
+var _active_folder_dialog: TextInputDialog
 
 signal path_selected(path: String)
 
 func _ready() -> void:
 	super._ready()
 
-	if directory_view:
-		directory_view.folder_selected.connect(_on_folder_selected)
-		directory_view.data_dropped.connect(_on_data_dropped)
-		directory_view.update_request.connect(_update_view)
-		directory_view.rename_request.connect(_on_rename_request)
-		directory_view.delete_request.connect(_on_delete_request)
+	if directory_browser:
+		directory_browser.folder_selected.connect(_on_folder_selected)
+		directory_browser.data_dropped.connect(_on_data_dropped)
+
+		directory_browser.update_request.connect(_update_view)
+		directory_browser.create_subfolder_request.connect(_on_create_subfolder_request)
+		directory_browser.rename_request.connect(_on_rename_request)
+		directory_browser.delete_request.connect(_on_delete_request)
+	
+	if folder_operation_handler:
+		folder_operation_handler.folder_created.connect(_on_subfolder_created)
+		folder_operation_handler.folder_renamed.connect(_on_folder_renamed)
+		folder_operation_handler.folder_deleted.connect(_on_folder_deleted)
 
 	get_window().files_dropped.connect(_on_files_dropped)
 
@@ -42,6 +49,9 @@ func _on_data_dropped(files: PackedStringArray, target_dir: String) -> void:
 		print(file, " -> ", new_path)
 		FileService.move_file(file, new_path, true)
 
+func _on_create_subfolder_request() -> void:
+	folder_operation_handler.request_create_folder(_current_directory)
+
 func _on_rename_request() -> void:
 	print("requesting rename of current directory")
 
@@ -50,20 +60,13 @@ func _on_delete_request() -> void:
 	if !dir:
 		push_error("Error opening directory at path: ", _current_directory)
 		return
-	_active_dialog = _confirm_dialog.instantiate() as ConfirmationDialog
-	add_child(_active_dialog)
-	_active_dialog.title = "Delete folder"
-	_active_dialog.dialog_text = "Are you certain you want to delete this folder and all of its contents?: " + _current_directory
-	_active_dialog.confirmed.connect(func() -> void: delete_folder(_current_directory))
-	_active_dialog.get_cancel_button().pressed.connect(_on_request_cancelled)
 	_on_folder_selected("")
-
 	_update_view()
 
 func _update_view() -> void:
 	print("updating view")
-	directory_view.build_directory_tree(_project_data.project_path)
-	directory_view.clear_filter()
+	directory_browser.build_directory_tree(_project_data.project_path)
+	directory_browser.clear_filter()
 
 ## Method for handling files dropped into the project from outside.
 ## Will attempt to copy and save all files in the currently open directory.
@@ -89,7 +92,30 @@ func _on_files_dropped(files: PackedStringArray) -> void:
 				new_name = "%s_%d" % [file_name, counter]
 		FileService.copy_file(file, file_path)
 
-#region Folder Operations	
+#region Folder Operations
+
+func _on_folder_dialog_input_changed(folder_name: String) -> void:
+	if !_active_folder_dialog:
+		return
+	var name_is_valid := folder_operation_handler.folder_name_is_valid(folder_name)
+	var folder_exists := DirAccess.dir_exists_absolute(_current_directory.path_join(folder_name))
+	_active_folder_dialog.is_valid = name_is_valid && !folder_exists
+
+func _on_folder_dialog_confirmed() -> void:
+	if !_active_folder_dialog:
+		return
+	var dir_name := _active_folder_dialog.get_dir_name()
+	var err := folder_operation_handler.create_folder(_current_directory, dir_name)
+	if err != OK:
+		push_error(err)
+	_update_view()
+	pass
+
+func _on_folder_dialog_cancelled() -> void:
+	if !_active_folder_dialog:
+		return
+	pass
+
 func create_new_folder(new_path: String) -> void:
 	new_path = _project_data.to_abolute_path(new_path)
 	var err := DirAccess.make_dir_absolute(new_path)
@@ -104,8 +130,6 @@ func delete_folder(path: String) -> void:
 	var err := DirAccess.remove_absolute(path)
 	if err != OK:
 		push_error("Could not delete directory: ", err)
-	if _active_dialog:
-		_active_dialog.queue_free()
 
 
 func move_folder(old_path: String, new_path: String) -> void:
@@ -117,6 +141,11 @@ func move_folder(old_path: String, new_path: String) -> void:
 
 #endregion
 
-func _on_request_cancelled() -> void:
-	if _active_dialog:
-		_active_dialog.queue_free()
+func _on_subfolder_created(_subfolder: String) -> void:
+	_update_view()
+
+func _on_folder_renamed() -> void:
+	_update_view()
+
+func _on_folder_deleted() -> void:
+	_update_view()

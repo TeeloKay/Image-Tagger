@@ -225,7 +225,7 @@ func _on_list_view_gui_input(event: InputEvent) -> void:
 func get_selected_items() -> PackedInt32Array:
 	return _item_list.get_selected_items()
 
-func set_item_thumbnail(index, thumbnail) -> void:
+func set_item_thumbnail(index: int, thumbnail: Texture2D) -> void:
 	_item_list.set_item_icon(index, thumbnail)
 
 func get_file_paths_in_dir() -> PackedStringArray:

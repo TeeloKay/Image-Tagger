@@ -13,9 +13,11 @@ func copy_file(path: String, new_path: String, safe: bool = true) -> Error:
 	
 	if !new_path.get_file().is_valid_filename():
 		return ERR_FILE_BAD_PATH
+
 	if FileAccess.file_exists(new_path):
 		if !safe:
 			return ERR_FILE_ALREADY_IN_USE
+
 	var err := DirAccess.copy_absolute(path, new_path)
 	if err != OK:
 		return ERR_FILE_CANT_WRITE

@@ -1,4 +1,6 @@
-class_name DirectoryView extends Control
+class_name DirectoryBrowser extends Control
+
+enum ContextActions {ADD, RENAME, DELETE}
 
 var _folder_icon := preload("res://assets/icons/Folder.svg")
 var _image_icon := preload("res://assets/icons/Image.svg")
@@ -10,10 +12,10 @@ var _image_icon := preload("res://assets/icons/Image.svg")
 signal folder_selected(path: String)
 signal data_dropped(files: PackedStringArray, target_dir: String)
 
-signal add_folder_request()
-signal delete_request()
-signal rename_request()
 signal update_request
+signal create_subfolder_request
+signal rename_request
+signal delete_request
 
 func _ready() -> void:
 	_tree.set_column_expand(0, true)
@@ -22,9 +24,9 @@ func _ready() -> void:
 	_tree.data_dropped.connect(_on_data_dropped)
 	
 	_context_menu.clear()
-	_context_menu.add_item("Add folder", 0)
-	_context_menu.add_item("Rename", 1)
-	_context_menu.add_item("Delete", 2)
+	_context_menu.add_item("New folder...", ContextActions.ADD)
+	_context_menu.add_item("Rename...", ContextActions.RENAME)
+	_context_menu.add_item("Delete", ContextActions.DELETE)
 	
 	_context_menu.id_pressed.connect(_on_context_menu_pressed)
 
@@ -109,24 +111,18 @@ func _show_context_menu(_item: TreeItem, pos: Vector2) -> void:
 	_context_menu.popup()
 	
 func _on_data_dropped(files: PackedStringArray, target_dir: String) -> void:
-	data_dropped.emit(files,target_dir)
+	data_dropped.emit(files, target_dir)
 
 func clear_filter() -> void:
 	_filter_input.clear()
 
 func _on_context_menu_pressed(id: int) -> void:
 	match id:
-		0:
-			print("add folder")
-			add_folder_request.emit()
-			pass
-		1:
-			print("rename")
+		ContextActions.ADD:
+			create_subfolder_request.emit()
+		ContextActions.RENAME:
 			rename_request.emit()
-			pass
-		2:
-			print("delete")
+		ContextActions.DELETE:
 			delete_request.emit()
-			pass
 		_:
 			return

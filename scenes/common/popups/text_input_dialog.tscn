@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3 uid="uid://cd3q4s152o3wt"]
+
+[ext_resource type="Script" uid="uid://bmo6drbx3d1cn" path="res://scenes/common/popups/text_input_dialog.gd" id="1_ba8cj"]
+
+[node name="CreateFolderDialog" type="ConfirmationDialog"]
+auto_translate_mode = 1
+title = "Create folder"
+initial_position = 2
+size = Vector2i(400, 134)
+visible = true
+always_on_top = true
+popup_window = true
+script = ExtResource("1_ba8cj")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+offset_left = 4.0
+offset_top = 4.0
+offset_right = 396.0
+offset_bottom = 96.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Name:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="LineEdit" type="LineEdit" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "folder name"
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/VBoxContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Name is valid"
