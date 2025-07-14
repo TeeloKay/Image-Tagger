@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
 	if file_hash.is_empty():
 		file_hash = image_hasher.hash_file(item.file)
 
-	project.add_image(file_hash, item.file)
+	project.add_image(file_hash, project.to_relative_path(item.file))
 	project.add_tags_for_hash(file_hash, item.tags)
 
 	item.free()
