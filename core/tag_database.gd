@@ -20,7 +20,7 @@ func set_tag_list(tags: Dictionary) -> void:
 func add_tag(tag: StringName) -> void:
 	if !_db.has(tag):
 		_db[tag] = TagData.new()
-		tag_added.emit(_db[tag])
+		tag_added.emit(tag)
 
 func add_hash_to_tag(hash_val: String, tag: StringName) -> void:
 	add_tag(tag)
