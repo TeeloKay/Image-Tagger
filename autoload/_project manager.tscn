@@ -1,15 +1,17 @@
-[gd_scene load_steps=8 format=3 uid="uid://c4s2ruwigwta8"]
+[gd_scene load_steps=6 format=3 uid="uid://c4s2ruwigwta8"]
 
 [ext_resource type="Script" uid="uid://dp3n020oemu1" path="res://autoload/_project_manager.gd" id="1_ulwsf"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
 [ext_resource type="Script" uid="uid://gg835r7030tf" path="res://scripts/utils/image_hasher.gd" id="3_4p2rh"]
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://bycy7kr32erlc" path="res://scripts/filesystem/image_indexer.gd" id="5_w6j2y"]
-[ext_resource type="Script" uid="uid://d3l5q35wrbgu2" path="res://scripts/filesystem/image_registrar.gd" id="6_3yaop"]
-[ext_resource type="Script" uid="uid://clupvd8o2mwfm" path="res://scripts/database/database_bridge.gd" id="7_ykfab"]
 
-[node name="ProjectManager" type="Node"]
+[node name="ProjectManager" type="Node" node_paths=PackedStringArray("search_engine", "image_indexer", "file_hasher", "tagging_queue")]
 script = ExtResource("1_ulwsf")
+search_engine = NodePath("SearchEngine")
+image_indexer = NodePath("ImageIndexer")
+file_hasher = NodePath("ImageHasher")
+tagging_queue = NodePath("TaggingQueue")
 
 [node name="TaggingQueue" type="Node" parent="." node_paths=PackedStringArray("image_hasher")]
 script = ExtResource("2_ygneo")
@@ -27,12 +29,3 @@ metadata/_custom_type_script = "uid://bthdqc3rbwlow"
 [node name="ImageIndexer" type="Node" parent="."]
 script = ExtResource("5_w6j2y")
 metadata/_custom_type_script = "uid://bycy7kr32erlc"
-
-[node name="ImageRegistrar" type="Node" parent="." node_paths=PackedStringArray("file_hasher")]
-script = ExtResource("6_3yaop")
-file_hasher = NodePath("../ImageHasher")
-metadata/_custom_type_script = "uid://d3l5q35wrbgu2"
-
-[node name="DatabaseBridge" type="Node" parent="."]
-script = ExtResource("7_ykfab")
-metadata/_custom_type_script = "uid://clupvd8o2mwfm"

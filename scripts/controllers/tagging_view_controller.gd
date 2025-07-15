@@ -68,7 +68,6 @@ func set_image(path: String) -> void:
 		return
 
 	current_image = path
-	# TODO: we might as well take this opportunity to register the image in full.
 	ProjectManager.file_hasher.add_file_to_queue(path)
 
 	tagging_editor.allow_input = true

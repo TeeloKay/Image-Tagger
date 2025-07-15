@@ -1,25 +1,25 @@
 extends Node
 
 var _queue: Array[String] = []
-var _cache: Dictionary[String, Texture2D] = {}
+var _cache: Dictionary[String,Texture2D] = {}
 var _pending_results: Dictionary[String, Texture2D] = {}
 
-var images_per_batch: int = 6
-var max_cache_size: int = 2048
+var images_per_batch: int 	= 6
+var max_cache_size: int 	= 4096
 
-var _semaphore: Semaphore = null
-var _thread: Thread = null
-var _mutex: Mutex = null
+var _semaphore: Semaphore	= null
+var _thread: Thread 		= null
+var _mutex: Mutex			= null
 
-var exit_thread: bool = false
+var exit_thread: bool		= false
 
 signal thumbnail_ready(path: String, thumbnail: Texture2D)
 signal queue_cleared
 
 func _ready() -> void:
-	_semaphore = Semaphore.new()
-	_thread = Thread.new()
-	_mutex = Mutex.new()
+	_semaphore 	= Semaphore.new()
+	_thread 	= Thread.new()
+	_mutex		= Mutex.new()
 	_thread.start(_thread_process)
 
 func queue_thumbnail(abs_path: String) -> void:
@@ -27,7 +27,7 @@ func queue_thumbnail(abs_path: String) -> void:
 	if abs_path in _cache:
 		var thumb := _cache[abs_path]
 		_mutex.unlock()
-		thumbnail_ready.emit(abs_path, thumb)
+		thumbnail_ready.emit(abs_path,thumb)
 		return
 	if abs_path in _queue:
 		_mutex.unlock()
@@ -51,13 +51,13 @@ func _thread_process() -> void:
 			local_queue.append(_queue.pop_front())
 		_mutex.unlock()
 
-		for path: String in local_queue:
+		for path:String in local_queue:
 			var thumbnail := get_image(path)
 			if thumbnail == null:
 				thumbnail = ImageUtil.generate_thumbnail_from_path(path)
 				if thumbnail:
 					_mutex.lock()
-					_add_thumbnail_to_cache(path, thumbnail)
+					_add_image_to_cache(path,thumbnail)
 					_mutex.unlock()
 			if thumbnail:
 				_mutex.lock()
@@ -81,16 +81,19 @@ func has(abs_path: String) -> bool:
 	return _cache.has(abs_path)
 
 func get_image(abs_path: String) -> Texture2D:
-	return _cache.get(abs_path, null)
+	return _cache.get(abs_path,null)
 
-func _add_thumbnail_to_cache(abs_path: String, texture: Texture2D) -> void:
+func _add_image_to_cache(abs_path: String, texture: Texture2D) -> void:
 	if _cache.size() >= max_cache_size:
 		_cache.erase(_cache.keys()[0])
 	_cache[abs_path] = texture
 
 func clear() -> void:
+	_mutex.lock()
 	_cache.clear()
-	clear_queue()
+	_queue.clear()
+	_mutex.unlock()
+	queue_cleared.emit()
 
 func clear_queue() -> void:
 	_mutex.lock()
