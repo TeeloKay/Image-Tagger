@@ -58,11 +58,10 @@ func populate_tag_list(tags: Array[StringName]) -> void:
 func apply_tags_to_selection() -> void:
 	for path in _selection:
 		ProjectManager.tagging_queue.enqueue(path, active_tags)
-	# active_tags.clear()
-	tagging_editor.clear()
 
 func _discard_changes() -> void:
 	set_active_tags([])
+	tagging_editor.clear()
 
 func set_active_tags(tags: Array[StringName]) -> void:
 	active_tags = tags

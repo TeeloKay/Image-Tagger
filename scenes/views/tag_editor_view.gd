@@ -20,6 +20,7 @@ func _ready() -> void:
 	_build_tree()
 	_add_button.pressed.connect(_on_add_tag)
 	_tag_tree.button_clicked.connect(_on_tree_item_button_clicked)
+	_update_button.pressed.connect(_on_update_pressed)
 	disable()
 
 func enable() -> void:
