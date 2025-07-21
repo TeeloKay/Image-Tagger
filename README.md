@@ -18,7 +18,7 @@ Tagger was made to simplify the organization of large collections of images loca
 ## Installation
 1. Download and install [Godot 4.4.1](https://godotengine.org/download/windows/) from the official site or Steam
 2. Clone or download this repository
-3. Open the projectin Godot as a local project
+3. Open the project in Godot as a local project
 
 Requires **Godot 4.4.1**
 
