@@ -16,6 +16,8 @@ Tagger also includes some quality of life features
  ## Installation
  As a Godot project, you will need [Godot](https://godotengine.org/download/windows/). Extract the project and open as a Godot project.
 
+ Requires ** Godot 4.4.1 **
+
 ## Addons
 - [Godot Gif](https://godotengine.org/asset-library/asset/2255) - required for animated .gif support.
  ## License
