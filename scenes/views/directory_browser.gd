@@ -105,11 +105,12 @@ func clear() -> void:
 # Handles direct UI input from the directory tree
 func _on_directory_tree_gui_input(event: InputEvent) -> void:
 	if event is InputEventKey && event.is_pressed():
-		match event.action:
-			"delete":
-				delete_request.emit()
-			"rename":
-				rename_request.emit()
+		if event.is_action("delete"):
+			delete_request.emit()
+			return
+		if event.is_action("rename"):
+			rename_request.emit()
+			return
 		return
 
 	if event is InputEventMouseButton && event.pressed:
