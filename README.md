@@ -9,10 +9,16 @@ Tagger was made to simplify the organization of large collections of images loca
 - Search images by tag, name, or both.
 - Quality of life tools:
 	- image type conversion
-  	- image extension correction: tagger has tools to try and correct file extensions on incorrectly named files. for example, a .png that is incorrectly labelled a .jpg can be restored to the proper extension.
+  	- image extension correction: tagger has tools to try and correct file extensions on incorrectly named files. for example, a `.png` that is incorrectly labelled a `.jpg` can be restored to the proper extension.
   	- Image file operations: renaming, moving, and deleting images
   	- directory management: Create, rename, delete, and move folders with contents.
   	- drag & drop support: Import images from the file exploorer directoy with automatic renaming to avoid conflicts.
+- Supported image types:
+	- `.jpg` & `.jpeg`
+	- `.png`
+	- `.webp`
+	- `.gif`
+	- `.tga`
 
 
 ## Installation
