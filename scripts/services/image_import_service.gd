@@ -1,4 +1,4 @@
-class_name ImageHasher extends Node
+class_name ImageImportService extends Node
 
 const CHUNK_SIZE := 1024
 const FINGERPRINT_CHUNK_SIZE := 8192

@@ -49,7 +49,7 @@ func _ready() -> void:
 	if selection_manager:
 		selection_manager.selection_changed.connect(_on_selection_changed)
 
-	ProjectManager.file_hasher.file_hashed.connect(_on_file_hashed)
+	ProjectManager.image_import_service.file_hashed.connect(_on_file_hashed)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -68,7 +68,7 @@ func set_image(path: String) -> void:
 		return
 
 	current_image = path
-	ProjectManager.file_hasher.add_file_to_queue(path)
+	ProjectManager.image_import_service.add_file_to_queue(path)
 
 	tagging_editor.allow_input = true
 	tagging_editor.can_submit = false

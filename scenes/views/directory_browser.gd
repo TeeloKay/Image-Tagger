@@ -102,7 +102,16 @@ func _on_item_selected() -> void:
 func clear() -> void:
 	_tree.clear()
 
+# Handles direct UI input from the directory tree
 func _on_directory_tree_gui_input(event: InputEvent) -> void:
+	if event is InputEventKey && event.is_pressed():
+		match event.action:
+			"delete":
+				delete_request.emit()
+			"rename":
+				rename_request.emit()
+		return
+
 	if event is InputEventMouseButton && event.pressed:
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			var click_pos: Vector2 = event.position

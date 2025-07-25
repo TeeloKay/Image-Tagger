@@ -10,7 +10,7 @@ var _project_io: ProjectIO
 @export var image_indexer: ImageIndexer
 
 var thumbnail_cache: ThumbnailCache
-@export var file_hasher: ImageHasher
+@export var image_import_service: ImageImportService
 
 @export var tagging_queue: TaggingQueue
 

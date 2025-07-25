@@ -1,7 +1,7 @@
 class_name TaggingQueue extends Node
 
 @export var project: ProjectData
-@export var image_hasher: ImageHasher
+@export var image_hasher: ImageImportService
 
 var _queue: Array[QueueItem] = []
 

@@ -20,7 +20,7 @@ func apply_changes() -> void:
 func discard_changes() -> void:
 	pass
 
-func set_image(path: String) -> void:
+func set_image(_path: String) -> void:
 	pass
 
 func on_next_pressed() -> void:
