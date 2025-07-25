@@ -109,7 +109,7 @@ bg_color = Color(0.203922, 0.564706, 0.819608, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_up26f"]
 content_margin_top = 4.0
 content_margin_bottom = 4.0
-bg_color = Color(0.247059, 0.247059, 0.247059, 1)
+bg_color = Color(0.133333, 0.137255, 0.145098, 1)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_3ltnh"]
 color = Color(0.270588, 0.282353, 0.298039, 1)
@@ -354,7 +354,7 @@ bg_color = Color(0.203922, 0.564706, 0.819608, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xukh7"]
 content_margin_left = 4.0
 content_margin_right = 4.0
-bg_color = Color(0.247059, 0.247059, 0.247059, 1)
+bg_color = Color(0.133333, 0.137255, 0.145098, 1)
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_yiexd"]
 color = Color(1, 1, 1, 0.117647)
