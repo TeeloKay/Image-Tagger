@@ -53,9 +53,9 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	var tags := _project_data.get_tags()
-	tagging_editor.set_tag_suggestions(tags)
 	_project_data.tag_db.tag_added.connect(_update_tag_suggestions)
+	_update_tag_suggestions()
+
 #endregion
 
 #region Public API
@@ -69,6 +69,7 @@ func set_image(path: String) -> void:
 
 	current_image = path
 	ProjectManager.image_import_service.add_file_to_queue(path)
+	_update_tag_suggestions()
 
 	tagging_editor.allow_input = true
 	tagging_editor.can_submit = false
@@ -78,6 +79,7 @@ func apply_changes() -> void:
 	_project_data.set_tags_for_hash(_current_hash, _working_tags)
 	_original_tags = _working_tags
 	_populate_tag_list()
+
 	tagging_editor.allow_input = true
 	tagging_editor.can_submit = false
 
@@ -149,6 +151,8 @@ func _on_add_tag_request(tag: StringName) -> void:
 		tagging_editor.add_active_tag(tag, tag_data.color)
 		tagging_editor.can_submit = true
 
+		_update_tag_suggestions()
+
 func _on_raw_tag_request(raw_tag: String) -> void:
 	if raw_tag.is_empty():
 		return
@@ -161,6 +165,8 @@ func _on_remove_tag_request(tag: StringName) -> void:
 	_working_tags.erase(tag)
 	_populate_tag_list()
 	tagging_editor.can_submit = true
+
+	_update_tag_suggestions()
 #endregion
 
 #region UI Callbacks
@@ -169,6 +175,7 @@ func _populate_tag_list() -> void:
 	for tag in _working_tags:
 		var data := _project_data.get_tag_data(tag)
 		tagging_editor.add_active_tag(tag, data.color)
+	_update_tag_suggestions()
 			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
@@ -178,10 +185,6 @@ func _on_file_hashed(path: String, file_hash: String) -> void:
 	_working_tags = _original_tags.duplicate()
 	_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))
 	_populate_tag_list()
-
-func _update_tag_suggestions(_tag: StringName) -> void:
-	var project_tags := _project_data.get_tags()
-	tagging_editor.set_tag_suggestions(project_tags)
 
 func _on_previous_pressed() -> void:
 	var selection := file_menu_controller.get_selection()
@@ -197,3 +200,9 @@ func _on_next_pressed() -> void:
 
 func _on_image_viewer_controller_selection_index_changed(index: int) -> void:
 	_selection_index = index
+
+func _update_tag_suggestions() -> void:
+	var tags := _project_data.get_tags()
+	for tag in _working_tags:
+		tags.erase(tag)
+	tagging_editor.set_tag_suggestions(tags)

@@ -27,8 +27,8 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	var tags := _project_data.get_tags()
-	tagging_editor.set_tag_suggestions(tags)
+	_project_data.tag_db.tags_changed.connect(update_tag_suggestions)
+	update_tag_suggestions()
 
 func _on_selection_changed() -> void:
 	_selection = selection_manager.get_selection()
@@ -39,6 +39,7 @@ func _on_tag_remove_request(tag: StringName) -> void:
 		return
 	active_tags.erase(tag)
 	populate_tag_list(active_tags)
+	update_tag_suggestions()
 
 func _on_tag_add_request(tag: StringName) -> void:
 	if tag.is_empty():
@@ -48,6 +49,7 @@ func _on_tag_add_request(tag: StringName) -> void:
 		return
 	active_tags.append(tag)
 	populate_tag_list(active_tags)
+	update_tag_suggestions()
 
 func populate_tag_list(tags: Array[StringName]) -> void:
 	tagging_editor.clear()
@@ -66,3 +68,9 @@ func _discard_changes() -> void:
 func set_active_tags(tags: Array[StringName]) -> void:
 	active_tags = tags
 	active_tags_changed.emit(active_tags)
+
+func update_tag_suggestions() -> void:
+	var tags := _project_data.get_tags()
+	for tag in active_tags:
+		tags.erase(tag)
+	tagging_editor.set_tag_suggestions(tags)
