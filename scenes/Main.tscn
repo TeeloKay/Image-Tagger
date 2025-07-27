@@ -158,6 +158,9 @@ split_offset = 800
 [node name="FileBrowser" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
 layout_mode = 2
 _controller = NodePath("../../../../../../../../../Controllers/FileBrowserController")
+small = null
+medium = null
+large = null
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer"]
 layout_mode = 2
@@ -216,6 +219,8 @@ metadata/_custom_type_script = "uid://bjvppx536xcr3"
 [node name="DirectoryBrowserController" type="Node" parent="Controllers" node_paths=PackedStringArray("directory_browser", "folder_operation_handler")]
 script = ExtResource("16_1nqs0")
 directory_browser = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/LeftMenu/Folders/VBoxContainer/DirectoryBrowser")
+_current_directory = null
+scan_interval = null
 folder_operation_handler = NodePath("FolderOperationhandler")
 
 [node name="FolderOperationhandler" type="Node" parent="Controllers/DirectoryBrowserController"]
@@ -224,7 +229,9 @@ metadata/_custom_type_script = "uid://bcqd7k0yj547h"
 
 [node name="FileBrowserController" type="Node" parent="Controllers" node_paths=PackedStringArray("image_view", "selection_manager", "_data_handler")]
 script = ExtResource("17_1nqs0")
+directory = null
 image_view = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer/FileBrowser")
+sort_mode = null
 selection_manager = NodePath("../../Managers/SelectionManager")
 _data_handler = NodePath("FileDataHandler")
 
@@ -244,6 +251,7 @@ image_previewer = NodePath("../../Root/VBoxContainer/Body/HSplitContainer/Images
 file_menu_controller = NodePath("../FileBrowserController")
 selection_manager = NodePath("../../Managers/SelectionManager")
 file_renamer = NodePath("FileRenamer")
+selection_index = null
 
 [node name="FileRenamer" type="Node" parent="Controllers/ImageViewerController" node_paths=PackedStringArray("_dialog")]
 script = ExtResource("23_ebg2g")

@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://c4s2ruwigwta8"]
+[gd_scene load_steps=7 format=3 uid="uid://c4s2ruwigwta8"]
 
 [ext_resource type="Script" uid="uid://dp3n020oemu1" path="res://autoload/_project_manager.gd" id="1_ulwsf"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
 [ext_resource type="Script" uid="uid://dpect7oodwy6" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://bycy7kr32erlc" path="res://scripts/filesystem/image_indexer.gd" id="5_w6j2y"]
+[ext_resource type="Script" uid="uid://c5vi3ethqfwp3" path="res://data/DatabaseManager.cs" id="6_3yaop"]
 
 [node name="ProjectManager" type="Node" node_paths=PackedStringArray("search_engine", "image_indexer", "image_import_service", "tagging_queue")]
 script = ExtResource("1_ulwsf")
@@ -20,7 +21,6 @@ metadata/_custom_type_script = "uid://qn1hye8vtl5x"
 
 [node name="ImageImportService" type="Node" parent="."]
 script = ExtResource("3_w6j2y")
-metadata/_custom_type_script = "uid://gg835r7030tf"
 
 [node name="SearchEngine" type="Node" parent="."]
 script = ExtResource("4_ucjkf")
@@ -29,3 +29,6 @@ metadata/_custom_type_script = "uid://bthdqc3rbwlow"
 [node name="ImageIndexer" type="Node" parent="."]
 script = ExtResource("5_w6j2y")
 metadata/_custom_type_script = "uid://bycy7kr32erlc"
+
+[node name="Node" type="Node" parent="."]
+script = ExtResource("6_3yaop")
