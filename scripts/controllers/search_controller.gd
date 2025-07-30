@@ -21,7 +21,7 @@ func _on_project_loaded() -> void:
 
 func search() -> void:
 	var query := SearchQuery.new()
-	query.text = _search_string.to_lower().strip_edges()
+	query.filter = _search_string.to_lower().strip_edges()
 	query.inclusive_tags = _tags
 	print(query)
 	ProjectManager.search_files(query)

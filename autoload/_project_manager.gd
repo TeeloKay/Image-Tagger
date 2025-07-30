@@ -4,6 +4,7 @@ const REGISTRY_PATH := "user://registry.tres"
 
 @export var registry: ProjectRegistry
 @export var current_project: ProjectData
+@export var database_adapter: DatabaseAdapter
 
 var _project_io: ProjectIO
 @export var search_engine: SearchEngine
@@ -23,6 +24,7 @@ func _ready() -> void:
 	image_indexer = ImageIndexer.new()
 	
 	project_loaded.connect(ThumbnailManager.clear_queue)
+	database_adapter.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
 
 	load_project_registry()
 
@@ -45,6 +47,8 @@ func open_project(project_path: String) -> void:
 	save_registry()
 	
 	current_project = _project_io.load_project(project_path)
+	database_adapter.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
+	database_adapter.open_database()
 
 	tagging_queue.project = current_project
 	search_engine.project = current_project

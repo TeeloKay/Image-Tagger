@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
+using System.Formats.Asn1;
+using System.Xml.Linq;
 using Godot;
 using Godot.Collections;
 using Microsoft.Data.Sqlite;
@@ -13,7 +16,7 @@ public partial class DatabaseManager : Node
 	[Signal]
 	public delegate void DatabaseOpenedEventHandler(string path);
 	[Signal]
-	public delegate void DatabaseCloseEventHandler();
+	public delegate void DatabaseClosedEventHandler();
 
 
 	// Called when the node enters the scene tree for the first time.
@@ -49,6 +52,13 @@ public partial class DatabaseManager : Node
 		}
 	}
 
+	public void CloseDatabase()
+	{
+		_connection?.Close();
+		_connection = null;
+		EmitSignal(SignalName.DatabaseClosed);
+	}
+
 	private void InitializeSchema()
 	{
 		using var cmd = _connection.CreateCommand();
@@ -73,6 +83,10 @@ public partial class DatabaseManager : Node
 		FOREIGN KEY (image_hash) REFERENCES images(hash)
 		);
 
+		CREATE TABLE IF NOT EXISTS meta (
+		key TEXT primary KEY,
+		value TEXT
+		);
 		CREATE INDEX IF NOT EXISTS idx_image_path ON images(path);
 		";
 
@@ -103,7 +117,51 @@ public partial class DatabaseManager : Node
 	}
 	#endregion
 
-	#region Tags
+	public Dictionary GetImageInfo(string hash)
+	{
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = @"
+		SELECT path, fingerprint, metadata
+		FROM images
+		WHERE hash = $hash;
+	";
+		cmd.Parameters.AddWithValue("$hash", hash);
+
+		using var reader = cmd.ExecuteReader();
+		if (reader.Read())
+		{
+			return new Dictionary
+			{
+				{"hash", hash},
+				{"path", reader.GetString(0)},
+				{"fingerprint", reader.GetString(1)},
+				{"metadata", reader.IsDBNull(2) ? "{}" : reader.GetString(2)}
+			};
+		}
+		return null;
+	}
+
+	public Array<Dictionary> GetAllImages()
+	{
+		var results = new Array<Dictionary>();
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = "SELECT hash, path, fingerprint, metadata FROM images;";
+
+		using var reader = cmd.ExecuteReader();
+		while (reader.Read())
+		{
+			results.Add(new Dictionary
+			{
+				{"hash", reader.GetString(0)},
+				{"path", reader.GetString(1)},
+				{"fingerprint", reader.GetString(2)},
+				{"metadata", reader.IsDBNull(3) ? "{}" : reader.GetString(3)}
+			});
+		}
+		return results;
+	}
+	#region Tag Operations
+
 	public void AddTag(StringName tag, string colorHex)
 	{
 		using var cmd = _connection.CreateCommand();
@@ -158,15 +216,68 @@ public partial class DatabaseManager : Node
 		}
 		return results;
 	}
+
+	public Godot.Collections.Dictionary GetTagInfo(StringName tag)
+	{
+		var info = new Godot.Collections.Dictionary();
+
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = @"
+		SELECT name,color
+		FROM tags
+		WHERE name = $tag;
+		";
+
+		cmd.Parameters.AddWithValue("$tag", tag.ToString());
+		using var reader = cmd.ExecuteReader();
+		if (reader.Read())
+		{
+			return new Dictionary {
+				{ "name", new StringName(reader.GetString(0)) },
+				{ "color", reader.GetString(1) }
+			};
+
+		}
+
+		return info;
+	}
+
+	public Array<Dictionary> GetAllTags()
+	{
+		var results = new Array<Dictionary>();
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = "SELECT name, color FROM tags;";
+
+		using var reader = cmd.ExecuteReader();
+		while (reader.Read())
+		{
+			results.Add(new Dictionary
+			{
+				{"name", reader.GetString(0)},
+				{"color", reader.IsDBNull(1) ? "" : reader.GetString(1)}
+			});
+		}
+		return results;
+	}
 	#endregion
 
 	#region Core Operations
-	public void TagImage(string hash, string tag)
+
+	public void TagImage(string hash, StringName tag)
 	{
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = "INSERT OR IGNORE INTO image_tags (image_hash, tag) VALUES ($hash, $tag);";
 		cmd.Parameters.AddWithValue("$hash", hash);
-		cmd.Parameters.AddWithValue("$tag", tag);
+		cmd.Parameters.AddWithValue("$tag", tag.ToString());
+		cmd.ExecuteNonQuery();
+	}
+
+	public void UntagImage(string hash, StringName tag)
+	{
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = @"DELETE FROM image_tags WHERE image_hash = $hash AND tag = $tag;";
+		cmd.Parameters.AddWithValue("$hash", hash);
+		cmd.Parameters.AddWithValue("$tag", tag.ToString());
 		cmd.ExecuteNonQuery();
 	}
 
@@ -220,68 +331,6 @@ public partial class DatabaseManager : Node
 		}
 		return results;
 	}
-
-	public Dictionary GetImageInfo(string hash)
-	{
-		using var cmd = _connection.CreateCommand();
-		cmd.CommandText = @"
-		SELECT path, fingerprint, metadata
-		FROM images
-		WHERE hash = $hash;
-	";
-		cmd.Parameters.AddWithValue("$hash", hash);
-
-		using var reader = cmd.ExecuteReader();
-		if (reader.Read())
-		{
-			return new Dictionary
-			{
-				{"hash", hash},
-				{"path", reader.GetString(0)},
-				{"fingerprint", reader.GetString(1)},
-				{"metadata", reader.IsDBNull(2) ? "{}" : reader.GetString(2)}
-			};
-		}
-		return null;
-	}
-
-	public Array<Dictionary> GetAllTags()
-	{
-		var results = new Array<Dictionary>();
-		using var cmd = _connection.CreateCommand();
-		cmd.CommandText = "SELECT name, color FROM tags;";
-
-		using var reader = cmd.ExecuteReader();
-		while (reader.Read())
-		{
-			results.Add(new Dictionary
-			{
-				{"name", reader.GetString(0)},
-				{"color", reader.IsDBNull(1) ? "" : reader.GetString(1)}
-			});
-		}
-		return results;
-	}
-
-	public Array<Dictionary> GetAllImages()
-	{
-		var results = new Array<Dictionary>();
-		using var cmd = _connection.CreateCommand();
-		cmd.CommandText = "SELECT hash, path, fingerprint, metadata FROM images;";
-
-		using var reader = cmd.ExecuteReader();
-		while (reader.Read())
-		{
-			results.Add(new Dictionary
-			{
-				{"hash", reader.GetString(0)},
-				{"path", reader.GetString(1)},
-				{"fingerprint", reader.GetString(2)},
-				{"metadata", reader.IsDBNull(3) ? "{}" : reader.GetString(3)}
-			});
-		}
-		return results;
-	}
 	#endregion
 
 	#region Search
@@ -331,12 +380,6 @@ public partial class DatabaseManager : Node
 
 	}
 	#endregion
-
-	public void CloseDatabase()
-	{
-		_connection?.Close();
-		_connection = null;
-	}
 
 	public override void _ExitTree()
 	{
