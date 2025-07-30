@@ -6,9 +6,15 @@ using Microsoft.Data.Sqlite;
 
 public partial class DatabaseManager : Node
 {
+
+	private const string SchemaVersionKey = "schema_version";
+	private const string VersionSettingPath = "application/config/version:";
+
 	private SqliteConnection _connection;
 
 	[Export(PropertyHint.GlobalFile)] private string _databasePath = "";
+
+	public bool IsDataBaseOpen => _connection != null && _connection.State == System.Data.ConnectionState.Open;
 
 	[Signal]
 	public delegate void DatabaseOpenedEventHandler(string path);
@@ -84,8 +90,12 @@ public partial class DatabaseManager : Node
 		key TEXT primary KEY,
 		value TEXT
 		);
+
 		CREATE INDEX IF NOT EXISTS idx_image_path ON images(path);
+		INSERT OR IGNORE INTO meta( key, value) VALUES ($key, $value)
 		";
+		cmd.Parameters.AddWithValue("$key", SchemaVersionKey);
+		cmd.Parameters.AddWithValue("$value", ProjectSettings.GetSetting(VersionSettingPath).ToString());
 
 		cmd.ExecuteNonQuery();
 	}
@@ -184,7 +194,7 @@ public partial class DatabaseManager : Node
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = @"
 		SELECT COUNT(*)
-		FROM iamge_tags
+		FROM image_tags
 		where tag = $tag;
 		";
 
@@ -202,14 +212,14 @@ public partial class DatabaseManager : Node
 		cmd.CommandText = @"
 		SELECT tags.name, COUNT(image_tags.image_hash) AS image_count
 		FROM tags
-		LEFT JOIN image_tags ON tags.name = image_tag.tag
+		LEFT JOIN image_tags ON tags.name = image_tags.tag
 		GROUP BY tags.name
 		";
 
 		using var reader = cmd.ExecuteReader();
 		while (reader.Read())
 		{
-			results[reader.GetString(0)] = reader.GetInt32(2);
+			results[reader.GetString(0)] = reader.GetInt32(1);
 		}
 		return results;
 	}
@@ -299,7 +309,7 @@ public partial class DatabaseManager : Node
 				{"hash", reader.GetString(0) },
 				{"path", reader.GetString(1)},
 				{"fingerprint", reader.GetString(2)},
-				{"metadata", reader.GetString(3)},
+				{"metadata", reader.IsDBNull(3)? "{}" : reader.GetString(3)},
 			});
 		}
 
@@ -340,7 +350,7 @@ public partial class DatabaseManager : Node
 		for (int i = 0; i < inclusiveTags.Count; i++)
 		{
 			string param = $"$inc{i}";
-			cmd.Parameters.AddWithValue(param, incParams[i].ToString());
+			cmd.Parameters.AddWithValue(param, inclusiveTags[i].ToString());
 			incParams.Add(param);
 		}
 
@@ -352,11 +362,11 @@ public partial class DatabaseManager : Node
 			FROM image_tags
 			WHERE tag IN ({string.Join(",", incParams)})
 			GROUP BY image_hash
-			HAVING COUNT(DISTINCT name) = {inclusiveTags.Count})
-		{(string.IsNullOrEmpty(nameFilter) ? "" : "AND path LIKE $filter")}
+			HAVING COUNT(DISTINCT tag) = {inclusiveTags.Count})
+		{(!string.IsNullOrEmpty(nameFilter) ? "" : "AND path LIKE $filter")}
 			";
 
-		if (string.IsNullOrEmpty(nameFilter))
+		if (!string.IsNullOrEmpty(nameFilter))
 		{
 			cmd.Parameters.AddWithValue("$filter", nameFilter);
 		}
@@ -369,7 +379,7 @@ public partial class DatabaseManager : Node
 				{"hash", reader.GetString(0)},
 				{"path", reader.GetString(1)},
 				{"fingerprint", reader.GetString(2)},
-				{"metadata", reader.GetString(3)},
+				{"metadata", reader.IsDBNull(3)? "{}" : reader.GetString(3)},
 			});
 		}
 
