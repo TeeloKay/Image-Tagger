@@ -1,9 +1,9 @@
 class_name SearchByString extends SearchHandler
 
 func search(query: SearchQuery, out_results: Array[String]) -> void:
-    if !query.text.is_empty():
+    if !query.filter.is_empty():
         var path := project_data.project_path
-        _resursive_dir_search(path, query.text, out_results)
+        _resursive_dir_search(path, query.filter, out_results)
 
     if _next_handler != null:
         _next_handler.search(query, out_results)
