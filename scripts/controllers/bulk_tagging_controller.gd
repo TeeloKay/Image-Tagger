@@ -27,7 +27,7 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	_project_data.tag_db.tags_changed.connect(update_tag_suggestions)
+	_project_data.tags_changed.connect(update_tag_suggestions)
 	update_tag_suggestions()
 
 func _on_selection_changed() -> void:
@@ -54,10 +54,12 @@ func _on_tag_add_request(tag: StringName) -> void:
 func populate_tag_list(tags: Array[StringName]) -> void:
 	tagging_editor.clear()
 	for tag in tags:
-		var data := _project_data.get_tag_data(tag)
+		var data := _project_data.get_tag_info(tag)
 		tagging_editor.add_active_tag(tag, data.color)
 
 func apply_tags_to_selection() -> void:
+	for tag in active_tags:
+		ProjectManager.database_adapter.add_tag(tag, Color.SLATE_GRAY)
 	for path in _selection:
 		ProjectManager.tagging_queue.enqueue(path, active_tags)
 
@@ -70,7 +72,7 @@ func set_active_tags(tags: Array[StringName]) -> void:
 	active_tags_changed.emit(active_tags)
 
 func update_tag_suggestions() -> void:
-	var tags := _project_data.get_tags()
+	var tags: Array[StringName] = _project_data.get_all_tags().keys()
 	for tag in active_tags:
 		tags.erase(tag)
 	tagging_editor.set_tag_suggestions(tags)

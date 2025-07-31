@@ -6,28 +6,24 @@ class_name ProjectData extends Resource
 @export var folder_tags: Dictionary
 
 var image_db: ImageDB
-var index: FileIndex
 var tag_db: TagDB
 
 func _init() -> void:
 	image_db = ImageDB.new()
 	tag_db = TagDB.new()
-	index = FileIndex.new()
 
 func add_image(image_hash: String, path: String) -> void:
 	path = to_relative_path(path)
 	image_db.register_image(path, image_hash)
-	index.add(path, image_hash)
 
 func remove_image(file_hash: String) -> void:
 	if image_db.has(file_hash):
 		for tag in image_db.get_image_data(file_hash).tags:
 			tag_db.remove_hash_from_tag(file_hash, tag)
 		image_db.remove_image(file_hash)
-		index.erase(file_hash)
 
 func clear_index() -> void:
-	index.clear()
+	pass
 
 #region Tags
 
@@ -121,10 +117,10 @@ func get_image_data(image_hash: String) -> ImageData:
 	return image_db.get_image_data(image_hash)
 
 func index_image_path(image_path: String, image_hash: String) -> void:
-	index.add(image_path, image_hash)
+	pass
 
 func get_hash_for_path(image_path: String, _force_new: bool = false) -> String:
-	return index.get_hash_for_file(image_path)
+	return ""
 
 func get_path_for_hash(image_hash: String) -> String:
 	return image_db.get_path_for_hash(image_hash)
@@ -158,6 +154,6 @@ func get_images() -> PackedStringArray:
 	return image_db.get_images()
 
 func get_index() -> Dictionary:
-	return index.get_index()
+	return {}
 
 #endregion

@@ -15,6 +15,7 @@ enum Mode {NONE, SINGLE, BULK}
 
 @export var _working_tags: Array[StringName] = []
 @export var _original_tags: Array[StringName] = []
+@export var _removed_tags: Array[StringName] = []
 #endregion
 
 #region Internal Variables
@@ -53,7 +54,7 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	_project_data.tag_db.tag_added.connect(_update_tag_suggestions)
+	_project_data.tag_added.connect(_update_tag_suggestions)
 	_update_tag_suggestions()
 
 #endregion
@@ -63,7 +64,7 @@ func set_image(path: String) -> void:
 	if path.is_empty():
 		clear()
 
-	path = _project_data.to_abolute_path(path)
+	path = ProjectManager.to_abolute_path(path)
 	if current_image == path:
 		return
 
@@ -75,9 +76,14 @@ func set_image(path: String) -> void:
 	tagging_editor.can_submit = false
 
 func apply_changes() -> void:
-	_project_data.add_image(_current_hash, current_image)
-	_project_data.set_tags_for_hash(_current_hash, _working_tags)
+	_project_data.add_image(_current_hash, current_image, "", {})
+	for tag in _working_tags:
+		_project_data.add_tag(tag, Color.SLATE_GRAY)
+	_project_data.multi_tag_image(_current_hash, _working_tags)
+	for tag in _removed_tags:
+		_project_data.untag_image(_current_hash, tag)
 	_original_tags = _working_tags
+	_removed_tags.clear()
 	_populate_tag_list()
 
 	tagging_editor.allow_input = true
@@ -87,6 +93,7 @@ func apply_changes() -> void:
 
 func discard_changes() -> void:
 	_working_tags = _original_tags.duplicate()
+	_removed_tags.clear()
 	_populate_tag_list()
 	tagging_editor.allow_input = true
 	tagging_editor.can_submit = false
@@ -94,6 +101,7 @@ func discard_changes() -> void:
 func clear() -> void:
 	_working_tags = []
 	_original_tags = []
+	_removed_tags = []
 	current_image = ""
 	_current_hash = ""
 	tagging_editor.clear()
@@ -146,12 +154,13 @@ func _on_add_tag_request(tag: StringName) -> void:
 	if tag.is_empty():
 		return
 	if !tag in _working_tags && tag != "":
-		var tag_data := _project_data.get_tag_data(tag)
+		var tag_data := _project_data.get_tag_info(tag)
 		_working_tags.append(tag)
 		tagging_editor.add_active_tag(tag, tag_data.color)
 		tagging_editor.can_submit = true
-
 		_update_tag_suggestions()
+	if tag in _removed_tags:
+		_removed_tags.erase(tag)
 
 func _on_raw_tag_request(raw_tag: String) -> void:
 	if raw_tag.is_empty():
@@ -163,6 +172,7 @@ func _on_remove_tag_request(tag: StringName) -> void:
 	if !tag in _working_tags:
 		return
 	_working_tags.erase(tag)
+	_removed_tags.append(tag)
 	_populate_tag_list()
 	tagging_editor.can_submit = true
 
@@ -173,15 +183,17 @@ func _on_remove_tag_request(tag: StringName) -> void:
 func _populate_tag_list() -> void:
 	tagging_editor.clear()
 	for tag in _working_tags:
-		var data := _project_data.get_tag_data(tag)
+		var data := _project_data.get_tag_info(tag)
 		tagging_editor.add_active_tag(tag, data.color)
 	_update_tag_suggestions()
 			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
 		_current_hash = file_hash
-
-	_original_tags = _project_data.get_tags_for_hash(_current_hash).duplicate()
+	var tags := _project_data.get_tags_for_image(_current_hash)
+	_original_tags.clear()
+	for tag in tags:
+		_original_tags.append(tag.tag)
 	_working_tags = _original_tags.duplicate()
 	_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))
 	_populate_tag_list()
@@ -202,7 +214,7 @@ func _on_image_viewer_controller_selection_index_changed(index: int) -> void:
 	_selection_index = index
 
 func _update_tag_suggestions() -> void:
-	var tags := _project_data.get_tags()
+	var tags: Array[StringName] = _project_data.get_all_tags().keys()
 	for tag in _working_tags:
 		tags.erase(tag)
 	tagging_editor.set_tag_suggestions(tags)

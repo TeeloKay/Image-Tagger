@@ -61,17 +61,18 @@ func _convert_selection() -> void:
 	for path in selection:
 		var new_path := _image_converter.convert(path)
 		if new_path != null && !new_path.is_empty():
-			var old_hash := _project_data.get_hash_for_path(path)
-			var new_hash := _project_data.get_hash_for_path(new_path, true)
+			#TODO: make this work for the new system
+			# var old_hash := _project_data.get_hash_for_path(path)
+			# var new_hash := _project_data.get_hash_for_path(new_path, true)
 
-			print("old hash: ", old_hash)
-			print("new_hash: ", new_hash)
+			# print("old hash: ", old_hash)
+			# print("new_hash: ", new_hash)
 
-			var image_data := _project_data.get_image_data(old_hash)
-			for tag in image_data.tags:
-				_project_data.image_db.add_tag_to_image(new_hash,tag)
-			_project_data.image_db.update_image_path(new_hash,new_path)
-			_project_data.image_db.remove_image(old_hash)
+			# var image_data := _project_data.get_image_data(old_hash)
+			# for tag in image_data.tags:
+			# 	_project_data.image_db.add_tag_to_image(new_hash,tag)
+			# _project_data.image_db.update_image_path(new_hash,new_path)
+			# _project_data.image_db.remove_image(old_hash)
 
 			FileService.remove_file(path)
 		completed += 1
@@ -91,10 +92,10 @@ func _repair_selection() -> void:
 		var detected_ext := _format_detector.detect_image_format(path)
 		if ext.to_lower() != detected_ext.to_lower() && !detected_ext.is_empty():
 			print(detected_ext)
-			var image_hash := _project_data.get_hash_for_path(path)
+			# var image_hash := _project_data.get_hash_for_path(path)
 			var new_path := path.get_basename() + "." + detected_ext
 			FileService.move_file(path,new_path)
-			_project_data.image_db.update_image_path(image_hash, new_path)
+			# _project_data.image_db.update_image_path(image_hash, new_path)
 	
 func _on_project_loaded() -> void:
 	super._on_project_loaded()

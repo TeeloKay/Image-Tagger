@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 using Godot;
 using Godot.Collections;
 using Microsoft.Data.Sqlite;
@@ -9,6 +11,8 @@ public partial class DatabaseManager : Node
 
 	private const string SchemaVersionKey = "schema_version";
 	private const string VersionSettingPath = "application/config/version:";
+
+	readonly HashSet<string> AllowedTagFields = ["color"];
 
 	private SqliteConnection _connection;
 
@@ -70,6 +74,7 @@ public partial class DatabaseManager : Node
 		hash TEXT PRIMARY KEY,
 		path TEXT NOT NULL,
 		fingerprint TEXT NOT NULL,
+		favorited INTEGER DEFAULT 0 NOT NULL,
 		metadata TEXT
 		);
 		
@@ -122,13 +127,27 @@ public partial class DatabaseManager : Node
 		cmd.Parameters.AddWithValue("$hash", hash);
 		cmd.ExecuteNonQuery();
 	}
+
+	public String GetHashForPath(string path)
+	{
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = @"SELECT hash FROM images where path = $path;";
+		cmd.Parameters.AddWithValue($"path", path);
+		using var reader = cmd.ExecuteReader();
+
+		if (reader.Read())
+		{
+			return reader.GetString(0);
+		}
+		return "";
+	}
 	#endregion
 
 	public Dictionary GetImageInfo(string hash)
 	{
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = @"
-		SELECT path, fingerprint, metadata
+		SELECT path, fingerprint, favorited, metadata
 		FROM images
 		WHERE hash = $hash;
 	";
@@ -142,7 +161,8 @@ public partial class DatabaseManager : Node
 				{"hash", hash},
 				{"path", reader.GetString(0)},
 				{"fingerprint", reader.GetString(1)},
-				{"metadata", reader.IsDBNull(2) ? "{}" : reader.GetString(2)}
+				{"favorited", reader.GetBoolean(2)},
+				{ "metadata", reader.IsDBNull(3) ? "{}" : reader.GetString(2)}
 			};
 		}
 		return null;
@@ -167,6 +187,36 @@ public partial class DatabaseManager : Node
 		}
 		return results;
 	}
+
+	public Godot.Collections.Dictionary<string, string> UpdateImagePath(string imageHash, string newPath)
+	{
+		using var getCmd = _connection.CreateCommand();
+		getCmd.CommandText = "SELECT path FROM images where hash = @hash;";
+		getCmd.Parameters.AddWithValue("@hash", imageHash);
+
+		string oldpath = "";
+		using (var reader = getCmd.ExecuteReader())
+		{
+			if (reader.Read())
+			{
+				oldpath = reader.GetString(0);
+			}
+		}
+
+		if (oldpath == null) return null;
+
+		using var updateCmd = _connection.CreateCommand();
+		updateCmd.CommandText = "UPDATE images SET path = @path WHERE hash = @hash;";
+		updateCmd.Parameters.AddWithValue("@path", newPath);
+		updateCmd.Parameters.AddWithValue("@hash", newPath);
+		updateCmd.ExecuteNonQuery();
+
+		return new Godot.Collections.Dictionary<string, string>
+		{
+			{"old_path", oldpath },
+			{"new_path", newPath}
+		};
+	}
 	#region Tag Operations
 
 	public void AddTag(StringName tag, string colorHex)
@@ -189,6 +239,25 @@ public partial class DatabaseManager : Node
 		cmd.ExecuteNonQuery();
 	}
 
+	public void UpdateTagField(StringName tag, string field, Godot.Variant value)
+	{
+		if (!AllowedTagFields.Contains(field))
+		{
+			return;
+		}
+
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = $@"
+		UPDATE tags
+		SET {field} = $value
+		WHERE name = $tag;
+		";
+		cmd.Parameters.AddWithValue("$value", value.ToString());
+		cmd.Parameters.AddWithValue("$tag", tag.ToString());
+
+		cmd.ExecuteNonQuery();
+	}
+
 	public int GetImageCountForTag(StringName tag)
 	{
 		using var cmd = _connection.CreateCommand();
@@ -200,8 +269,8 @@ public partial class DatabaseManager : Node
 
 		cmd.Parameters.AddWithValue("$tag", tag.ToString());
 
-		var result = cmd.ExecuteScalar();
-		return (int)result;
+		var result = Convert.ToInt32(cmd.ExecuteScalar());
+		return result;
 	}
 
 	public Godot.Collections.Dictionary<string, int> GetImageCountsPerTag()
@@ -260,8 +329,8 @@ public partial class DatabaseManager : Node
 		{
 			results.Add(new Dictionary
 			{
-				{"name", reader.GetString(0)},
-				{"color", reader.IsDBNull(1) ? "" : reader.GetString(1)}
+				{"tag", new StringName(reader.GetString(0))},
+				{"color", reader.GetString(1) }
 			});
 		}
 		return results;

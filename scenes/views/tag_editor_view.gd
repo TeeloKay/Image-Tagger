@@ -14,7 +14,7 @@ var _picker_icon := preload("res://assets/icons/ColorPick.svg")
 @export var project_data: ProjectData
 
 signal tag_color_request(item: TreeItem, id: int, mouse_button_index: int)
-signal update_pressed 
+signal update_pressed
 
 func _ready() -> void:
 	_build_tree()
@@ -40,8 +40,8 @@ func _build_tree() -> void:
 	_tag_tree.set_column_expand(COL_COLOR, false)
 	#_tag_tree.set_column_title(COL_SYNONYMS, "Synonyms")
 	
-	_tag_tree.set_column_custom_minimum_width(COL_AMOUNT,160)
-	_tag_tree.set_column_custom_minimum_width(COL_COLOR,100)
+	_tag_tree.set_column_custom_minimum_width(COL_AMOUNT, 160)
+	_tag_tree.set_column_custom_minimum_width(COL_COLOR, 100)
 
 func add_tag_to_tree(tag: StringName, data: TagData) -> TreeItem:
 	var item := _tag_tree.create_item(_tag_tree.get_root())
@@ -50,12 +50,12 @@ func add_tag_to_tree(tag: StringName, data: TagData) -> TreeItem:
 	item.set_editable(COL_NAME, false)
 	item.set_metadata(COL_NAME, tag)
 
-	item.set_text(COL_AMOUNT, str(data.hashes.size()))
+	item.set_text(COL_AMOUNT, str(ProjectManager.database_adapter.get_image_count_for_tag(tag)))
 	item.set_text_alignment(COL_AMOUNT, HORIZONTAL_ALIGNMENT_LEFT)
 
 	item.set_custom_bg_color(COL_COLOR, data.color)
 	item.set_text(COL_COLOR, "#" + data.color.to_html(false))
-	item.add_button(COL_COLOR,_picker_icon)
+	item.add_button(COL_COLOR, _picker_icon)
 
 	return item
 
@@ -70,7 +70,7 @@ func _on_add_tag() -> void:
 func _on_tree_item_button_clicked(item: TreeItem, column: int, id: int, mouse_button_index: int) -> void:
 	match column:
 		COL_COLOR:
-			tag_color_request.emit(item,id,mouse_button_index)
+			tag_color_request.emit(item, id, mouse_button_index)
 		_:
 			return
 
