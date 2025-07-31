@@ -1,6 +1,6 @@
 class_name SearchEngine extends Node
 
-var project: ProjectData:
+var project: DatabaseAdapter:
 	set = set_project
 
 var _thread: Thread
@@ -23,7 +23,7 @@ signal search_completed(results: Array[SearchResult])
 func _ready() -> void:
 	_thread = Thread.new()
 
-func set_project(_project: ProjectData) -> void:
+func set_project(_project: DatabaseAdapter) -> void:
 	project = _project
 
 func start_search(query: SearchQuery) -> void:
@@ -41,8 +41,8 @@ func start_search(query: SearchQuery) -> void:
 	var found_list: Dictionary[String, String] = {}
 
 	for file_hash in matches:
-		var path := project.get_path_for_hash(file_hash)
-		path = project.to_abolute_path(path)
+		var path: String = project.get_image_info(file_hash).get("path")
+		path = ProjectManager.to_abolute_path(path)
 		print(path)
 		if !FileAccess.file_exists(path):
 			search_list.append(file_hash)
@@ -56,8 +56,8 @@ func start_search(query: SearchQuery) -> void:
 
 func find_hashes_by_tags(inclusive_tags: Array[StringName], exclusive_tags: Array[StringName]) -> PackedStringArray:
 	var matches: PackedStringArray = []
-	for file_hash in project.image_db.get_images():
-		var tags := project.get_image_data(file_hash).tags
+	for file_hash: String in project.get_all_images():
+		var tags: Array[String] = project.get_image_info(file_hash).get("tags")
 
 		if inclusive_tags.all(func(t: StringName) -> bool: return tags.has(t)) \
 		&& exclusive_tags.all(func(t: StringName) -> bool: return !tags.has(t)) \
@@ -69,7 +69,7 @@ func validate_paths(hashes: PackedStringArray) -> Dictionary:
 	var results := {}
 	var to_search := []
 	for file_hash: String in hashes:
-		var path := project.get_image_data(file_hash).last_path
+		var path: String = project.get_image_info(file_hash).get("path")
 		if FileAccess.file_exists(path):
 			results[hash] = path
 		else:

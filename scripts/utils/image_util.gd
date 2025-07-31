@@ -45,7 +45,7 @@ static func generate_thumbnail_from_path(path: String) -> Texture2D:
 
 static func generate_thumbnail_from_texture(texture: Texture2D) -> Texture2D:
 	if texture is AnimatedTexture:
-		texture = texture.get_frame_texture(0)
+		texture = _get_frame_from_animated_texture(texture)
 	var img := texture.get_image()
 	return generate_thumbnail(img)
 
@@ -59,3 +59,6 @@ static func generate_thumbnail(image: Image) -> Texture2D:
 
 static func is_valid_image(file_name: String) -> bool:
 	return file_name.get_extension() in ACCEPTED_TYPES
+
+static func _get_frame_from_animated_texture(texture: AnimatedTexture) -> Texture2D:
+	return texture.get_frame_texture(0)

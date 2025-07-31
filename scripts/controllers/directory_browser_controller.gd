@@ -31,14 +31,14 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	_current_directory = _project_data.project_path
+	_current_directory = ProjectManager.project_path
 	_update_view()
 	path_selected.emit(_current_directory)
 
 func _on_folder_selected(path: String) -> void:
 	_current_directory = path
 	if _current_directory == "":
-		path_selected.emit(_project_data.project_path)
+		path_selected.emit(ProjectManager.project_path)
 	path_selected.emit(_current_directory)
 
 ## Method for handling files dropped into a directory through the internal drag & drop system
@@ -55,7 +55,7 @@ func _on_folder_data_dropped(target_dir: String, source_dir: String) -> void:
 	var new_dir := target_dir.path_join(source_dir.get_file())
 	if DirAccess.dir_exists_absolute(new_dir):
 		return
-	var err := DirAccess.rename_absolute(source_dir, new_dir)
+	var _err := DirAccess.rename_absolute(source_dir, new_dir)
 	_update_view()
 	
 func _on_create_subfolder_request() -> void:
@@ -78,7 +78,7 @@ func _on_folder_deleted(_folder: String) -> void:
 
 func _update_view() -> void:
 	print("updating view")
-	directory_browser.build_directory_tree(_project_data.project_path)
+	directory_browser.build_directory_tree(ProjectManager.project_path)
 	directory_browser.clear_filter()
 
 ## Method for handling files dropped into the project from outside.

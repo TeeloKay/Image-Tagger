@@ -1,6 +1,6 @@
 class_name TaggingQueue extends Node
 
-@export var project: ProjectData
+@export var project: DatabaseAdapter
 @export var image_hasher: ImageImportService
 
 var _queue: Array[QueueItem] = []
@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
 	if file_hash.is_empty():
 		file_hash = image_hasher.hash_file(item.file)
 
-	project.add_image(file_hash, item.file)
-	project.add_tags_for_hash(file_hash, item.tags)
+	project.add_image(file_hash, item.file, "", {})
+	project.multi_tag_image(file_hash, item.tags)
 
 	item.free()

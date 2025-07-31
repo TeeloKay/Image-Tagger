@@ -4,11 +4,11 @@ const REGISTRY_PATH := "user://registry.tres"
 
 @export var registry: ProjectRegistry
 @export var current_project: ProjectData
+@export var project_path: String
 @export var database_adapter: DatabaseAdapter
 
 var _project_io: ProjectIO
 @export var search_engine: SearchEngine
-@export var image_indexer: ImageIndexer
 
 var thumbnail_cache: ThumbnailCache
 @export var image_import_service: ImageImportService
@@ -20,8 +20,7 @@ signal project_loaded
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	thumbnail_cache = ThumbnailCache.new()
-	_project_io = ProjectIO.new()
-	image_indexer = ImageIndexer.new()
+	# _project_io = ProjectIO.new()
 	
 	project_loaded.connect(ThumbnailManager.clear_queue)
 	database_adapter.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
@@ -40,20 +39,20 @@ func save_registry() -> void:
 	ResourceSaver.save(registry, REGISTRY_PATH)
 
 func save_current_project() -> void:
-	_project_io.save_project(current_project)
+	# _project_io.save_project(current_project)
+	pass
 	
 func open_project(project_path: String) -> void:
 	registry.register_project(project_path)
 	save_registry()
 	
-	current_project = _project_io.load_project(project_path)
+	self.project_path = project_path
+	# current_project = _project_io.load_project(project_path)
 	database_adapter.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
 	database_adapter.open_database()
 
-	tagging_queue.project = current_project
-	search_engine.project = current_project
-	image_indexer.project = current_project
-
+	tagging_queue.project = database_adapter
+	search_engine.project = database_adapter
 	# save_current_project()
 	project_loaded.emit()
 
