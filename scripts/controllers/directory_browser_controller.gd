@@ -84,7 +84,7 @@ func _update_view() -> void:
 ## Method for handling files dropped into the project from outside.
 ## Will attempt to copy and save all files in the currently open directory.
 func _on_files_dropped(files: PackedStringArray) -> void:
-	if _project_data == null || _current_directory == "":
+	if _database == null || _current_directory == "":
 		return
 	for file in files:
 		if !ImageUtil.is_valid_image(file):

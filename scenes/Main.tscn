@@ -155,12 +155,8 @@ metadata/_tab_index = 0
 layout_mode = 2
 split_offset = 800
 
-[node name="FileBrowser" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer" node_paths=PackedStringArray("_controller") instance=ExtResource("5_jlsqs")]
+[node name="FileBrowser" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer" instance=ExtResource("5_jlsqs")]
 layout_mode = 2
-_controller = NodePath("../../../../../../../../../Controllers/FileBrowserController")
-small = null
-medium = null
-large = null
 
 [node name="VSplitContainer" type="VSplitContainer" parent="Root/VBoxContainer/Body/HSplitContainer/Images/CenterMenu/Images/HSplitContainer"]
 layout_mode = 2

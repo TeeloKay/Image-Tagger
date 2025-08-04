@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dp3n020oemu1" path="res://autoload/_project_manager.gd" id="1_ulwsf"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
-[ext_resource type="Script" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
+[ext_resource type="Script" uid="uid://dpect7oodwy6" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://ch2pbw6dop0jx" path="res://data/database_adapter.gd" id="6_3yaop"]
 
