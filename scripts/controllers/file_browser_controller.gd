@@ -166,8 +166,8 @@ func _on_file_remove_request() -> void:
 
 func _on_file_remove_confirmation() -> void:
 	for file in selection_manager.get_selection():
-		var img_hash := _project_data.get_hash_for_path(file)
-		_project_data.image_db.remove_image(img_hash)
+		var img_hash := _database.get_hash_for_path(file)
+		# _database.image_db.remove_image(img_hash)
 		FileService.remove_file(file)
 	rebuild_view_from_file_list()
 	clear_selection()

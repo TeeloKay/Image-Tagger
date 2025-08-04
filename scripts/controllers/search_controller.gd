@@ -17,7 +17,7 @@ func _ready() -> void:
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	search_panel.clear()
-	search_panel.set_available_tags(_project_data.get_all_tags().keys())
+	search_panel.set_available_tags(_database.get_all_tags().keys())
 
 func search() -> void:
 	var query := SearchQuery.new()
@@ -45,7 +45,7 @@ func remove_tag(tag: StringName) -> void:
 func add_tag(tag: StringName) -> void:
 	if tag && !tag in _tags:
 		_tags.append(tag)
-		var data: TagData = _project_data.get_tag_info(tag)
+		var data: TagData = _database.get_tag_info(tag)
 		search_panel.add_tag(tag, data.color)
 
 func set_tag_suggestions(tags: Array[StringName]) -> void:

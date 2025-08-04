@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 using Godot;
 using Godot.Collections;
 using Microsoft.Data.Sqlite;
@@ -13,6 +11,7 @@ public partial class DatabaseManager : Node
 	private const string VersionSettingPath = "application/config/version:";
 
 	readonly HashSet<string> AllowedTagFields = ["color"];
+	readonly HashSet<string> AllowedImageFields = ["fingerprint", "path", "favorited", "metadata"];
 
 	private SqliteConnection _connection;
 
@@ -128,7 +127,7 @@ public partial class DatabaseManager : Node
 		cmd.ExecuteNonQuery();
 	}
 
-	public String GetHashForPath(string path)
+	public string GetHashForPath(string path)
 	{
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = @"SELECT hash FROM images where path = $path;";
@@ -141,7 +140,25 @@ public partial class DatabaseManager : Node
 		}
 		return "";
 	}
-	#endregion
+
+	public void UpdateImageField(string hash, string field, Godot.Variant value)
+	{
+		if (!AllowedImageFields.Contains(field))
+		{
+			return;
+		}
+
+		using var cmd = _connection.CreateCommand();
+		cmd.CommandText = $@"
+		UPDATE images
+		SET {field} = $value
+		WHERE hash = $hash;
+		";
+		cmd.Parameters.AddWithValue("$value", value.ToString());
+		cmd.Parameters.AddWithValue("$hash", hash);
+
+		cmd.ExecuteNonQuery();
+	}
 
 	public Dictionary GetImageInfo(string hash)
 	{
@@ -217,18 +234,20 @@ public partial class DatabaseManager : Node
 			{"new_path", newPath}
 		};
 	}
+	#endregion
 	#region Tag Operations
 
-	public void AddTag(StringName tag, string colorHex)
+	public Error AddTag(StringName tag, string colorHex)
 	{
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = "INSERT OR IGNORE INTO tags (name, color) VALUES ($name, $color);";
 		cmd.Parameters.AddWithValue("$name", tag.ToString());
 		cmd.Parameters.AddWithValue("$color", colorHex);
 		cmd.ExecuteNonQuery();
+		return Error.Ok;
 	}
 
-	public void DeleteTag(StringName tag)
+	public Error DeleteTag(StringName tag)
 	{
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = @"
@@ -237,6 +256,7 @@ public partial class DatabaseManager : Node
 		";
 		cmd.Parameters.AddWithValue("$tag", tag.ToString());
 		cmd.ExecuteNonQuery();
+		return Error.Ok;
 	}
 
 	public void UpdateTagField(StringName tag, string field, Godot.Variant value)

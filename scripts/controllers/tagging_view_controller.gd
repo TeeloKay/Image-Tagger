@@ -54,7 +54,7 @@ func _ready() -> void:
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	_project_data.tag_added.connect(_update_tag_suggestions)
+	_database.tag_added.connect(_update_tag_suggestions)
 	_update_tag_suggestions()
 
 #endregion
@@ -76,12 +76,12 @@ func set_image(path: String) -> void:
 	tagging_editor.can_submit = false
 
 func apply_changes() -> void:
-	_project_data.add_image(_current_hash, current_image, "", {})
+	_database.add_image(_current_hash, current_image, "", {})
 	for tag in _working_tags:
-		_project_data.add_tag(tag, Color.SLATE_GRAY)
-	_project_data.multi_tag_image(_current_hash, _working_tags)
+		_database.add_tag(tag, Color.SLATE_GRAY)
+	_database.multi_tag_image(_current_hash, _working_tags)
 	for tag in _removed_tags:
-		_project_data.untag_image(_current_hash, tag)
+		_database.untag_image(_current_hash, tag)
 	_original_tags = _working_tags
 	_removed_tags.clear()
 	_populate_tag_list()
@@ -127,7 +127,9 @@ func _change_state(state: TaggingState) -> void:
 	if _active_state != null:
 		_active_state.enter()
 #endregion
+
 #region External Callbacks
+## Opens image externally through an OS request
 func _on_open_image_request() -> void:
 	if current_image.is_empty():
 		return
@@ -154,7 +156,7 @@ func _on_add_tag_request(tag: StringName) -> void:
 	if tag.is_empty():
 		return
 	if !tag in _working_tags && tag != "":
-		var tag_data := _project_data.get_tag_info(tag)
+		var tag_data := _database.get_tag_info(tag)
 		_working_tags.append(tag)
 		tagging_editor.add_active_tag(tag, tag_data.color)
 		tagging_editor.can_submit = true
@@ -177,26 +179,29 @@ func _on_remove_tag_request(tag: StringName) -> void:
 	tagging_editor.can_submit = true
 
 	_update_tag_suggestions()
-#endregion
 
-#region UI Callbacks
-func _populate_tag_list() -> void:
-	tagging_editor.clear()
-	for tag in _working_tags:
-		var data := _project_data.get_tag_info(tag)
-		tagging_editor.add_active_tag(tag, data.color)
-	_update_tag_suggestions()
-			
 func _on_file_hashed(path: String, file_hash: String) -> void:
 	if path == current_image:
 		_current_hash = file_hash
-	var tags := _project_data.get_tags_for_image(_current_hash)
+	print(path)
+	_database.update_image_path(_current_hash, path)
+	var tags := _database.get_tags_for_image(_current_hash)
 	_original_tags.clear()
 	for tag in tags:
 		_original_tags.append(tag.tag)
 	_working_tags = _original_tags.duplicate()
 	_working_tags.sort_custom(func(a: String, b: String) -> bool: return String(a) < String(b))
 	_populate_tag_list()
+#endregion
+
+#region UI Callbacks
+func _populate_tag_list() -> void:
+	tagging_editor.clear()
+	for tag in _working_tags:
+		var data := _database.get_tag_info(tag)
+		tagging_editor.add_active_tag(tag, data.color)
+	_update_tag_suggestions()
+			
 
 func _on_previous_pressed() -> void:
 	var selection := file_menu_controller.get_selection()
@@ -214,7 +219,7 @@ func _on_image_viewer_controller_selection_index_changed(index: int) -> void:
 	_selection_index = index
 
 func _update_tag_suggestions() -> void:
-	var tags: Array[StringName] = _project_data.get_all_tags().keys()
+	var tags: Array[StringName] = _database.get_all_tags().keys()
 	for tag in _working_tags:
 		tags.erase(tag)
 	tagging_editor.set_tag_suggestions(tags)

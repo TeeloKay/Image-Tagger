@@ -17,7 +17,6 @@ signal tags_changed
 signal tag_added(tag: StringName)
 signal tag_removed(tag: StringName)
 signal tag_updated(tag: StringName)
-signal cleared
 
 func _ready() -> void:
 	_db_manager = preload("res://data/DatabaseManager.cs").new()
@@ -41,7 +40,8 @@ func is_database_open() -> bool:
 #region Image Operations
 func add_image(img_hash: String, path: String, fingerprint: String, metadata: Dictionary) -> void:
 	var json := JSON.stringify(metadata)
-	_db_manager.AddImage(img_hash, path, fingerprint, json)
+	var rel_path: String = ProjectManager.to_relative_path(path)
+	_db_manager.AddImage(img_hash, rel_path, fingerprint, json)
 	image_registered.emit(img_hash)
 
 func delete_image(img_hash: String) -> void:
@@ -67,11 +67,13 @@ func get_all_images() -> Array[String]:
 	return _db_manager.GetAllImages()
 
 func update_image_path(img_hash: String, to: String) -> void:
-	var paths: Dictionary = _db_manager.UpdateImagePath()
+	var rel_path: String = ProjectManager.to_relative_path(to)
+	var paths: Dictionary = _db_manager.UpdateImagePath(img_hash, rel_path)
 	image_moved.emit(paths.get("old_path", ""), paths.get("new_path", ""))
 
 func get_hash_for_path(path: String) -> String:
-	return _db_manager.GetHashForPath(path)
+	var rel_path: String = ProjectManager.to_relative_path(path)
+	return _db_manager.GetHashForPath(rel_path)
 
 #endregion
 
@@ -79,11 +81,14 @@ func get_hash_for_path(path: String) -> String:
 func add_tag(tag: StringName, color: Color) -> void:
 	var hex := color.to_html(NO_ALPHA)
 	_db_manager.AddTag(tag, hex)
-	tag_updated.emit(tag)
+	tag_added.emit(tag)
+	tags_changed.emit()
 
 func delete_tag(tag: StringName) -> void:
+	print("deleting tag: ", tag)
 	_db_manager.DeleteTag(tag)
 	tag_removed.emit(tag)
+	tags_changed.emit()
 
 func get_image_count_for_tag(tag: StringName) -> int:
 	return _db_manager.GetImageCountForTag(tag)

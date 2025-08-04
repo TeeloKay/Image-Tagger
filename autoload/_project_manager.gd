@@ -3,7 +3,6 @@ extends Node
 const REGISTRY_PATH := "user://registry.tres"
 
 @export var registry: ProjectRegistry
-@export var current_project: ProjectData
 @export var project_path: String
 @export var database_adapter: DatabaseAdapter
 
@@ -65,11 +64,11 @@ func search_files(query: SearchQuery) -> void:
 	search_engine.start_search(query)
 
 func to_relative_path(abs_path: String) -> String:
-	if current_project:
-		return current_project.to_relative_path(abs_path)
+	if abs_path.begins_with(project_path):
+		return abs_path.replace(project_path + "/", "")
 	return abs_path
 
 func to_abolute_path(rel_path: String) -> String:
-	if current_project:
-		return current_project.to_abolute_path(rel_path)
-	return rel_path
+	if rel_path.begins_with(project_path + "/"):
+		return rel_path
+	return project_path.path_join(rel_path)
