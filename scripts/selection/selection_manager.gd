@@ -27,7 +27,7 @@ func get_selection() -> PackedStringArray:
 	return _selection.duplicate()
 
 func _on_item_selected(index: int) -> void:
-	print(index)
+	print("selection index: ", index)
 	if index >= 0 && index < data_handler.get_file_count():
 		_selection.append(data_handler.get_filtered_files()[index])
 		if !_selection.is_empty():
@@ -37,7 +37,10 @@ func _on_item_selected(index: int) -> void:
 		selection_changed.emit()
 
 func _on_multi_item_selected(index: int, _selected: bool) -> void:
-	_on_item_selected(index)
+	if index < 0 || index >= data_handler.get_file_count():
+		return
+	_selection.append(data_handler.get_filtered_files()[index])
+	_schedule_selection_update()
 
 func _schedule_selection_update() -> void:
 	if _selection_update_pending:
