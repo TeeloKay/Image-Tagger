@@ -3,12 +3,12 @@ class_name FileBrowserView extends Control
 enum IconSizes {SMALL, MEDIUM, LARGE}
 enum {FAVORITE, RENAME, DELETE}
 
-@export var _controller: FileBrowserController
-
 @export_group("View settings")
 @export var small := Vector2i(64, 64)
 @export var medium := Vector2i(96, 96)
 @export var large := Vector2i(128, 128)
+
+@export var sort_mode := FileDataHandler.SortMode.SORT_BY_NAME_DESC
 
 @onready var _update_button: Button = %UpdateButton
 @onready var _item_list: ResponsiveItemList = %ImageList
@@ -76,7 +76,6 @@ func _build_sort_menu() -> void:
 	for key: String in FileDataHandler.SortMode.keys():
 		popup.add_radio_check_item(str(key).capitalize())
 
-	var sort_mode := _controller.sort_mode
 	popup.set_item_checked(sort_mode, true)
 
 func _build_type_filter_button() -> void:
@@ -103,7 +102,7 @@ func _show_context_menu(click_position: Vector2) -> void:
 		return
 		
 	var path := _file_paths_in_dir[_right_click_index]
-	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
+	var hash_val := ProjectManager.database_adapter.get_hash_for_path(path)
 	_context_menu.set_item_checked(0, ProjectManager.current_project.is_favorited(hash_val))
 	_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
 
@@ -113,11 +112,12 @@ func _on_context_menu_item_pressed(id: int) -> void:
 		return
 	
 	var path := _file_paths_in_dir[_right_click_index]
-	var hash_val := ProjectManager.current_project.get_hash_for_path(path)
+	var hash_val := ProjectManager.database_adapter.get_hash_for_path(path)
 	
 	match id:
 		FAVORITE:
-			var is_fav := ProjectManager.current_project.is_favorited(hash_val)
+			# var is_fav := ProjectManager.database_adapter.is_favorited(hash_val)
+			var is_fav := false
 			if is_fav:
 				ProjectManager.current_project.remove_from_favorites(hash_val)
 			else:
