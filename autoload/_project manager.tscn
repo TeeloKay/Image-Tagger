@@ -1,14 +1,16 @@
-[gd_scene load_steps=6 format=3 uid="uid://c4s2ruwigwta8"]
+[gd_scene load_steps=7 format=3 uid="uid://c4s2ruwigwta8"]
 
 [ext_resource type="Script" uid="uid://dp3n020oemu1" path="res://autoload/_project_manager.gd" id="1_ulwsf"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
 [ext_resource type="Script" uid="uid://dpect7oodwy6" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://ch2pbw6dop0jx" path="res://data/database_adapter.gd" id="6_3yaop"]
+[ext_resource type="Script" uid="uid://b4tbxq0rtbc2n" path="res://scripts/filesystem/file_system_watch_adapter.gd" id="6_ykfab"]
 
-[node name="ProjectManager" type="Node" node_paths=PackedStringArray("database_adapter", "search_engine", "image_import_service", "tagging_queue")]
+[node name="ProjectManager" type="Node" node_paths=PackedStringArray("database_adapter", "filesystem_watch_adapter", "search_engine", "image_import_service", "tagging_queue")]
 script = ExtResource("1_ulwsf")
 database_adapter = NodePath("DatabaseAdapter")
+filesystem_watch_adapter = NodePath("FileSystemWatchAdapter")
 search_engine = NodePath("SearchEngine")
 image_import_service = NodePath("ImageImportService")
 tagging_queue = NodePath("TaggingQueue")
@@ -28,3 +30,7 @@ metadata/_custom_type_script = "uid://bthdqc3rbwlow"
 [node name="DatabaseAdapter" type="Node" parent="."]
 script = ExtResource("6_3yaop")
 metadata/_custom_type_script = "uid://ch2pbw6dop0jx"
+
+[node name="FileSystemWatchAdapter" type="Node" parent="."]
+script = ExtResource("6_ykfab")
+metadata/_custom_type_script = "uid://b4tbxq0rtbc2n"

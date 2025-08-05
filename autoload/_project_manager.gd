@@ -5,14 +5,12 @@ const REGISTRY_PATH := "user://registry.tres"
 @export var registry: ProjectRegistry
 @export var project_path: String
 @export var database_adapter: DatabaseAdapter
-
-var _project_io: ProjectIO
+@export var filesystem_watch_adapter: FileSystemWatchAdapter
 @export var search_engine: SearchEngine
 
-var thumbnail_cache: ThumbnailCache
 @export var image_import_service: ImageImportService
-
 @export var tagging_queue: TaggingQueue
+var thumbnail_cache: ThumbnailCache
 
 signal project_loaded
 
@@ -23,6 +21,9 @@ func _ready() -> void:
 	
 	project_loaded.connect(ThumbnailManager.clear_queue)
 	database_adapter.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
+
+	tagging_queue.project = database_adapter
+	search_engine.project = database_adapter
 
 	load_project_registry()
 
@@ -46,13 +47,12 @@ func open_project(project_path: String) -> void:
 	save_registry()
 	
 	self.project_path = project_path
-	# current_project = _project_io.load_project(project_path)
 	database_adapter.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
 	database_adapter.open_database()
 
-	tagging_queue.project = database_adapter
-	search_engine.project = database_adapter
-	# save_current_project()
+	filesystem_watch_adapter.start_watching(project_path)
+
+
 	project_loaded.emit()
 
 func get_valid_projects() -> Array[String]:
