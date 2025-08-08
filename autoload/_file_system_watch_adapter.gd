@@ -23,12 +23,14 @@ func _ready() -> void:
 	_watcher.FileRenamed.connect(_on_file_renamed)
 
 func start_watching(directory: String) -> void:
+	print("started directory watch")
 	_watcher.StartWatching(directory)
 
 func stop_watching() -> void:
+	print("ending directory watch")
 	_watcher.StopWatching()
 
-func set_filter(filter: Array[String]) -> void:
+func set_filter(filter: PackedStringArray) -> void:
 	_watcher.Filter = filter
 
 func _on_watch_started(directory: String) -> void:
@@ -40,16 +42,26 @@ func _on_watch_stopped() -> void:
 
 func _on_file_created(path: String) -> void:
 	print("file_created: ", path)
-	file_created.emit(path)
+	if _is_file_valid_type(path):
+		file_created.emit(path)
 
 func _on_file_changed(path: String) -> void:
 	print("file_changed: ", path)
-	file_changed.emit(path)
+	if _is_file_valid_type(path):
+		file_changed.emit(path)
 
 func _on_file_deleted(path: String) -> void:
 	print("file_deleted: ", path)
-	file_deleted.emit(path)
+	if _is_file_valid_type:
+		file_deleted.emit(path)
 
 func _on_file_renamed(old_path: String, new_path: String) -> void:
 	print("file renamed: ", old_path, " -> ", new_path)
-	file_renamed.emit(old_path, new_path)
+	if _is_file_valid_type(new_path):
+		file_renamed.emit(old_path, new_path)
+
+func _is_file_valid_type(path: String) -> bool:
+	return path.get_extension() in ImageUtil.ACCEPTED_TYPES
+
+func _is_directory(path: String) -> bool:
+	return path.get_extension() == ""

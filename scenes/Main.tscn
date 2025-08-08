@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://fie0ld0my05u"]
+[gd_scene load_steps=23 format=3 uid="uid://fie0ld0my05u"]
 
 [ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_3p2gp"]
 [ext_resource type="PackedScene" uid="uid://cd7adillri8dg" path="res://scenes/views/directory_browser.tscn" id="3_q8u5g"]
@@ -13,6 +13,7 @@
 [ext_resource type="PackedScene" uid="uid://bajibmipjnmdt" path="res://scenes/views/tag_editor.tscn" id="7_q8u5g"]
 [ext_resource type="PackedScene" uid="uid://jf0kmal2x5ej" path="res://scenes/common/tagging_editor.tscn" id="8_2ofn6"]
 [ext_resource type="Script" uid="uid://bjvppx536xcr3" path="res://scripts/controllers/search_controller.gd" id="8_jlsqs"]
+[ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="11_yxlcp"]
 [ext_resource type="Script" uid="uid://bcqd7k0yj547h" path="res://scripts/filesystem/folder_operation_handler.gd" id="13_1iba3"]
 [ext_resource type="PackedScene" uid="uid://xjnyl66p6obf" path="res://scenes/common/popups/color_picker_popup.tscn" id="14_3p2gp"]
 [ext_resource type="Script" uid="uid://cbqh682fdjv3l" path="res://scripts/controllers/directory_browser_controller.gd" id="16_1nqs0"]
@@ -200,12 +201,16 @@ visible = false
 
 [node name="Controllers" type="Node" parent="."]
 
-[node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("menu_button", "directory_controller", "file_controller")]
+[node name="ToolController" type="Node" parent="Controllers" node_paths=PackedStringArray("conversion_popup", "menu_button", "directory_controller", "file_controller")]
 script = ExtResource("1_3p2gp")
+conversion_popup = NodePath("ConversionPopup")
 menu_button = NodePath("../../Root/VBoxContainer/Header/MarginContainer/Toolbar/ToolsMenuButton")
 directory_controller = NodePath("../DirectoryBrowserController")
 file_controller = NodePath("../FileBrowserController")
 metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
+
+[node name="ConversionPopup" parent="Controllers/ToolController" instance=ExtResource("11_yxlcp")]
+visible = false
 
 [node name="SearchController" type="Node" parent="Controllers" node_paths=PackedStringArray("search_panel")]
 script = ExtResource("8_jlsqs")

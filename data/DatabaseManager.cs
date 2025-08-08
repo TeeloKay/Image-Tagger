@@ -162,27 +162,28 @@ public partial class DatabaseManager : Node
 
 	public Dictionary GetImageInfo(string hash)
 	{
+		using var info = new Dictionary
+		{
+			{ "hash", hash }
+		};
+
 		using var cmd = _connection.CreateCommand();
 		cmd.CommandText = @"
-		SELECT path, fingerprint, favorited, metadata
-		FROM images
-		WHERE hash = $hash;
-	";
+			SELECT path, fingerprint, favorited, metadata
+			FROM images
+			WHERE hash = $hash;
+			";
 		cmd.Parameters.AddWithValue("$hash", hash);
 
 		using var reader = cmd.ExecuteReader();
 		if (reader.Read())
 		{
-			return new Dictionary
-			{
-				{"hash", hash},
-				{"path", reader.GetString(0)},
-				{"fingerprint", reader.GetString(1)},
-				{"favorited", reader.GetBoolean(2)},
-				{ "metadata", reader.IsDBNull(3) ? "{}" : reader.GetString(2)}
-			};
+			info.Add("path", reader.GetString(0));
+			info.Add("fingerprint", reader.GetString(1));
+			info.Add("favorited", reader.GetInt32(2) != 0);
+			info.Add("metadata", reader.IsDBNull(3) ? "{}" : reader.GetString(3));
 		}
-		return null;
+		return info;
 	}
 
 	public Array<Dictionary> GetAllImages()

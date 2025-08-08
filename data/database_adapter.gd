@@ -18,6 +18,7 @@ signal tag_added(tag: StringName)
 signal tag_removed(tag: StringName)
 signal tag_updated(tag: StringName)
 
+
 func _ready() -> void:
 	_db_manager = preload("res://data/DatabaseManager.cs").new()
 	add_child(_db_manager, INTERNAL_MODE_BACK)
@@ -53,13 +54,16 @@ func get_image_info(img_hash: String) -> ImageData:
 	var data: Dictionary = _db_manager.GetImageInfo(img_hash)
 	var tags := get_tags_for_image(img_hash)
 
+	if data.is_empty():
+		return img_data
+
 	img_data.image_hash = data.get("hash", "")
 	img_data.last_path = data.get("path", "")
 	img_data.fingerprint = data.get("fingerprint", "")
 	img_data.favorited = bool(data.get("favorited", 0))
 
-	for tag in tags:
-		img_data.add_tag(tag.tag)
+	for tag_info in tags:
+		img_data.add_tag(tag_info.tag)
 
 	return img_data
 
