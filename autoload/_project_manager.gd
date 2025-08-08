@@ -5,7 +5,6 @@ const REGISTRY_PATH := "user://registry.tres"
 @export var registry: ProjectRegistry
 @export var project_path: String
 @export var database_adapter: DatabaseAdapter
-@export var filesystem_watch_adapter: FileSystemWatchAdapter
 @export var search_engine: SearchEngine
 
 @export var image_import_service: ImageImportService
@@ -43,6 +42,8 @@ func save_current_project() -> void:
 	pass
 	
 func open_project(project_path: String) -> void:
+	FileSystemWatcher.stop_watching()
+	
 	registry.register_project(project_path)
 	save_registry()
 	
@@ -50,8 +51,7 @@ func open_project(project_path: String) -> void:
 	database_adapter.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
 	database_adapter.open_database()
 
-	filesystem_watch_adapter.start_watching(project_path)
-
+	FileSystemWatcher.start_watching(project_path)
 
 	project_loaded.emit()
 

@@ -22,7 +22,7 @@ Tagger was made to simplify the organization of large collections of images loca
 
 
 ## Installation
-1. Download and install [Godot 4.4.1](https://godotengine.org/download/windows/) from the official site or Steam
+1. Download and install [Godot 4.4.1 - .NET](https://godotengine.org/download/windows/). 
 2. Clone or download this repository
 3. Open the project in Godot as a local project
 4. Add the [Godot GIF (4.4.1) addon](https://godotengine.org/asset-library/asset/3993)

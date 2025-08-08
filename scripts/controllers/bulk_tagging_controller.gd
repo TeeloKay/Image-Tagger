@@ -24,11 +24,12 @@ func _ready() -> void:
 
 		tagging_editor.can_submit = false
 		tagging_editor.allow_input = true
+	
+	ProjectManager.database_adapter.tags_changed.connect(update_tag_suggestions)
 
 #region Callbacks
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
-	_database.tags_changed.connect(update_tag_suggestions)
 	update_tag_suggestions()
 
 func _on_selection_changed() -> void:

@@ -1,23 +1,21 @@
 class_name ImageConverter extends Node
 
-var strategy: ImageConversionStrategy = null:
-	set = set_strategy
+var strategies: Dictionary[int, ImageConversionStrategy] = {}
 
-func _init(strategy: ImageConversionStrategy) -> void:
-	self.strategy = strategy
+func _init() -> void:
+	pass
 
-
-func convert(input_path: String, output_path: String = "") -> String:
-	if strategy == null:
+func convert(type: int, input_path: String, output_path: String = "") -> String:
+	if !strategies.has(type):
 		return ""
-	if input_path.get_extension() == strategy.get_target_extension():
+	if input_path.get_extension() == strategies[type].get_target_extension():
 		return ""
 	if output_path.is_empty():
-		output_path = input_path.get_basename() + "." + strategy.get_target_extension()
-	if strategy._convert(input_path,output_path) == OK:
+		output_path = input_path.get_basename() + "." + strategies[type].get_target_extension()
+	if strategies[type]._convert(input_path, output_path) == OK:
 		return output_path
 	return ""
 
 
-func set_strategy(strat: ImageConversionStrategy) -> void:
-	strategy = strat
+func add_strategy(type: int, strat: ImageConversionStrategy) -> void:
+	strategies[type] = strat
