@@ -160,9 +160,16 @@ public partial class DatabaseManager : Node
 		cmd.ExecuteNonQuery();
 	}
 
+	public void SetImageFavorited(string hash, bool favorited = true)
+	{
+		return;
+		UpdateImageField(hash, "favorited", favorited);
+	}
+
 	public Dictionary GetImageInfo(string hash)
 	{
-		using var info = new Dictionary
+		GD.Print(hash);
+		var info = new Dictionary
 		{
 			{ "hash", hash }
 		};

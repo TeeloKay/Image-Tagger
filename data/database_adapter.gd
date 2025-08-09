@@ -50,6 +50,8 @@ func delete_image(img_hash: String) -> void:
 
 func get_image_info(img_hash: String) -> ImageData:
 	var img_data := ImageData.new()
+	if img_hash.is_empty():
+		return img_data
 	var data: Dictionary = _db_manager.GetImageInfo(img_hash)
 	var tags := get_tags_for_image(img_hash)
 
@@ -78,6 +80,8 @@ func get_hash_for_path(path: String) -> String:
 	var rel_path: String = ProjectContext.to_relative_path(path)
 	return _db_manager.GetHashForPath(rel_path)
 
+func set_image_favorited(img_hash: String, favorited: bool = true) -> void:
+	_db_manager.SetImageFavorited(img_hash, favorited)
 #endregion
 
 #region Tag Operations

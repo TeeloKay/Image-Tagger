@@ -4,7 +4,7 @@ const REGISTRY_PATH := "user://registry.tres"
 
 @export var registry: ProjectRegistry
 @export var project_path: String
-@export var database_adapter: DatabaseAdapter
+@export var db: DatabaseAdapter
 @export var search_engine: SearchEngine
 
 @export var image_import_service: ImageImportService
@@ -19,10 +19,10 @@ func _ready() -> void:
 	# _project_io = ProjectIO.new()
 	
 	project_loaded.connect(ThumbnailManager.clear_queue)
-	database_adapter.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
+	db.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
 
-	tagging_queue.project = database_adapter
-	search_engine.project = database_adapter
+	tagging_queue.project = db
+	search_engine.project = db
 
 	load_project_registry()
 
@@ -48,8 +48,8 @@ func open_project(project_path: String) -> void:
 	save_registry()
 	
 	self.project_path = project_path
-	database_adapter.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
-	database_adapter.open_database()
+	db.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
+	db.open_database()
 
 	FileSystemWatcher.start_watching(project_path)
 

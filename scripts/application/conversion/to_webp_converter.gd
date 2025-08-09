@@ -1,9 +1,9 @@
-class_name ToWebPStrategy extends ImageConversionStrategy
+class_name ToWebPConverter extends ImageConverter
 
 var lossy: bool = false
 var quality: float = 0.75
 
-func _convert(input_path: String, output_path: String) -> Error:
+func convert(input_path: String, output_path: String) -> Error:
 	var img := Image.new()
 	var err := img.load(input_path)
 	if err != OK:
@@ -13,7 +13,6 @@ func _convert(input_path: String, output_path: String) -> Error:
 	if err != OK:
 		push_error("Failed to save PNG image: %s" % err)
 	return err
-
 
 func get_target_extension() -> String:
 	return "webp"

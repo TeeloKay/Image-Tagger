@@ -1,7 +1,8 @@
 class_name ImageImportService extends Node
 
-const CHUNK_SIZE := 1024
+const CHUNK_SIZE := 8192
 const FINGERPRINT_CHUNK_SIZE := 8192
+const MAX_FILE_SIZE := 10000000
 
 @export_range(1, 100, 1) var batch_size: int = 1
 
@@ -25,7 +26,7 @@ func _ready() -> void:
 
 func hash_file(abs_path: String) -> String:
 	var file_hash := _hash_file(abs_path)
-
+	print("file hash: ", file_hash)
 	file_hashed.emit(abs_path, file_hash)
 	return file_hash
 
@@ -81,13 +82,24 @@ func _hash_file(path: String) -> String:
 	var file := FileAccess.open(path, FileAccess.READ)
 	if !file:
 		return ""
+	if file.get_error() != OK:
+		push_error(file.get_error())
+		return ""
 	
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 
+	if file.get_length() > MAX_FILE_SIZE:
+		push_error("File is too large.")
+		return ""
+
+	print("starting hashing")
 	while file.get_position() < file.get_length():
 		var remaining := file.get_length() - file.get_position()
-		ctx.update(file.get_buffer(min(remaining, CHUNK_SIZE)))
+		print("remaining bytes: ", remaining)
+
+		var buffer := file.get_buffer(min(remaining, CHUNK_SIZE))
+		ctx.update(buffer)
 
 	file.close()
 	var res := ctx.finish()

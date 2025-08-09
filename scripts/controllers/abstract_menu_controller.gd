@@ -5,7 +5,7 @@ var _database: DatabaseAdapter
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	ProjectContext.project_loaded.connect(_on_project_loaded)
-	_database = ProjectContext.database_adapter
+	_database = ProjectContext.db
 
 func _on_project_loaded() -> void:
 	_on_project_reset()

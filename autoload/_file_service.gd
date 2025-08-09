@@ -48,21 +48,26 @@ func move_file(old_path: String, new_path: String, safe: bool = true) -> Error:
 	remove_file(old_path)
 	return OK
 
-## generates a unique file path based on a file's original name.
-static func get_unique_file_path(base_path: String, filename: String) -> String:
-	var file_exists := true
-	var counter := 0
-	
-	var dot_ext := "." + filename.get_extension()
-	var file_path := ""
-	var file_name := filename.get_basename()
-	var new_name := file_name
+## Converts file path into a unique path based on the original file's name.
+func make_unique_file_path(file_path: String) -> String:
+	if !FileAccess.file_exists(file_path):
+		return file_path
 
+	var directory_path := file_path.get_base_dir()
+	var file_name := file_path.get_file().get_basename()
+	var dot_ext := "." + file_path.get_extension()
+
+	var file_exists := true
+	var counter := 1
+
+	var new_name := ""
+
+	## We loop over the directory trying to find an iteration that hasn't been implemented yet.
 	while file_exists:
-		file_path = base_path.path_join(new_name + dot_ext)
+		new_name = "%s_%d" % [file_name, counter]
+		file_path = directory_path.path_join(new_name + dot_ext)
 		file_exists = FileAccess.file_exists(file_path)
 		if file_exists:
 			counter += 1
-			new_name = "%s_%d" % [file_name, counter]
 	
 	return file_path

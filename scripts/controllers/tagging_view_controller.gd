@@ -51,7 +51,7 @@ func _ready() -> void:
 		selection_manager.selection_changed.connect(_on_selection_changed)
 
 	ProjectContext.image_import_service.file_hashed.connect(_on_file_hashed)
-	ProjectContext.database_adapter.tag_added.connect(_update_tag_suggestions)
+	ProjectContext.db.tag_added.connect(_update_tag_suggestions)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
