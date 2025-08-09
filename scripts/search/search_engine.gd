@@ -42,7 +42,7 @@ func start_search(query: SearchQuery) -> void:
 
 	for file_hash in matches:
 		var path: String = project.get_image_info(file_hash).get("path")
-		path = ProjectManager.to_abolute_path(path)
+		path = ProjectContext.to_abolute_path(path)
 		print(path)
 		if !FileAccess.file_exists(path):
 			search_list.append(file_hash)

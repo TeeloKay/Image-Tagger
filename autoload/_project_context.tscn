@@ -1,13 +1,13 @@
 [gd_scene load_steps=6 format=3 uid="uid://c4s2ruwigwta8"]
 
-[ext_resource type="Script" uid="uid://dp3n020oemu1" path="res://autoload/_project_manager.gd" id="1_ulwsf"]
+[ext_resource type="Script" uid="uid://cqu5mkfwk7hva" path="res://autoload/_project_context.gd" id="1_wa5fo"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
 [ext_resource type="Script" uid="uid://dpect7oodwy6" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://ch2pbw6dop0jx" path="res://data/database_adapter.gd" id="6_3yaop"]
 
-[node name="ProjectManager" type="Node" node_paths=PackedStringArray("database_adapter", "search_engine", "image_import_service", "tagging_queue")]
-script = ExtResource("1_ulwsf")
+[node name="ProjectContext" type="Node" node_paths=PackedStringArray("database_adapter", "search_engine", "image_import_service", "tagging_queue")]
+script = ExtResource("1_wa5fo")
 database_adapter = NodePath("DatabaseAdapter")
 search_engine = NodePath("SearchEngine")
 image_import_service = NodePath("ImageImportService")

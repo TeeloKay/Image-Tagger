@@ -19,7 +19,7 @@ config/windows_native_icon="uid://b7yg8ft85xsjw"
 
 [autoload]
 
-ProjectManager="*res://autoload/_project manager.tscn"
+ProjectContext="*res://autoload/_project_context.tscn"
 FileService="*res://autoload/_file_service.gd"
 InputHandler="*res://autoload/_global_input_handler.gd"
 ThumbnailManager="*res://autoload/_thumbnail_manager.gd"

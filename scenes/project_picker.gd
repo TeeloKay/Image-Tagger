@@ -13,7 +13,7 @@ func _update_list() -> void:
 	for child in project_list.get_children():
 		child.queue_free()
 		
-	for project in ProjectManager.get_valid_projects():
+	for project in ProjectContext.get_valid_projects():
 		var _idx := project_list.add_item(project)
 
 func _on_new_project_pressed() -> void:
@@ -23,7 +23,7 @@ func _on_update_pressed() -> void:
 	_update_list()
 
 func _on_project_item_activated(index: int) -> void:
-	project_selected.emit(ProjectManager.get_valid_projects()[index])
+	project_selected.emit(ProjectContext.get_valid_projects()[index])
 
 func _on_file_dialog_dir_selected(dir: String) -> void:
-	ProjectManager.open_project(dir)
+	ProjectContext.open_project(dir)

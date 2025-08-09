@@ -25,7 +25,7 @@ func _ready() -> void:
 		tagging_editor.can_submit = false
 		tagging_editor.allow_input = true
 	
-	ProjectManager.database_adapter.tags_changed.connect(update_tag_suggestions)
+	ProjectContext.database_adapter.tags_changed.connect(update_tag_suggestions)
 
 #region Callbacks
 func _on_project_loaded() -> void:
@@ -63,9 +63,9 @@ func populate_tag_list(tags: Array[StringName]) -> void:
 
 func apply_tags_to_selection() -> void:
 	for tag in active_tags:
-		ProjectManager.database_adapter.add_tag(tag, Color.SLATE_GRAY)
+		ProjectContext.database_adapter.add_tag(tag, Color.SLATE_GRAY)
 	for path in _selection:
-		ProjectManager.tagging_queue.enqueue(path, active_tags)
+		ProjectContext.tagging_queue.enqueue(path, active_tags)
 
 func _discard_changes() -> void:
 	set_active_tags([])

@@ -26,9 +26,9 @@ func _build_menus():
 	_file.add_item("Clear index", MENU_CLEAR_INDEX)
 	_file.add_item("Exit", MENU_EXIT)
 	
-	var projects := ProjectManager.get_valid_projects()
+	var projects := ProjectContext.get_valid_projects()
 	_file.set_item_disabled(MENU_OPEN_RECENT_PROJECT,projects.is_empty())
-	for project in ProjectManager.get_valid_projects():
+	for project in ProjectContext.get_valid_projects():
 		_recent_submenu.add_item(project.replace(project.get_base_dir() + "/", ""))
 	
 	_file.id_pressed.connect(_on_file_menu_item_pressed)
@@ -41,7 +41,7 @@ func _on_file_menu_item_pressed(id: int) -> void:
 		MENU_OPEN_RECENT_PROJECT:
 			return
 		MENU_CLEAR_INDEX:
-			ProjectManager.current_project.clear_index()
+			ProjectContext.current_project.clear_index()
 		MENU_EXIT:
 			get_tree().root.propagate_notification(NOTIFICATION_WM_CLOSE_REQUEST)
 			get_tree().quit()
@@ -49,20 +49,20 @@ func _on_file_menu_item_pressed(id: int) -> void:
 			return
 
 func _on_recent_menu_item_pressed(id: int) -> void:
-	var project := ProjectManager.get_valid_projects()[id]
-	ProjectManager.open_project(project)
+	var project := ProjectContext.get_valid_projects()[id]
+	ProjectContext.open_project(project)
 
 func _create_new_project() -> void:
 	file_dialog.popup_centered()
 
 func _on_dialog_dir_selected(dir: String) -> void:
-	ProjectManager.open_project(dir)
+	ProjectContext.open_project(dir)
 
 func _on_rebuild_tags_pressed() -> void:
 	pass
-	#var images := ProjectManager.current_project.get_images()
+	#var images := ProjectContext.current_project.get_images()
 	#for image in images:
-		#var tags := ProjectManager.current_project.get_tags_for_image(image)
+		#var tags := ProjectContext.current_project.get_tags_for_image(image)
 		#for tag in tags:
-			#ProjectManager.current_project.add_tag(tag)
-	#ProjectManager.save_current_project()
+			#ProjectContext.current_project.add_tag(tag)
+	#ProjectContext.save_current_project()

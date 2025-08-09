@@ -20,8 +20,8 @@ func _ready() -> void:
 	_color_selection.color = tag_data.color
 
 func _on_tag_input_changed(text: String) -> void:
-	if ProjectManager.current_project != null:
-		get_ok_button().disabled =  _tag_input.text in ProjectManager.current_project.get_tags()
+	if ProjectContext.current_project != null:
+		get_ok_button().disabled =  _tag_input.text in ProjectContext.current_project.get_tags()
 
 func _on_tag_input_submitted(text: String) -> void:
 	_tag_input.text = ProjectTools.sanitize_tag(text)

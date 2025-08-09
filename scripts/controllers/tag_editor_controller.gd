@@ -53,7 +53,7 @@ func _on_color_changed(color: Color) -> void:
 	if _active_tag.is_empty():
 		return
 	var data := _database.get_tag_info(_active_tag)
-	ProjectManager.database_adapter.update_tag_color(_active_tag, color)
+	ProjectContext.database_adapter.update_tag_color(_active_tag, color)
 	data.color = color
 
 	update()
