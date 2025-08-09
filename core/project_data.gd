@@ -42,7 +42,7 @@ func set_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 		if !tag in tags:
 			untag_file(file_hash, tag)
 	
-	ProjectManager.save_current_project()
+	ProjectContext.save_current_project()
 
 ## Adds tags to an image by hash, preserving existing tags.
 ## Only new tags are applied and recorded in the tag database.
@@ -55,7 +55,7 @@ func add_tags_for_hash(file_hash: String, tags: Array[StringName]) -> void:
 		if !tag in original_tags:
 			tag_file(file_hash, tag)
 	
-	ProjectManager.save_current_project()
+	ProjectContext.save_current_project()
 
 ## Adds a single tag to a file by hash.
 ## Automatically creates the tag in the database if it doesn't exist.
@@ -130,7 +130,7 @@ func move_image_data(old_path: String, new_path: String) -> void:
 	new_path = to_relative_path(new_path)
 	var image_hash := get_hash_for_path(old_path)
 	if image_hash.is_empty():
-		image_hash = ProjectManager.image_import_service.hash_file(new_path)
+		image_hash = ProjectContext.image_import_service.hash_file(new_path)
 	image_db.update_image_path(image_hash, new_path)
 
 #endregion

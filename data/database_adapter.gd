@@ -18,7 +18,6 @@ signal tag_added(tag: StringName)
 signal tag_removed(tag: StringName)
 signal tag_updated(tag: StringName)
 
-
 func _ready() -> void:
 	_db_manager = preload("res://data/DatabaseManager.cs").new()
 	add_child(_db_manager, INTERNAL_MODE_BACK)
@@ -41,7 +40,7 @@ func is_database_open() -> bool:
 #region Image Operations
 func add_image(img_hash: String, path: String, fingerprint: String, metadata: Dictionary) -> void:
 	var json := JSON.stringify(metadata)
-	var rel_path: String = ProjectManager.to_relative_path(path)
+	var rel_path: String = ProjectContext.to_relative_path(path)
 	_db_manager.AddImage(img_hash, rel_path, fingerprint, json)
 	image_registered.emit(img_hash)
 
@@ -71,12 +70,12 @@ func get_all_images() -> Array[String]:
 	return _db_manager.GetAllImages()
 
 func update_image_path(img_hash: String, to: String) -> void:
-	var rel_path: String = ProjectManager.to_relative_path(to)
+	var rel_path: String = ProjectContext.to_relative_path(to)
 	var paths: Dictionary = _db_manager.UpdateImagePath(img_hash, rel_path)
 	image_moved.emit(paths.get("old_path", ""), paths.get("new_path", ""))
 
 func get_hash_for_path(path: String) -> String:
-	var rel_path: String = ProjectManager.to_relative_path(path)
+	var rel_path: String = ProjectContext.to_relative_path(path)
 	return _db_manager.GetHashForPath(rel_path)
 
 #endregion

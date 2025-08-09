@@ -55,7 +55,7 @@ func add_tag_to_tree(tag: StringName, data: TagData) -> TreeItem:
 	item.set_editable(COL_NAME, false)
 	item.set_metadata(COL_NAME, tag)
 
-	item.set_text(COL_AMOUNT, str(ProjectManager.database_adapter.get_image_count_for_tag(tag)))
+	item.set_text(COL_AMOUNT, str(ProjectContext.database_adapter.get_image_count_for_tag(tag)))
 	item.set_text_alignment(COL_AMOUNT, HORIZONTAL_ALIGNMENT_LEFT)
 
 	item.set_custom_bg_color(COL_COLOR, data.color)
@@ -86,7 +86,7 @@ func _on_tree_item_button_clicked(item: TreeItem, column: int, id: int, mouse_bu
 			return
 
 	
-	ProjectManager.save_current_project()
+	ProjectContext.save_current_project()
 
 func _on_update_pressed() -> void:
 	update_pressed.emit()

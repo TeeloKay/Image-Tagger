@@ -20,7 +20,7 @@ func _resursive_dir_search(path: String, query: String, out_results: Array[Strin
             continue
         
         var full_path := path.path_join(name)
-        var rel_path := ProjectManager.to_relative_path(full_path)
+        var rel_path := ProjectContext.to_relative_path(full_path)
 
         if dir.current_is_dir():
             _resursive_dir_search(full_path, query, out_results)

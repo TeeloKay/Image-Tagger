@@ -1,13 +1,18 @@
 class_name ToolController extends MenuController
 
-enum {PNG = 0, WEBP = 1, JPEG = 2}
+const PNG := "png"
+const JPG := "jpg"
+const WEBP := "webp"
+
+var type_table := {PNG: 0, JPG: 1, WEBP: 2}
 
 @export var conversion_popup: ImageConversionPopup
 @export var menu_button: MenuButton
 @export var directory_controller: DirectoryController
 @export var file_controller: FileBrowserController
+@export var selection_manager: SelectionManager
 
-var _image_converter: ImageConverter = null
+var _image_converter: ImageConversionQueue = null
 var _format_detector: ImageFormatDetector = null
 var _strategies: Dictionary[int, ImageConversionStrategy] = {}
 
@@ -18,11 +23,10 @@ signal conversion_progressed(current: String, completed: int, total: int)
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
-	_image_converter = ImageConverter.new()
-	_image_converter.add_strategy(PNG, ToPNGStrategy.new())
-	_image_converter.add_strategy(WEBP, ToWebPStrategy.new())
-	_image_converter.add_strategy(JPEG, ToJPEGStrategy.new())
+
 	_format_detector = ImageFormatDetector.new()
+	_image_converter = ImageConversionQueue.new()
+	add_child(_image_converter, true, INTERNAL_MODE_BACK)
 
 	if menu_button:
 		menu_button.disabled = true
@@ -33,25 +37,24 @@ func _ready() -> void:
 		# Build conversion submenu
 		var conversion_submenu := PopupMenu.new()
 		popup.add_submenu_node_item("convert selection", conversion_submenu)
-		conversion_submenu.add_item("Convert to png", PNG)
-		conversion_submenu.add_item("Convert to webp", WEBP)
-		conversion_submenu.add_item("Convert to jpeg", JPEG)
+		conversion_submenu.add_item("Convert to png", type_table[PNG])
+		conversion_submenu.add_item("Convert to jpeg", type_table[JPG])
+		conversion_submenu.add_item("Convert to webp", type_table[WEBP])
 		conversion_submenu.index_pressed.connect(_on_conversion_item_pressed)
 		
 		popup.add_item("Repair selection", 1)
 
 func _on_conversion_item_pressed(idx: int) -> void:
-	print(idx)
-	if _strategies.has(idx) && _strategies[idx] != null:
-		_image_converter.strategy = _strategies[idx]
-	_convert_selection(idx)
+	var type := type_table.find_key(idx) as String
+	print(type)
+	var selection := selection_manager.get_selection()
+	for item in selection:
+		_image_converter.enqueue_image_conversion(item, type)
+	_image_converter.process_queue()
 
 func _on_item_pressed(idx: int) -> void:
 	if idx == 1:
 		_repair_selection()
-
-func _convert_selection(idx: int) -> void:
-	pass
 
 func _repair_selection() -> void:
 	var selection := file_controller.get_selection()

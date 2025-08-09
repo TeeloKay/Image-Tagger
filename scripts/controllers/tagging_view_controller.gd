@@ -50,8 +50,8 @@ func _ready() -> void:
 	if selection_manager:
 		selection_manager.selection_changed.connect(_on_selection_changed)
 
-	ProjectManager.image_import_service.file_hashed.connect(_on_file_hashed)
-	ProjectManager.database_adapter.tag_added.connect(_update_tag_suggestions)
+	ProjectContext.image_import_service.file_hashed.connect(_on_file_hashed)
+	ProjectContext.database_adapter.tag_added.connect(_update_tag_suggestions)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -64,12 +64,12 @@ func set_image(path: String) -> void:
 	if path.is_empty():
 		clear()
 
-	path = ProjectManager.to_abolute_path(path)
+	path = ProjectContext.to_abolute_path(path)
 	if current_image == path:
 		return
 
 	current_image = path
-	ProjectManager.image_import_service.add_file_to_queue(path)
+	ProjectContext.image_import_service.add_file_to_queue(path)
 	_update_tag_suggestions()
 
 	tagging_editor.allow_input = true
@@ -89,7 +89,7 @@ func apply_changes() -> void:
 	tagging_editor.allow_input = true
 	tagging_editor.can_submit = false
 
-	ProjectManager.save_current_project()
+	ProjectContext.save_current_project()
 
 func discard_changes() -> void:
 	_working_tags = _original_tags.duplicate()
