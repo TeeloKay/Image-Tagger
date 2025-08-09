@@ -1,21 +1,16 @@
-class_name ImageConverter extends Node
+class_name ImageConverter extends RefCounted
 
-var strategies: Dictionary[String, ImageConversionStrategy] = {}
 
-func _init() -> void:
-	pass
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	pass # Replace with function body.
 
-func convert(type: String, input_path: String, output_path: String = "") -> String:
-	if !strategies.has(type):
-		return ""
-	if input_path.get_extension() == strategies[type].get_target_extension():
-		return ""
-	if output_path.is_empty():
-		output_path = input_path.get_basename() + "." + strategies[type].get_target_extension()
-	if strategies[type]._convert(input_path, output_path) == OK:
-		return output_path
+func convert(_input_path: String, _output_path: String) -> Error:
+	push_error("Convert() not implemented.")
+	return ERR_UNAVAILABLE
+
+func _is_compatible(_input_path: String) -> bool:
+	return true
+
+func get_target_extension() -> String:
 	return ""
-
-
-func add_strategy(type: String, strat: ImageConversionStrategy) -> void:
-	strategies[type] = strat

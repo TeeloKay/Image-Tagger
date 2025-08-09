@@ -102,7 +102,7 @@ func _show_context_menu(click_position: Vector2) -> void:
 		return
 		
 	var path := _file_paths_in_dir[_right_click_index]
-	var hash_val := ProjectContext.database_adapter.get_hash_for_path(path)
+	var hash_val := ProjectContext.db.get_hash_for_path(path)
 	#TODO: implement proper favorite logic
 	# _context_menu.set_item_checked(0, ProjectContext.current_project.is_favorited(hash_val))
 	_context_menu.popup(Rect2(get_global_mouse_position(), Vector2.ZERO))
@@ -113,7 +113,7 @@ func _on_context_menu_item_pressed(id: int) -> void:
 		return
 	
 	var path := _file_paths_in_dir[_right_click_index]
-	var hash_val := ProjectContext.database_adapter.get_hash_for_path(path)
+	var hash_val := ProjectContext.db.get_hash_for_path(path)
 	
 	match id:
 		FAVORITE:

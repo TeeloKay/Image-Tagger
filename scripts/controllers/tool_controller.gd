@@ -12,21 +12,19 @@ var type_table := {PNG: 0, JPG: 1, WEBP: 2}
 @export var file_controller: FileBrowserController
 @export var selection_manager: SelectionManager
 
-var _image_converter: ImageConversionQueue = null
+var _image_converter: ConversionManager = null
 var _format_detector: ImageFormatDetector = null
-var _strategies: Dictionary[int, ImageConversionStrategy] = {}
-
-signal conversion_started
-signal conversion_ended
-signal conversion_progressed(current: String, completed: int, total: int)
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	super._ready()
 
 	_format_detector = ImageFormatDetector.new()
-	_image_converter = ImageConversionQueue.new()
+	_image_converter = ConversionManager.new()
 	add_child(_image_converter, true, INTERNAL_MODE_BACK)
+	_image_converter.register_converter(PNG, ToPNGConverter.new())
+	_image_converter.register_converter(JPG, ToJPGConverter.new())
+	_image_converter.register_converter(WEBP, ToWebPConverter.new())
 
 	if menu_button:
 		menu_button.disabled = true
@@ -45,12 +43,12 @@ func _ready() -> void:
 		popup.add_item("Repair selection", 1)
 
 func _on_conversion_item_pressed(idx: int) -> void:
+	if idx > type_table.size() || idx < 0:
+		return
 	var type := type_table.find_key(idx) as String
-	print(type)
 	var selection := selection_manager.get_selection()
-	for item in selection:
-		_image_converter.enqueue_image_conversion(item, type)
-	_image_converter.process_queue()
+	_image_converter.enqueue_jobs(selection, type)
+	_image_converter.start_processing()
 
 func _on_item_pressed(idx: int) -> void:
 	if idx == 1:
