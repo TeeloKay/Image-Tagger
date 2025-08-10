@@ -6,11 +6,11 @@
 [ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://ch2pbw6dop0jx" path="res://data/database_adapter.gd" id="6_3yaop"]
 
-[node name="ProjectContext" type="Node" node_paths=PackedStringArray("db", "search_engine", "image_import_service", "tagging_queue")]
+[node name="ProjectContext" type="Node" node_paths=PackedStringArray("db", "search_engine", "importer", "tagging_queue")]
 script = ExtResource("1_wa5fo")
 db = NodePath("DatabaseAdapter")
 search_engine = NodePath("SearchEngine")
-image_import_service = NodePath("ImageImportService")
+importer = NodePath("ImageImportService")
 tagging_queue = NodePath("TaggingQueue")
 
 [node name="TaggingQueue" type="Node" parent="." node_paths=PackedStringArray("image_hasher")]

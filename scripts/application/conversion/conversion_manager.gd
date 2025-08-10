@@ -1,13 +1,14 @@
 class_name ConversionManager extends Node
 
+var _queue: Array[ConversionJob] = []
+var _current_job_index := -1
+var _converters: Dictionary[String, ImageConverter] = {}
+
 signal conversion_started
 signal conversion_ended
 signal conversion_progress(progress: float)
 signal conversion_failed(image_path: String, error: Error)
 
-var _queue: Array[ConversionJob] = []
-var _current_job_index := -1
-var _converters: Dictionary[String, ImageConverter] = {}
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -36,6 +37,7 @@ func start_processing() -> void:
 	_process_next_job()
 
 func _process_next_job() -> void:
+	#TODO: break this method up into functions
 	print("processing queue")
 	if _current_job_index >= _queue.size() || _current_job_index == -1:
 		conversion_ended.emit()
@@ -55,7 +57,7 @@ func _process_next_job() -> void:
 		_process_next_job()
 	
 	print("converting: ", job.image_path)
-	var orig_hash := ProjectContext.image_import_service.hash_file(job.image_path)
+	var orig_hash := ProjectContext.importer.hash_file(job.image_path)
 	print(orig_hash)
 	
 	var orig_info := ProjectContext.db.get_image_info(orig_hash)
@@ -73,7 +75,7 @@ func _process_next_job() -> void:
 		_current_job_index += 1
 		_process_next_job()
 	
-	var new_hash := ProjectContext.image_import_service.hash_file(output_path)
+	var new_hash := ProjectContext.importer.hash_file(output_path)
 
 	if orig_info:
 		ProjectContext.db.delete_image(orig_hash)
@@ -81,6 +83,7 @@ func _process_next_job() -> void:
 		ProjectContext.db.multi_tag_image(new_hash, orig_info.tags)
 		ProjectContext.db.set_image_favorited(new_hash, orig_info.favorited)
 
+	FileService.remove_file(job.image_path)
 	_current_job_index += 1
 	_process_next_job()
 	
