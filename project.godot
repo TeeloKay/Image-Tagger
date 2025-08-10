@@ -25,6 +25,7 @@ InputHandler="*res://autoload/_global_input_handler.gd"
 ThumbnailManager="*res://autoload/_thumbnail_manager.gd"
 Config="*res://autoload/_config_manager.gd"
 FileSystemWatcher="*res://autoload/_file_system_watch_adapter.gd"
+Search="*res://autoload/_search_engine.gd"
 
 [debug]
 

@@ -162,7 +162,6 @@ public partial class DatabaseManager : Node
 
 	public void SetImageFavorited(string hash, bool favorited = true)
 	{
-		return;
 		UpdateImageField(hash, "favorited", favorited);
 	}
 
@@ -438,11 +437,16 @@ public partial class DatabaseManager : Node
 	#endregion
 
 	#region Search
-	public Array<Dictionary> Search(Array<StringName> inclusiveTags, Array<StringName> ExclusiveTags, string nameFilter = null)
+	public Array<Godot.Collections.Dictionary> ImageSearch(
+		Array<StringName> inclusiveTags,
+	 	Array<StringName> ExclusiveTags,
+	 	string nameFilter = null
+	 )
 	{
 		var results = new Array<Dictionary>();
 		var cmd = _connection.CreateCommand();
 
+		// Prepare inclusive tags
 		var incParams = new List<string>();
 		for (int i = 0; i < inclusiveTags.Count; i++)
 		{
@@ -451,27 +455,47 @@ public partial class DatabaseManager : Node
 			incParams.Add(param);
 		}
 
-		cmd.CommandText = $@"
-		SELECT images.*
-		FROM images
-		WHERE images.hash IN (
-			SELECT image_hash
-			FROM image_tags
-			WHERE tag IN ({string.Join(",", incParams)})
-			GROUP BY image_hash
-			HAVING COUNT(DISTINCT tag) = {inclusiveTags.Count})
-		{(!string.IsNullOrEmpty(nameFilter) ? "" : "AND path LIKE $filter")}
-			";
+		// Prepare exclusive tags
+		var excParams = new List<string>();
+		for (int i = 0; i < ExclusiveTags.Count; i++)
+		{
+			string param = $"$exc{i}";
+			cmd.Parameters.AddWithValue(param, ExclusiveTags[i].ToString());
+			incParams.Add(param);
+		}
+		// Compose SQL parts
+		string incCondition = inclusiveTags.Count > 0
+			? $"inc_tags.tag IS NOT NULL"
+			: "1=1"; // always true if no inclusive tags
+
+		string excCondition = ExclusiveTags.Count > 0
+			? "exc_tags.tag IS NULL"
+			: "1=1"; // always true if no exclusive tags
+
+		string filterCondition = !string.IsNullOrEmpty(nameFilter)
+			? "images.path LIKE $filter"
+			: "1=1"; // always true if no filter
 
 		if (!string.IsNullOrEmpty(nameFilter))
 		{
-			cmd.Parameters.AddWithValue("$filter", nameFilter);
+			cmd.Parameters.AddWithValue("$filter", $"%{nameFilter}%");
 		}
+
+		// SQL query with LEFT JOINs for tags
+		cmd.CommandText = $@"
+        	SELECT DISTINCT images.hash, images.path, images.fingerprint, images.metadata
+        	FROM images
+        	LEFT JOIN image_tags inc_tags ON images.hash = inc_tags.image_hash AND inc_tags.tag IN ({string.Join(",", incParams)})
+        	LEFT JOIN image_tags exc_tags ON images.hash = exc_tags.image_hash AND exc_tags.tag IN ({string.Join(",", excParams)})
+        	WHERE {incCondition}
+        	AND {excCondition}
+        	AND {filterCondition}
+   		";
 
 		var reader = cmd.ExecuteReader();
 		while (reader.Read())
 		{
-			results.Add(new Dictionary
+			results.Add(new Godot.Collections.Dictionary
 			{
 				{"hash", reader.GetString(0)},
 				{"path", reader.GetString(1)},

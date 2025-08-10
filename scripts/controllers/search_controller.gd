@@ -24,7 +24,7 @@ func search() -> void:
 	query.filter = _search_string.to_lower().strip_edges()
 	query.inclusive_tags = _tags
 	print(query)
-	ProjectContext.search_files(query)
+	Search.start_search(query)
 
 func reset_query() -> void:
 	_search_string = ""

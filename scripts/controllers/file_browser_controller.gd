@@ -41,8 +41,8 @@ func _ready() -> void:
 	FileService.file_removed.connect(_on_file_removed)
 	FileService.file_created.connect(_on_file_created)
 
-	ProjectContext.search_engine.search_started.connect(clear)
-	ProjectContext.search_engine.search_result.connect(_add_search_result)
+	Search.search_started.connect(clear)
+	Search.search_result.connect(_add_search_result)
 
 	ThumbnailManager.thumbnail_ready.connect(image_view._on_thumbnail_ready)
 

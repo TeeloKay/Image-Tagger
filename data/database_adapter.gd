@@ -158,6 +158,20 @@ func get_tags_for_image(img_hash: String) -> Array[TagData]:
 #endregion
 
 #region Search
-func search(search_query: SearchQuery) -> Array[Dictionary]:
-	return _db_manager.Search(search_query.inclusive_tags, [], search_query.filter)
+func search(search_query: SearchQuery) -> Array[ImageData]:
+	if search_query.is_empty():
+		return []
+	var results: Array[Dictionary] = _db_manager.ImageSearch(
+		search_query.inclusive_tags,
+		search_query.exclusive_tags,
+	 	search_query.filter
+		)
+	var image_data_array: Array[ImageData]
+	for result in results:
+		var info := ImageData.new()
+		info.image_hash = result["hash"]
+		info.last_path = result["path"]
+		info.fingerprint = result["fingerprint"]
+		image_data_array.append(info)
+	return image_data_array
 #endregion
