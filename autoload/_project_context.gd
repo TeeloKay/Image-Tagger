@@ -7,7 +7,7 @@ const REGISTRY_PATH := "user://registry.tres"
 @export var db: DatabaseAdapter
 @export var search_engine: SearchEngine
 
-@export var image_import_service: ImageImportService
+@export var importer: ImageImportService
 @export var tagging_queue: TaggingQueue
 var thumbnail_cache: ThumbnailCache
 

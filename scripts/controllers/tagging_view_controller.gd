@@ -50,8 +50,8 @@ func _ready() -> void:
 	if selection_manager:
 		selection_manager.selection_changed.connect(_on_selection_changed)
 
-	ProjectContext.image_import_service.file_hashed.connect(_on_file_hashed)
-	ProjectContext.db.tag_added.connect(_update_tag_suggestions)
+	ProjectContext.importer.file_hashed.connect(_on_file_hashed)
+	ProjectContext.db.tags_changed.connect(_update_tag_suggestions)
 
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
@@ -69,7 +69,7 @@ func set_image(path: String) -> void:
 		return
 
 	current_image = path
-	ProjectContext.image_import_service.add_file_to_queue(path)
+	ProjectContext.importer.add_file_to_queue(path)
 	_update_tag_suggestions()
 
 	tagging_editor.allow_input = true

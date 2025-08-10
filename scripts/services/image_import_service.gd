@@ -26,7 +26,6 @@ func _ready() -> void:
 
 func hash_file(abs_path: String) -> String:
 	var file_hash := _hash_file(abs_path)
-	print("file hash: ", file_hash)
 	file_hashed.emit(abs_path, file_hash)
 	return file_hash
 
@@ -96,8 +95,6 @@ func _hash_file(path: String) -> String:
 	print("starting hashing")
 	while file.get_position() < file.get_length():
 		var remaining := file.get_length() - file.get_position()
-		print("remaining bytes: ", remaining)
-
 		var buffer := file.get_buffer(min(remaining, CHUNK_SIZE))
 		ctx.update(buffer)
 
@@ -115,7 +112,6 @@ func fingerprint_file(path: String) -> String:
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_MD5)
 
-	file.seek(0)
 	ctx.update(file.get_buffer(min(FINGERPRINT_CHUNK_SIZE, file_size)))
 
 	return ctx.finish().hex_encode()
