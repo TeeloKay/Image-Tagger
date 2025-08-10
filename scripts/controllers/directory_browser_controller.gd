@@ -29,6 +29,8 @@ func _ready() -> void:
 
 	get_window().files_dropped.connect(_on_files_dropped)
 
+	InputHandler.update.connect(_update_view)
+
 func _on_project_loaded() -> void:
 	super._on_project_loaded()
 	_current_directory = ProjectContext.project_path

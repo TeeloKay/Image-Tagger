@@ -30,13 +30,13 @@ func start_search(query: SearchQuery) -> void:
 	print("db search results: ", db_results.size())
 	# Phase 2: validate last paths for matches
 	var valid_results: Dictionary[String, String] = {}
-	var missing_hashes: Array[String] = []
+	var missing_hashes: Dictionary[String, String] = {}
 
 	for result in db_results:
 		var path := result.last_path
 		path = ProjectContext.to_abolute_path(path)
 		if !FileAccess.file_exists(path):
-			missing_hashes.append(result.image_hash)
+			missing_hashes[result.image_hash] = result.fingerprint
 			continue
 		valid_results[result.image_hash] = path
 	
@@ -44,6 +44,15 @@ func start_search(query: SearchQuery) -> void:
 	for file_hash in valid_results:
 		var result := SearchResult.new(valid_results[file_hash], file_hash)
 		search_result.emit(result)
+
+	#recover missing files
+	if !missing_hashes.is_empty():
+		var missing_count := missing_hashes.size()
+		var missing_results := scan_for_missing_files(missing_hashes)
+		print("missing files found: ", missing_results.size(), " out of ", missing_count)
+		for file in missing_results:
+			var result := SearchResult.new(missing_results[file], file);
+			search_result.emit(result)
 
 	# look for untracked files.
 	if !query.filter.is_empty() && query.inclusive_tags.is_empty():
@@ -56,10 +65,42 @@ func start_search(query: SearchQuery) -> void:
 	search_finished.emit()
 
 
-func scan_for_missing_files(hashes: Array[String]) -> Dictionary:
-	var results: Dictionary
+func scan_for_missing_files(missing: Dictionary[String, String]) -> Dictionary[String, String]:
+	var results: Dictionary[String, String]
+
+	var source_dir: String = ProjectContext.project_path
+
+	_scan_for_missing_files_recursively(source_dir, missing, results)
 
 	return results;
+
+func _scan_for_missing_files_recursively(dir_path: String, missing: Dictionary[String, String], files: Dictionary[String, String]) -> void:
+	var dir := DirAccess.open(dir_path)
+	if dir == null:
+		push_error("Failed to open directory: ", dir_path)
+		return
+	
+	dir.list_dir_begin()
+	var file_name := dir.get_next()
+	while file_name != "":
+		if file_name.begins_with("."):
+			file_name = dir.get_next()
+			continue
+
+		var full_path := dir_path.path_join(file_name)
+
+		if dir.current_is_dir():
+			_scan_for_missing_files_recursively(full_path, missing, files)
+		else:
+			if ImageUtil.is_valid_image(file_name):
+				var fingerprint := ProjectContext.importer.fingerprint_file(full_path)
+				if fingerprint in missing.values():
+					var file_hash := ProjectContext.importer.hash_file(full_path)
+					if file_hash in missing.keys():
+						missing.erase(file_hash)
+						files[file_hash] = full_path
+		file_name = dir.get_next()
+	dir.list_dir_end()
 
 func scan_for_untracked_files(name_filter: String) -> PackedStringArray:
 	name_filter = name_filter.strip_edges().to_lower()
