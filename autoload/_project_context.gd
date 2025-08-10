@@ -5,7 +5,6 @@ const REGISTRY_PATH := "user://registry.tres"
 @export var registry: ProjectRegistry
 @export var project_path: String
 @export var db: DatabaseAdapter
-@export var search_engine: SearchEngine
 
 @export var importer: ImageImportService
 @export var tagging_queue: TaggingQueue
@@ -22,7 +21,6 @@ func _ready() -> void:
 	db.database_opened.connect(func(_val: String) -> void: ThumbnailManager.clear_queue())
 
 	tagging_queue.project = db
-	search_engine.project = db
 
 	load_project_registry()
 
@@ -59,9 +57,6 @@ func get_valid_projects() -> Array[String]:
 	if !registry:
 		return []
 	return registry.get_valid_projects()
-
-func search_files(query: SearchQuery) -> void:
-	search_engine.start_search(query)
 
 func to_relative_path(abs_path: String) -> String:
 	if abs_path.begins_with(project_path):

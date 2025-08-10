@@ -1,15 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://c4s2ruwigwta8"]
+[gd_scene load_steps=5 format=3 uid="uid://c4s2ruwigwta8"]
 
 [ext_resource type="Script" uid="uid://cqu5mkfwk7hva" path="res://autoload/_project_context.gd" id="1_wa5fo"]
 [ext_resource type="Script" uid="uid://qn1hye8vtl5x" path="res://scripts/tools/tagging/tagging_queue.gd" id="2_ygneo"]
 [ext_resource type="Script" uid="uid://dpect7oodwy6" path="res://scripts/services/image_import_service.gd" id="3_w6j2y"]
-[ext_resource type="Script" uid="uid://bthdqc3rbwlow" path="res://scripts/search/search_engine.gd" id="4_ucjkf"]
 [ext_resource type="Script" uid="uid://ch2pbw6dop0jx" path="res://data/database_adapter.gd" id="6_3yaop"]
 
-[node name="ProjectContext" type="Node" node_paths=PackedStringArray("db", "search_engine", "importer", "tagging_queue")]
+[node name="ProjectContext" type="Node" node_paths=PackedStringArray("db", "importer", "tagging_queue")]
 script = ExtResource("1_wa5fo")
 db = NodePath("DatabaseAdapter")
-search_engine = NodePath("SearchEngine")
 importer = NodePath("ImageImportService")
 tagging_queue = NodePath("TaggingQueue")
 
@@ -20,10 +18,6 @@ metadata/_custom_type_script = "uid://qn1hye8vtl5x"
 
 [node name="ImageImportService" type="Node" parent="."]
 script = ExtResource("3_w6j2y")
-
-[node name="SearchEngine" type="Node" parent="."]
-script = ExtResource("4_ucjkf")
-metadata/_custom_type_script = "uid://bthdqc3rbwlow"
 
 [node name="DatabaseAdapter" type="Node" parent="."]
 script = ExtResource("6_3yaop")
