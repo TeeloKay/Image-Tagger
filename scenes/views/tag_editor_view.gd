@@ -13,8 +13,6 @@ const COL_SYNONYMS := 4
 var _picker_icon := preload("res://assets/icons/ColorPick.svg")
 var _remove_icon := preload("res://assets/icons/Remove.svg")
 
-@export var project_data: ProjectData
-
 signal tag_color_request(item: TreeItem, id: int, mouse_button_index: int)
 signal tag_delete_request(item: TreeItem, id: int, mouse_button_index: int)
 signal update_pressed

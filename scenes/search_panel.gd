@@ -1,6 +1,6 @@
 class_name SearchPanel extends VBoxContainer
 
-var _active_tags: Dictionary[StringName, TagBadge]
+var _active_badges: Dictionary[StringName, TagBadge]
 
 var _tag_badge_scene := preload("res://scenes/ui/tag_badge.tscn")
 
@@ -46,12 +46,12 @@ func add_tag(tag: StringName, color: Color) -> void:
 	badge.set_tag(tag)
 	badge.modulate = color
 	badge.remove_requested.connect(func(t: StringName) -> void: tag_remove_pressed.emit(t))
-	_active_tags[tag] = badge
+	_active_badges[tag] = badge
 
 func remove_tag(tag: StringName) -> void:
-	if !_active_tags.has(tag):
+	if !_active_badges.has(tag):
 		return
-	_active_tags[tag].queue_free()
+	_active_badges[tag].queue_free()
 
 func _on_search(_query: String) -> void:
 	_on_search_pressed()
@@ -77,6 +77,6 @@ func clear_input() -> void:
 	_search_input.text = ""
 
 func clear_badges() -> void:
-	for tag in _active_tags:
-		_active_tags[tag].queue_free()
-	_active_tags = {}
+	for tag in _active_badges:
+		_active_badges[tag].queue_free()
+	_active_badges.clear()

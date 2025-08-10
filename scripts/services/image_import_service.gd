@@ -1,13 +1,13 @@
 class_name ImageImportService extends Node
 
 const CHUNK_SIZE := 8192
-const FINGERPRINT_CHUNK_SIZE := 8192
+const FINGERPRINT_CHUNK_SIZE := 4096
 const MAX_FILE_SIZE := 10000000
 
 @export_range(1, 100, 1) var batch_size: int = 1
 
 var _queue: Array[String]
-var _output_queue: Dictionary[String, String] = {}
+var _output_queue: Dictionary[String, HashingResult] = {}
 
 var _thread: Thread
 var _mutex: Mutex
@@ -15,6 +15,7 @@ var _semaphore: Semaphore
 
 var _exit_thread: bool = false
 
+signal file_processed(path: String, file_data: HashingResult)
 signal file_hashed(path: String, file_hash: String)
 
 func _ready() -> void:
@@ -59,10 +60,13 @@ func _thread_process() -> void:
 				continue
 
 			var file_hash := _hash_file(path)
-			if !file_hash.is_empty():
-				_mutex.lock()
-				_output_queue[path] = file_hash
-				_mutex.unlock()
+			var file_fingerprint := fingerprint_file(path)
+
+			var file_data := HashingResult.new(path, file_hash, file_fingerprint)
+
+			_mutex.lock()
+			_output_queue[path] = file_data
+			_mutex.unlock()
 
 		_mutex.unlock()
 
@@ -72,7 +76,7 @@ func _process(_delta: float) -> void:
 	_mutex.lock()
 	if !_output_queue.is_empty():
 		for file: String in _output_queue.keys():
-			file_hashed.emit(file, _output_queue[file])
+			file_processed.emit(file, _output_queue[file])
 		_output_queue.clear()
 
 	_mutex.unlock()
@@ -91,8 +95,6 @@ func _hash_file(path: String) -> String:
 	if file.get_length() > MAX_FILE_SIZE:
 		push_error("File is too large.")
 		return ""
-
-	print("starting hashing")
 	while file.get_position() < file.get_length():
 		var remaining := file.get_length() - file.get_position()
 		var buffer := file.get_buffer(min(remaining, CHUNK_SIZE))

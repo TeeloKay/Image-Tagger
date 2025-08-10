@@ -53,28 +53,23 @@ public partial class ProjectFileSystemWatcher : Node
 
 	private void OnCreated(object sender, FileSystemEventArgs e)
 	{
-		GD.Print(e.FullPath);
 		if (File.Exists(e.FullPath))
 			Callable.From(() => EmitSignal(SignalName.FileCreated, e.FullPath)).CallDeferred();
 	}
 
 	private void OnChanged(object sender, FileSystemEventArgs e)
 	{
-		GD.Print(e.FullPath);
 		if (File.Exists(e.FullPath))
 			Callable.From(() => EmitSignal(SignalName.FileChanged, e.FullPath)).CallDeferred();
 	}
 
 	private void OnDeleted(object sender, FileSystemEventArgs e)
 	{
-		GD.Print(e.FullPath);
 		Callable.From(() => EmitSignal(SignalName.FileDeleted, e.FullPath)).CallDeferred();
 	}
 
 	private void OnRenamed(object sender, RenamedEventArgs e)
 	{
-		GD.Print(e.OldFullPath);
-		GD.Print(e.FullPath);
 		if (File.Exists(e.FullPath))
 			Callable.From(() => EmitSignal(SignalName.FileRenamed, e.OldFullPath, e.FullPath)).CallDeferred();
 	}

@@ -39,6 +39,8 @@ func is_database_open() -> bool:
 
 #region Image Operations
 func add_image(img_hash: String, path: String, fingerprint: String, metadata: Dictionary) -> void:
+	if img_hash.is_empty():
+		return
 	var json := JSON.stringify(metadata)
 	var rel_path: String = ProjectContext.to_relative_path(path)
 	_db_manager.AddImage(img_hash, rel_path, fingerprint, json)

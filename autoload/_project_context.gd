@@ -39,17 +39,17 @@ func save_current_project() -> void:
 	# _project_io.save_project(current_project)
 	pass
 	
-func open_project(project_path: String) -> void:
+func open_project(path: String) -> void:
 	FileSystemWatcher.stop_watching()
 	
-	registry.register_project(project_path)
+	registry.register_project(path)
 	save_registry()
 	
-	self.project_path = project_path
-	db.set_database_path(project_path.path_join(".artmeta").path_join("images.db"))
+	project_path = path
+	db.set_database_path(path.path_join(".artmeta").path_join("images.db"))
 	db.open_database()
 
-	FileSystemWatcher.start_watching(project_path)
+	FileSystemWatcher.start_watching(path)
 
 	project_loaded.emit()
 
@@ -67,3 +67,12 @@ func to_abolute_path(rel_path: String) -> String:
 	if rel_path.begins_with(project_path + "/"):
 		return rel_path
 	return project_path.path_join(rel_path)
+
+func register_image(path: String) -> void:
+	var abs_path := to_abolute_path(path)
+	var rel_path := to_relative_path(path)
+
+	var img_hash := importer.hash_file(abs_path)
+	var fingerprint := importer.fingerprint_file(abs_path)
+
+	db.add_image(img_hash, rel_path, fingerprint, {})
