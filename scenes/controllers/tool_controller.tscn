@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://bfo0cttg5cvw0"]
+
+[ext_resource type="Script" uid="uid://b4t3o4eogrh3n" path="res://scripts/controllers/tool_controller.gd" id="1_ffykk"]
+[ext_resource type="Script" uid="uid://c41y1tmywq70v" path="res://scripts/application/conversion/conversion_manager.gd" id="2_gq0vn"]
+[ext_resource type="PackedScene" uid="uid://cm5d0yt6l5llv" path="res://scenes/common/popups/conversion_popup.tscn" id="3_1jm1l"]
+
+[node name="ToolController" type="Node" node_paths=PackedStringArray("conversion_popup", "_image_converter")]
+script = ExtResource("1_ffykk")
+conversion_popup = NodePath("ConversionManager/ConversionPopup")
+_image_converter = NodePath("ConversionManager")
+metadata/_custom_type_script = "uid://b4t3o4eogrh3n"
+
+[node name="ConversionManager" type="Node" parent="."]
+script = ExtResource("2_gq0vn")
+metadata/_custom_type_script = "uid://c41y1tmywq70v"
+
+[node name="ConversionPopup" parent="ConversionManager" instance=ExtResource("3_1jm1l")]
+auto_translate_mode = 1
+size = Vector2i(460, 100)
+visible = false
+exclusive = true
+min_size = Vector2i(460, 100)
+
+[connection signal="conversion_ended" from="ConversionManager" to="ConversionManager/ConversionPopup" method="hide"]
+[connection signal="conversion_progress" from="ConversionManager" to="ConversionManager/ConversionPopup" method="set_progress"]
+[connection signal="conversion_started" from="ConversionManager" to="ConversionManager/ConversionPopup" method="show_popup"]

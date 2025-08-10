@@ -33,8 +33,9 @@ func start_processing() -> void:
 	if _queue.is_empty():
 		return
 	_current_job_index = 0
+	print("starting conversion")
 	conversion_started.emit()
-	_process_next_job()
+	_process_next_job_deferred()
 
 func _process_next_job() -> void:
 	#TODO: break this method up into functions
@@ -54,7 +55,7 @@ func _process_next_job() -> void:
 		push_error("Cannot convert image '%s', converter for type '%s' not registered." % [job.image_path, job.target_format])
 		conversion_failed.emit(job.image_path, ERR_INVALID_PARAMETER)
 		_current_job_index += 1
-		_process_next_job()
+		_process_next_job_deferred()
 	
 	print("converting: ", job.image_path)
 	var orig_hash := ProjectContext.importer.hash_file(job.image_path)
@@ -73,7 +74,7 @@ func _process_next_job() -> void:
 		push_error("Failed to convert image '%s' with error code %d" % [job.image_path, err])
 		conversion_failed.emit(job.image_path, output_path)
 		_current_job_index += 1
-		_process_next_job()
+		_process_next_job_deferred()
 	
 	var new_hash := ProjectContext.importer.hash_file(output_path)
 
@@ -85,13 +86,15 @@ func _process_next_job() -> void:
 
 	FileService.remove_file(job.image_path)
 	_current_job_index += 1
-	_process_next_job()
+	_process_next_job_deferred()
 	
 func register_converter(type: String, converter: ImageConverter) -> void:
 	if _converters.has(type):
 		return
 	_converters[type] = converter
 
+func _process_next_job_deferred() -> void:
+	call_deferred("_process_next_job")
 
 class ConversionJob:
 	var image_path: String
