@@ -444,6 +444,10 @@ public partial class DatabaseManager : Node
 	 )
 	{
 		var results = new Array<Dictionary>();
+
+		if (inclusiveTags.Count == 0 && ExclusiveTags.Count == 0 && nameFilter != null)
+			return results;
+
 		var cmd = _connection.CreateCommand();
 
 		// Prepare inclusive tags

@@ -77,10 +77,11 @@ func _process_next_job() -> void:
 		_process_next_job_deferred()
 	
 	var new_hash := ProjectContext.importer.hash_file(output_path)
+	var new_fingerprint := ProjectContext.importer.fingerprint_file(output_path)
 
 	if orig_info:
 		ProjectContext.db.delete_image(orig_hash)
-		ProjectContext.db.add_image(new_hash, output_path, "", {})
+		ProjectContext.db.add_image(new_hash, output_path, new_fingerprint, {})
 		ProjectContext.db.multi_tag_image(new_hash, orig_info.tags)
 		ProjectContext.db.set_image_favorited(new_hash, orig_info.favorited)
 

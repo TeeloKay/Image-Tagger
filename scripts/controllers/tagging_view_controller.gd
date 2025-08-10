@@ -50,7 +50,7 @@ func _ready() -> void:
 	if selection_manager:
 		selection_manager.selection_changed.connect(_on_selection_changed)
 
-	ProjectContext.importer.file_hashed.connect(_on_file_hashed)
+	ProjectContext.importer.file_processed.connect(_on_image_hashed)
 	ProjectContext.db.tags_changed.connect(_update_tag_suggestions)
 
 func _on_project_loaded() -> void:
@@ -76,8 +76,9 @@ func set_image(path: String) -> void:
 	tagging_editor.can_submit = false
 
 func apply_changes() -> void:
-	_database.add_image(_current_hash, current_image, "", {})
+	ProjectContext.register_image(current_image)
 	for tag in _working_tags:
+		print(tag)
 		_database.add_tag(tag, Color.SLATE_GRAY)
 	_database.multi_tag_image(_current_hash, _working_tags)
 	for tag in _removed_tags:
@@ -180,11 +181,11 @@ func _on_remove_tag_request(tag: StringName) -> void:
 
 	_update_tag_suggestions()
 
-func _on_file_hashed(path: String, file_hash: String) -> void:
+func _on_image_hashed(path: String, result: HashingResult) -> void:
 	if path == current_image:
-		_current_hash = file_hash
-	print(path)
-	_database.update_image_path(_current_hash, path)
+		_current_hash = result.file_hash
+	ProjectContext.db.add_image(result.file_hash, result.file_path, result.fingerprint, {})
+	# _database.update_image_path(_current_hash, path)
 	var tags := _database.get_tags_for_image(_current_hash)
 	_original_tags.clear()
 	for tag in tags:

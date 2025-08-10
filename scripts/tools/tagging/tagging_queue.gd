@@ -22,7 +22,7 @@ func _process(_delta: float) -> void:
 	if file_hash.is_empty():
 		file_hash = image_hasher.hash_file(item.file)
 
-	project.add_image(file_hash, item.file, "", {})
+	ProjectContext.register_image(item.file)
 	project.multi_tag_image(file_hash, item.tags)
 
 	item.free()
