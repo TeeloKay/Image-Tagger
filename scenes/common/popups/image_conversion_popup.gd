@@ -13,8 +13,11 @@ func set_progress(progress: float) -> void:
 func set_text(text: String) -> void:
 	_label.text = text
 
-func update_progress(current_file: String, completed: int, total: int) -> void:
+func update_progress(progress: float) -> void:
 	_progress_bar.min_value = 0
-	_progress_bar.max_value = total
-	_progress_bar.value = completed
-	_label.text = current_file.get_file()
+	_progress_bar.max_value = 1
+	_progress_bar.value = progress
+
+func show_popup() -> void:
+	popup_centered()
+	set_progress(0)
